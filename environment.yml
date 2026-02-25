@@ -1,0 +1,29 @@
+name: rsa-brains-babylm
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - jupyter
+  - pytorch
+  - pip:
+    - transformers
+    - nibabel
+    - nilearn
+    - rsatoolbox
+    - plotly
+    - tqdm
+    - pyyaml
+    - h5py
+    - ipywidgets
+    - pytest
+    - black
+    - flake8

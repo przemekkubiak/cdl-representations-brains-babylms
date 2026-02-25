@@ -1,0 +1,49 @@
+# Training configuration for 60M token dataset
+
+dataset_size: "60M"
+
+# Model architecture
+model:
+  type: "gpt2"
+  hidden_size: 768
+  num_layers: 12
+  num_heads: 12
+  vocab_size: 50257
+  max_position_embeddings: 512
+
+# Training parameters
+training:
+  num_epochs: 15
+  batch_size: 32
+  learning_rate: 5e-4
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  
+  # Optimization
+  optimizer: "adamw"
+  scheduler: "linear"
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  
+  # Data
+  max_seq_length: 512
+  train_split: 0.9
+  
+# Checkpointing
+checkpointing:
+  output_dir: "checkpoints/babylm_60M"
+  save_steps: 1000
+  save_total_limit: 3
+  
+# Logging
+logging:
+  log_dir: "logs/babylm_60M"
+  logging_steps: 100
+  eval_steps: 500
+
+# Hardware
+hardware:
+  device: "auto"
+  mixed_precision: true
+  num_workers: 4

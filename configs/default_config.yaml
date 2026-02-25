@@ -1,0 +1,36 @@
+# Example configuration for RSA analysis
+
+# Paths
+data:
+  brain_data: "data/brain/"
+  babylm_data: "data/babylm/"
+  stimuli: "data/stimuli/"
+
+# Model settings
+models:
+  babylm:
+    - name: "baby-llama"
+      path: "path/to/model"
+    - name: "baby-gpt2"
+      path: "path/to/model"
+  layers_to_extract:
+    - 0
+    - 6
+    - 12
+
+# RSA settings
+rsa:
+  distance_metric: "correlation"  # Options: correlation, euclidean, cosine
+  method: "spearman"  # Options: spearman, pearson, kendall
+  
+# Analysis
+analysis:
+  n_permutations: 1000
+  alpha: 0.05
+  correction_method: "fdr_bh"  # Options: bonferroni, fdr_bh, none
+
+# Visualization
+visualization:
+  dpi: 300
+  figure_format: "png"  # Options: png, pdf, svg
+  color_scheme: "viridis"
