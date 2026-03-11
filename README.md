@@ -1,83 +1,124 @@
 # Representational Similarity Analysis: Brain Data and BabyLMs
 
-This project explores the relationship between brain representations from neuroimaging data and representations learned by small-scale language models (BabyLMs) using Representational Similarity Analysis (RSA).
+Compare neural representations from fMRI data with language model representations using RSA.
 
-## Project Overview
+## Overview
 
-This repository contains code and analyses for comparing neural representations from:
-- Neuroimaging data (fMRI/MEG/EEG)
-- Baby Language Models (BabyLMs) - small-scale language models
+This repository analyzes neural representations across multiple subjects and timepoints (ses-5, ses-7, ses-9) using:
+- fMRI preprocessing with GLM and HRF modeling
+- Hyperalignment to align subjects to common representational space
+- Session-level RDM computation aggregated across subjects
 
 ## Directory Structure
 
 ```
-├── data/                 # Data directory (add to .gitignore)
-│   ├── brain/           # Neuroimaging data
-│   └── babylm/          # Language model data
-├── src/                 # Source code
-│   ├── preprocessing/   # Data preprocessing scripts
-│   ├── models/          # Model loading and feature extraction
-│   └── rsa/            # RSA analysis code
-├── results/             # Analysis results and figures
-├── configs/             # Configuration files
-└── tests/              # Unit tests
-
+├── data/
+│   ├── brain/ds003604/         # BIDS neuroimaging data
+│   └── processed/fmri/         # Extracted patterns and RDMs
+├── src/
+│   ├── preprocessing/          # fMRI preprocessing
+│   └── rsa/                    # RSA analysis
+├── scripts/                    # Download utilities
+├── slurm/                      # Cluster job scripts
+└── run_pipeline.py             # Main pipeline orchestrator
 ```
 
-## Setup
+## Installation
 
-1. Create a virtual environment:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On macOS/Linux
-```
-
-2. Install dependencies:
-```bash
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Downloading the Neuroimaging Data
+## Quick Start
 
-The neuroimaging data (OpenNeuro dataset ds003604) is available at:
-https://github.com/OpenNeuroDatasets/ds003604.git
+### Local Execution
 
-**Important:** This dataset is very large. Download it on a remote machine with sufficient storage.
-
-### Option 1: Python script
 ```bash
-# On the remote machine
-source venv/bin/activate
-python scripts/download_brain_data.py
+# Run full pipeline
+python run_pipeline.py
+
+# Run specific steps
+python run_pipeline.py --steps preprocess rsa
+
+# Specify subjects/sessions
+python run_pipeline.py --subjects sub-5007 --sessions ses-7 ses-9
 ```
 
-### Option 2: Bash script
+### SLURM Cluster
+
 ```bash
-# On the remote machine
-chmod +x scripts/download_brain_data.sh
-./scripts/download_brain_data.sh
+# Full pipeline
+sbatch slurm/full_pipeline.sh
+
+# Individual steps
+sbatch slurm/download_data.sh
+sbatch slurm/preprocess.sh
+sbatch slurm/run_rsa.sh
+
+# Parallel preprocessing (one job per subject)
+sbatch slurm/preprocess_parallel.sh
 ```
 
-### Option 3: Manual download
+## Pipeline Steps
+
+### 1. Download Data
 ```bash
-# On the remote machine
-mkdir -p data/brain
-cd data/brain
-git clone https://github.com/OpenNeuroDatasets/ds003604.git
+python scripts/batch_download_bold.py --data-dir data/brain/ds003604
 ```
 
-The data will be downloaded to `data/brain/ds003604/`
+Downloads BOLD fMRI files from OpenNeuro for all subjects.
 
-## Usage
+### 2. Preprocess
+```bash
+python src/preprocessing/batch_preprocessing.py \
+    --data-dir data/brain/ds003604 \
+    --output-dir data/processed/fmri
+```
 
-Documentation coming soon.
+Applies spatial smoothing (6mm FWHM), high-pass filtering (0.01 Hz), GLM with canonical HRF, and extracts stimulus-specific patterns.
+
+### 3. Session-Based RSA
+```bash
+python src/rsa/session_based_rsa.py \
+    --pattern-dir data/processed/fmri \
+    --aggregation hyperalignment
+```
+
+Creates 3 session-level RDMs (ses-5, ses-7, ses-9) using hyperalignment to align subjects to shared representational space before aggregation.
+
+## Output Files
+
+- `sub-*_ses-*_run-*_patterns.npz` - Per-subject neural patterns
+- `session_rdm_ses-*.npz` - Session-level RDMs (aggregated across subjects)
+- `session_rdm_ses-*.png` - RDM visualizations
+- `session_rdm_comparison.csv` - Between-session correlations
+
+## Key Features
+
+- Handles variable sessions and runs across subjects
+- Uses hyperalignment (SRM) for robust cross-subject aggregation
+- Supports SLURM parallel processing
+- No GPU required (CPU and memory intensive only)
+
+## Configuration
+
+Pipeline parameters:
+- `--smoothing-fwhm`: Spatial smoothing (default: 6.0mm)
+- `--high-pass`: Filter cutoff (default: 0.01 Hz)
+- `--aggregation`: hyperalignment, mean, or median (default: hyperalignment)
+- `--n-iter`: SRM iterations (default: 10)
+- `--metric`: correlation, euclidean, or cosine (default: correlation)
 
 ## Citation
 
-If you use this code, please cite:
-```
-[Add citation information]
-```
+Dataset: OpenNeuro ds003604 (https://openneuro.org/datasets/ds003604)
+
+- [ ] Extract language model representations for stimuli
+- [ ] Compute model RDMs
+- [ ] Compare neural vs model RDMs
+
 
 ## License
 
