@@ -37,6 +37,36 @@ def get_annex_url(symlink_target: str, base_url: str = "https://github.com/OpenN
     return None
 
 
+def get_candidate_urls(bold_file: Path, data_dir: Path) -> list:
+    """Build candidate download URLs for a BOLD file."""
+    rel_path = bold_file.relative_to(data_dir).as_posix()
+    urls = []
+
+    # Candidate 1-2: git-annex object on GitHub (main/master)
+    if bold_file.is_symlink():
+        target = os.readlink(str(bold_file))
+        main_url = get_annex_url(target, base_url="https://github.com/OpenNeuroDatasets/ds003604/raw/main")
+        master_url = get_annex_url(target, base_url="https://github.com/OpenNeuroDatasets/ds003604/raw/master")
+        if main_url:
+            urls.append(main_url)
+        if master_url:
+            urls.append(master_url)
+
+    # Candidate 3-4: direct file path on OpenNeuro public storage
+    urls.append(f"https://s3.amazonaws.com/openneuro.org/ds003604/{rel_path}")
+    urls.append(f"https://openneuro.org/crn/datasets/ds003604/snapshots/1.0.0/files/{rel_path}")
+
+    # Remove duplicates while preserving order
+    seen = set()
+    deduped = []
+    for u in urls:
+        if u not in seen:
+            deduped.append(u)
+            seen.add(u)
+
+    return deduped
+
+
 def download_file(url: str, output_path: Path, chunk_size: int = 8192, max_retries: int = 3):
     """
     Download a file with progress bar and retry logic.
@@ -158,37 +188,30 @@ def download_bold_file(bold_file: Path, data_dir: Path) -> dict:
         result["message"] = "Already downloaded"
         return result
     
-    # Get symlink target
-    target = os.readlink(str(bold_file))
-    
-    # Construct download URL
-    url = get_annex_url(target)
-    
-    if not url:
-        result["status"] = "error"
-        result["message"] = "Could not construct URL"
-        return result
-    
-    try:
-        # Download to temporary location
-        temp_file = bold_file.with_suffix('.nii.gz.tmp')
-        download_file(url, temp_file)
-        
-        # Replace symlink with actual file
-        bold_file.unlink()
-        temp_file.rename(bold_file)
-        
-        result["status"] = "success"
-        result["message"] = "Downloaded"
-        
-    except Exception as e:
-        result["status"] = "error"
-        result["message"] = str(e)
-        
-        # Clean up temp file
-        temp_file = bold_file.with_suffix('.nii.gz.tmp')
-        if temp_file.exists():
-            temp_file.unlink()
+    candidate_urls = get_candidate_urls(bold_file, data_dir)
+    last_error = None
+
+    for url in candidate_urls:
+        try:
+            temp_file = bold_file.with_suffix('.nii.gz.tmp')
+            download_file(url, temp_file)
+
+            # Replace symlink with actual file
+            bold_file.unlink()
+            temp_file.rename(bold_file)
+
+            result["status"] = "success"
+            result["message"] = f"Downloaded from {url}"
+            return result
+
+        except Exception as e:
+            last_error = str(e)
+            temp_file = bold_file.with_suffix('.nii.gz.tmp')
+            if temp_file.exists():
+                temp_file.unlink()
+
+    result["status"] = "error"
+    result["message"] = f"All URL candidates failed. Last error: {last_error}"
     
     return result
 
