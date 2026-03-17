@@ -95,13 +95,6 @@ Creates 3 session-level RDMs (ses-5, ses-7, ses-9) using hyperalignment to align
 - `session_rdm_ses-*.png` - RDM visualizations
 - `session_rdm_comparison.csv` - Between-session correlations
 
-## Key Features
-
-- Handles variable sessions and runs across subjects
-- Uses hyperalignment (SRM) for robust cross-subject aggregation
-- Supports SLURM parallel processing
-- No GPU required (CPU and memory intensive only)
-
 ## Configuration
 
 Pipeline parameters:
@@ -111,14 +104,9 @@ Pipeline parameters:
 - `--n-iter`: SRM iterations (default: 10)
 - `--metric`: correlation, euclidean, or cosine (default: correlation)
 
-## Citation
+## Data Info
 
 Dataset: OpenNeuro ds003604 (https://openneuro.org/datasets/ds003604)
-
-- [ ] Extract language model representations for stimuli
-- [ ] Compute model RDMs
-- [ ] Compare neural vs model RDMs
-
 
 ## License
 
