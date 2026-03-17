@@ -76,6 +76,9 @@ logs/
 .cache/
 *.cache
 
+# SLurm scripts
+slurm/
+
 # Pytest
 .pytest_cache/
 

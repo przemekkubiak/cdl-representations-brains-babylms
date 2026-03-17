@@ -28,7 +28,8 @@ class BatchPreprocessor:
         output_dir: str = "data/processed/fmri",
         smoothing_fwhm: float = 6.0,
         high_pass: float = 0.01,
-        use_glm: bool = True
+        use_glm: bool = True,
+        mask_path: Optional[str] = None
     ):
         """
         Initialize batch preprocessor.
@@ -45,12 +46,15 @@ class BatchPreprocessor:
             High-pass filter cutoff in Hz
         use_glm : bool
             Use GLM with HRF modeling
+        mask_path : str, optional
+            Path to NIfTI mask used to restrict voxel selection.
         """
         self.data_dir = Path(data_dir)
         self.output_dir = Path(output_dir)
         self.smoothing_fwhm = smoothing_fwhm
         self.high_pass = high_pass
         self.use_glm = use_glm
+        self.mask_path = mask_path
         
         self.output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -154,7 +158,8 @@ class BatchPreprocessor:
                 subject_id=subject_id,
                 smoothing_fwhm=self.smoothing_fwhm,
                 high_pass=self.high_pass,
-                use_glm=self.use_glm
+                use_glm=self.use_glm,
+                mask_path=self.mask_path
             )
             
             # Process all runs
@@ -299,6 +304,11 @@ def main():
         action="store_true",
         help="Disable GLM modeling (use simple averaging)"
     )
+    parser.add_argument(
+        "--mask-path",
+        type=str,
+        help="Path to NIfTI mask for language-responsive voxels"
+    )
     
     args = parser.parse_args()
     
@@ -308,7 +318,8 @@ def main():
         output_dir=args.output_dir,
         smoothing_fwhm=args.smoothing_fwhm,
         high_pass=args.high_pass,
-        use_glm=not args.no_glm
+        use_glm=not args.no_glm,
+        mask_path=args.mask_path
     )
     
     # Process subjects

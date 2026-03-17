@@ -18,6 +18,7 @@ import pandas as pd
 import nibabel as nib
 from typing import Dict, List, Tuple, Optional
 from nilearn import image
+from nilearn.image import resample_to_img
 from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
 from nilearn.maskers import NiftiMasker
 import warnings
@@ -36,7 +37,8 @@ class FMRIPreprocessor:
         subject_id: str = "sub-5007",
         smoothing_fwhm: float = 6.0,
         high_pass: float = 0.01,
-        use_glm: bool = True
+        use_glm: bool = True,
+        mask_path: Optional[str] = None
     ):
         """
         Initialize the preprocessor.
@@ -54,6 +56,9 @@ class FMRIPreprocessor:
             Note: When use_glm=True, filtering is done by GLM's drift model
         use_glm : bool
             Whether to use GLM modeling (default: True)
+        mask_path : str, optional
+            Path to binary/probabilistic mask NIfTI defining voxels to keep.
+            If provided, analysis is restricted to this mask.
         """
         self.data_dir = Path(data_dir)
         self.subject_id = subject_id
@@ -61,9 +66,14 @@ class FMRIPreprocessor:
         self.smoothing_fwhm = smoothing_fwhm
         self.high_pass = high_pass
         self.use_glm = use_glm
+        self.mask_path = Path(mask_path) if mask_path else None
+        self.mask_img = nib.load(str(self.mask_path)) if self.mask_path else None
         
         if not self.subject_dir.exists():
             raise ValueError(f"Subject directory not found: {self.subject_dir}")
+
+        if self.mask_path and not self.mask_path.exists():
+            raise ValueError(f"Mask file not found: {self.mask_path}")
     
     def find_semantic_runs(self) -> List[Dict[str, Path]]:
         """
@@ -218,16 +228,29 @@ class FMRIPreprocessor:
         events_for_glm['trial_type'] = events_for_glm['stim_file']
         events_for_glm = events_for_glm[['onset', 'duration', 'trial_type']]
         
-        # Create brain mask
-        if verbose:
-            print(f"    - Creating brain mask")
-        masker = NiftiMasker(
-            standardize=False,
-            detrend=False,  # Already detrended in preprocessing
-            memory='nilearn_cache',
-            memory_level=1
-        )
-        masker.fit(bold_img)
+        # Create/prepare brain mask
+        if self.mask_img is not None:
+            if verbose:
+                print(f"    - Using provided mask: {self.mask_path}")
+            mask_img = resample_to_img(self.mask_img, bold_img, interpolation='nearest')
+            masker = NiftiMasker(
+                mask_img=mask_img,
+                standardize=False,
+                detrend=False,
+                memory='nilearn_cache',
+                memory_level=1
+            )
+            masker.fit(bold_img)
+        else:
+            if verbose:
+                print(f"    - Creating brain mask")
+            masker = NiftiMasker(
+                standardize=False,
+                detrend=False,  # Already detrended in preprocessing
+                memory='nilearn_cache',
+                memory_level=1
+            )
+            masker.fit(bold_img)
         
         # Fit GLM
         if verbose:
@@ -306,8 +329,12 @@ class FMRIPreprocessor:
         stimulus_patterns = {}
         
         # Create brain mask
-        mean_bold = np.mean(bold_data, axis=3)
-        mask = mean_bold > np.percentile(mean_bold, 10)
+        if self.mask_img is not None:
+            mask_img = resample_to_img(self.mask_img, bold_img, interpolation='nearest')
+            mask = mask_img.get_fdata() > 0
+        else:
+            mean_bold = np.mean(bold_data, axis=3)
+            mask = mean_bold > np.percentile(mean_bold, 10)
         
         # Extract voxel coordinates
         voxel_coords = np.where(mask)
@@ -457,7 +484,8 @@ def main():
         subject_id="sub-5007",
         smoothing_fwhm=6.0,  # 6mm spatial smoothing
         high_pass=0.01,      # 0.01 Hz high-pass filter (1/100s)
-        use_glm=True         # Use GLM with HRF modeling
+        use_glm=True,        # Use GLM with HRF modeling
+        mask_path=None       # Set to NIfTI mask path to restrict voxels
     )
     
     # Process all runs
