@@ -74,39 +74,22 @@ def main():
 
     mask_path_for_preprocess = args.mask_path
 
-    # If no mask provided and we need one, check if pre-generated mask exists
+    # If no mask provided, check if pre-generated mask exists
     if not args.mask_path:
         default_mask_path = str(Path(args.output_dir) / "language_mask_aal.nii.gz")
         
-        # Try to find existing mask
+        # Only use mask if it already exists locally
         if Path(default_mask_path).exists():
             print(f"Using pre-generated mask: {default_mask_path}")
             mask_path_for_preprocess = default_mask_path
         else:
-            # User provided --aal-rois or wants to generate from scratch
-            selected_aal_rois = args.aal_rois if args.aal_rois else DEFAULT_LANGUAGE_ROIS
-            generated_mask_path = args.generated_mask_path or default_mask_path
-            cmd = [
-                "python",
-                "src/preprocessing/prepare_language_mask.py",
-                "--aal-rois",
-            ] + [str(x) for x in selected_aal_rois] + [
-                "--aal-version", args.aal_version,
-                "--output-mask", generated_mask_path,
-            ]
-
-            print(f"Using AAL ROIs: {selected_aal_rois}")
-
-            reference_bold = find_reference_bold(args.data_dir)
-            if reference_bold:
-                cmd.extend(["--reference-bold", reference_bold])
-
-            if args.dry_run:
-                print(f"\n[DRY RUN] Would execute: {' '.join(cmd)}")
-            else:
-                run_command(cmd, "STEP 1: Building language mask from AAL ROIs")
-
-            mask_path_for_preprocess = generated_mask_path
+            print("\nWARNING: No mask provided and no pre-generated mask found.")
+            print("Proceeding with preprocessing WITHOUT spatial masking.")
+            print(f"To use masking, either:")
+            print(f"  1. Provide --mask-path <path_to_mask.nii.gz>")
+            print(f"  2. Run locally: python src/preprocessing/prepare_language_mask.py --aal-rois 7 8 9 10 11 12 67 68 69 70 85 86 --output-mask {default_mask_path}")
+            print(f"  3. Transfer the generated mask to this machine\n")
+            mask_path_for_preprocess = None
 
     preprocess_cmd = [
         sys.executable,
