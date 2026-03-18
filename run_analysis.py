@@ -78,7 +78,7 @@ def main():
     if not args.mask_path:
         generated_mask_path = args.generated_mask_path or str(Path(args.output_dir) / "language_mask_aal.nii.gz")
         cmd = [
-            sys.executable,
+            "python",
             "src/preprocessing/prepare_language_mask.py",
             "--aal-rois",
         ] + [str(x) for x in selected_aal_rois] + [
