@@ -69,6 +69,14 @@ class SessionBasedRSA:
         pattern_files = list(self.pattern_dir.glob("sub-*_patterns.npz"))
         subjects = sorted(set([f.name.split("_")[0] for f in pattern_files]))
         return subjects
+
+    @staticmethod
+    def _stack_with_min_features(vectors: List[np.ndarray]) -> np.ndarray:
+        """Stack 1D vectors after truncating all to the minimum length."""
+        if not vectors:
+            return np.array([])
+        min_features = min(v.shape[0] for v in vectors)
+        return np.vstack([v[:min_features] for v in vectors])
     
     def load_subject_patterns(
         self,
@@ -109,7 +117,18 @@ class SessionBasedRSA:
             
             # Load patterns
             data = np.load(str(pf))
-            patterns = {key: data[key] for key in data.keys()}
+            patterns = {}
+            for key in data.keys():
+                # Normalize to filename so the same stimulus can match across runs,
+                # e.g., Sem/Sem_run-01/foo.wav and Sem/Sem_run-02/foo.wav -> foo.wav
+                norm_key = Path(str(key)).name
+                if norm_key in patterns:
+                    warnings.warn(
+                        f"Duplicate normalized stimulus key '{norm_key}' in {pf.name}; "
+                        "keeping the first occurrence."
+                    )
+                    continue
+                patterns[norm_key] = data[key]
             
             if session not in organized_data:
                 organized_data[session] = {}
@@ -230,27 +249,24 @@ class SessionBasedRSA:
         if session not in subject_data:
             return None
         
-        # Collect patterns across runs
-        run_matrices = []
-        
-        for run, patterns in subject_data[session].items():
-            # Build matrix for this run
-            pattern_matrix = []
-            for stim in common_stimuli:
+        # Average each stimulus across all runs where it is present.
+        avg_patterns = []
+        for stim in common_stimuli:
+            stim_patterns = []
+            for _, patterns in subject_data[session].items():
                 if stim in patterns:
-                    pattern_matrix.append(patterns[stim])
-                else:
-                    # Skip this run if missing stimuli
-                    continue
-            
-            if len(pattern_matrix) == len(common_stimuli):
-                run_matrices.append(np.array(pattern_matrix))
-        
-        if not run_matrices:
+                    stim_patterns.append(patterns[stim])
+
+            if not stim_patterns:
+                return None
+
+            stim_matrix = self._stack_with_min_features(stim_patterns)
+            avg_patterns.append(np.mean(stim_matrix, axis=0))
+
+        if not avg_patterns:
             return None
-        
-        # Average patterns across runs
-        avg_patterns = np.mean(run_matrices, axis=0)
+
+        avg_patterns = self._stack_with_min_features(avg_patterns)
         
         # Compute RDM
         rdm = compute_rdm(avg_patterns, metric=metric)
@@ -343,11 +359,33 @@ class SessionBasedRSA:
         n_subjects : int
             Number of subjects included
         """
-        # Find common stimuli across all subjects
-        common_stimuli = self.get_common_stimuli(self.patterns_by_subject)
-        
+        # Find common stimuli for this session only.
+        # For each subject, take union across runs in this session,
+        # then intersect across subjects.
+        subject_session_stimuli = []
+        for subject_data in self.patterns_by_subject.values():
+            if session not in subject_data:
+                continue
+
+            run_sets = [
+                set(run_data.keys())
+                for run_data in subject_data[session].values()
+                if run_data
+            ]
+            if not run_sets:
+                continue
+
+            subject_union = set.union(*run_sets)
+            if subject_union:
+                subject_session_stimuli.append(subject_union)
+
+        if not subject_session_stimuli:
+            raise ValueError(f"No stimuli found for session {session}")
+
+        common_stimuli = sorted(set.intersection(*subject_session_stimuli))
+
         if not common_stimuli:
-            raise ValueError("No common stimuli found across subjects")
+            raise ValueError(f"No common stimuli found across subjects for session {session}")
         
         print(f"\nComputing session RDM for {session}")
         print(f"  Common stimuli: {len(common_stimuli)}")
@@ -372,23 +410,26 @@ class SessionBasedRSA:
                     print(f"    {subject_id}: ✗ (no data)")
                     continue
                 
-                # Collect patterns across runs
-                run_matrices = []
-                for run, patterns in subject_data[session].items():
-                    pattern_matrix = []
-                    for stim in common_stimuli:
+                # Average each stimulus across all runs where it is present.
+                avg_patterns = []
+                for stim in common_stimuli:
+                    stim_patterns = []
+                    for _, patterns in subject_data[session].items():
                         if stim in patterns:
-                            pattern_matrix.append(patterns[stim])
-                    
-                    if len(pattern_matrix) == len(common_stimuli):
-                        run_matrices.append(np.array(pattern_matrix))
-                
-                if run_matrices:
-                    # Average across runs for this subject
-                    avg_patterns = np.mean(run_matrices, axis=0)
+                            stim_patterns.append(patterns[stim])
+
+                    if not stim_patterns:
+                        avg_patterns = []
+                        break
+
+                    stim_matrix = self._stack_with_min_features(stim_patterns)
+                    avg_patterns.append(np.mean(stim_matrix, axis=0))
+
+                if avg_patterns:
+                    avg_patterns = self._stack_with_min_features(avg_patterns)
                     subject_patterns.append(avg_patterns)
                     subject_ids.append(subject_id)
-                    print(f"    {subject_id}: ✓ ({len(run_matrices)} runs)")
+                    print(f"    {subject_id}: ✓ ({len(subject_data[session])} runs)")
                 else:
                     print(f"    {subject_id}: ✗ (no valid runs)")
             
