@@ -20,12 +20,18 @@ import sys
 import json
 import warnings
 
+HYPERALIGNMENT_IMPORT_ERROR = None
 try:
     from brainiak.funcalign.srm import SRM
     HYPERALIGNMENT_AVAILABLE = True
-except ImportError:
+except Exception as e:
     HYPERALIGNMENT_AVAILABLE = False
-    warnings.warn("BrainIAK not installed. Install with: pip install brainiak")
+    HYPERALIGNMENT_IMPORT_ERROR = str(e)
+    warnings.warn(
+        "Hyperalignment unavailable (BrainIAK/SRM import failed). "
+        "Install MPI + mpi4py/BrainIAK or use --aggregation mean|median. "
+        f"Details: {HYPERALIGNMENT_IMPORT_ERROR}"
+    )
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -347,6 +353,13 @@ class SessionBasedRSA:
         print(f"  Common stimuli: {len(common_stimuli)}")
         print(f"  Aggregation: {aggregation}")
         
+        if aggregation == "hyperalignment" and not HYPERALIGNMENT_AVAILABLE:
+            warnings.warn(
+                "Requested aggregation='hyperalignment' but SRM is unavailable. "
+                "Falling back to aggregation='mean'."
+            )
+            aggregation = "mean"
+
         if aggregation == "hyperalignment":
             # Collect patterns from all subjects (before computing RDMs)
             subject_patterns = []
