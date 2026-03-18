@@ -73,31 +73,40 @@ def main():
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 
     mask_path_for_preprocess = args.mask_path
-    selected_aal_rois = args.aal_rois if args.aal_rois else DEFAULT_LANGUAGE_ROIS
 
+    # If no mask provided and we need one, check if pre-generated mask exists
     if not args.mask_path:
-        generated_mask_path = args.generated_mask_path or str(Path(args.output_dir) / "language_mask_aal.nii.gz")
-        cmd = [
-            "python",
-            "src/preprocessing/prepare_language_mask.py",
-            "--aal-rois",
-        ] + [str(x) for x in selected_aal_rois] + [
-            "--aal-version", args.aal_version,
-            "--output-mask", generated_mask_path,
-        ]
-
-        print(f"Using AAL ROIs: {selected_aal_rois}")
-
-        reference_bold = find_reference_bold(args.data_dir)
-        if reference_bold:
-            cmd.extend(["--reference-bold", reference_bold])
-
-        if args.dry_run:
-            print(f"\n[DRY RUN] Would execute: {' '.join(cmd)}")
+        default_mask_path = str(Path(args.output_dir) / "language_mask_aal.nii.gz")
+        
+        # Try to find existing mask
+        if Path(default_mask_path).exists():
+            print(f"Using pre-generated mask: {default_mask_path}")
+            mask_path_for_preprocess = default_mask_path
         else:
-            run_command(cmd, "STEP 1: Building language mask from AAL ROIs")
+            # User provided --aal-rois or wants to generate from scratch
+            selected_aal_rois = args.aal_rois if args.aal_rois else DEFAULT_LANGUAGE_ROIS
+            generated_mask_path = args.generated_mask_path or default_mask_path
+            cmd = [
+                "python",
+                "src/preprocessing/prepare_language_mask.py",
+                "--aal-rois",
+            ] + [str(x) for x in selected_aal_rois] + [
+                "--aal-version", args.aal_version,
+                "--output-mask", generated_mask_path,
+            ]
 
-        mask_path_for_preprocess = generated_mask_path
+            print(f"Using AAL ROIs: {selected_aal_rois}")
+
+            reference_bold = find_reference_bold(args.data_dir)
+            if reference_bold:
+                cmd.extend(["--reference-bold", reference_bold])
+
+            if args.dry_run:
+                print(f"\n[DRY RUN] Would execute: {' '.join(cmd)}")
+            else:
+                run_command(cmd, "STEP 1: Building language mask from AAL ROIs")
+
+            mask_path_for_preprocess = generated_mask_path
 
     preprocess_cmd = [
         sys.executable,
