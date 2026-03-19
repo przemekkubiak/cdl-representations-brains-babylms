@@ -545,16 +545,38 @@ class SessionBasedRSA:
         print(f"\nComputing RDMs for sessions: {available_sessions}")
         print("=" * 70)
         
+        skipped_sessions = []
         for session in available_sessions:
-            self.compute_session_rdm(
-                session=session,
-                metric=metric,
-                aggregation=aggregation,
-                n_iter=n_iter,
-                features=features
-            )
+            try:
+                self.compute_session_rdm(
+                    session=session,
+                    metric=metric,
+                    aggregation=aggregation,
+                    n_iter=n_iter,
+                    features=features
+                )
+            except ValueError as e:
+                msg = str(e)
+                if (
+                    "No common stimuli found across subjects for session" in msg
+                    or "No stimuli found for session" in msg
+                    or "No subjects have data for" in msg
+                ):
+                    warnings.warn(f"Skipping {session}: {msg}")
+                    skipped_sessions.append(session)
+                    continue
+                raise
         
         print("=" * 70)
+
+        if skipped_sessions:
+            print(f"Skipped sessions: {skipped_sessions}")
+
+        if not self.session_rdms:
+            raise ValueError(
+                "No session RDMs could be computed. "
+                "Try running with fewer subjects or specify --sessions."
+            )
         
         return self.session_rdms
     
