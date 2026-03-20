@@ -248,10 +248,26 @@ class LanguageModelRDMComputer:
             embeddings = np.nan_to_num(embeddings, nan=0.0)
         
         stimulus_embeddings = []
+        skipped_count = 0
         
         for idx, row in characteristics.iterrows():
-            word_a = str(row["word_A"]).lower()
-            word_b = str(row["word_B"]).lower()
+            word_a = row.get("word_A")
+            word_b = row.get("word_B")
+            
+            # Check for NaN values in the words themselves
+            if pd.isna(word_a) or pd.isna(word_b):
+                logger.debug(f"Skipping row {idx}: contains NaN words ({word_a}, {word_b})")
+                skipped_count += 1
+                continue
+            
+            word_a = str(word_a).lower()
+            word_b = str(word_b).lower()
+            
+            # Check if words exist in vocabulary
+            if word_a not in word_to_idx or word_b not in word_to_idx:
+                logger.debug(f"Skipping row {idx}: unknown words ({word_a}, {word_b})")
+                skipped_count += 1
+                continue
             
             # Get embeddings
             emb_a = embeddings[word_to_idx[word_a]]
@@ -261,8 +277,14 @@ class LanguageModelRDMComputer:
             pair_embedding = (emb_a + emb_b) / 2
             stimulus_embeddings.append(pair_embedding)
         
+        if skipped_count > 0:
+            logger.info(f"Skipped {skipped_count} stimuli with NaN or unknown words")
+        
+        if len(stimulus_embeddings) == 0:
+            raise ValueError("No valid stimuli found after filtering NaN and unknown words")
+        
         stimulus_embeddings = np.array(stimulus_embeddings)
-        logger.info(f"Computed {len(stimulus_embeddings)} stimulus embeddings")
+        logger.info(f"Computed {len(stimulus_embeddings)} stimulus embeddings (skipped {skipped_count})")
         
         # Check for NaN in stimulus embeddings
         if np.any(np.isnan(stimulus_embeddings)):
