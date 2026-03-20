@@ -49,9 +49,24 @@ def resolve_checkpoints(args: argparse.Namespace) -> list[str]:
         matches = sorted(Path().glob(args.checkpoints_glob))
         checkpoints.extend([str(m) for m in matches])
 
+    # Auto-discover fallback if nothing was passed explicitly.
+    if not checkpoints:
+        root = Path(args.checkpoint_root)
+        auto_patterns = [
+            "checkpoint-*",
+            "**/checkpoint-*",
+            "step-*",
+            "**/step-*",
+        ]
+        for pat in auto_patterns:
+            checkpoints.extend([str(m) for m in sorted(root.glob(pat)) if m.is_dir()])
+
     checkpoints = [c for c in checkpoints if c]
     if not checkpoints:
-        raise ValueError("No checkpoints resolved. Use --checkpoints or --checkpoints-glob.")
+        raise ValueError(
+            "No checkpoints resolved. Use --checkpoints or --checkpoints-glob. "
+            f"Searched from cwd='{Path.cwd()}' and checkpoint_root='{args.checkpoint_root}'."
+        )
 
     # De-duplicate while preserving order
     uniq = []
@@ -75,6 +90,11 @@ def main() -> None:
         "--checkpoints-glob",
         default=None,
         help="Glob pattern for checkpoints, e.g. 'checkpoints/gpt2-babylm-7/checkpoint-*'",
+    )
+    parser.add_argument(
+        "--checkpoint-root",
+        default="checkpoints",
+        help="Root directory for auto-discovery when no explicit checkpoints are given",
     )
     parser.add_argument("--task", default="Sem")
     parser.add_argument("--compare-sessions", nargs="+", default=["ses-5", "ses-7", "ses-9"])
