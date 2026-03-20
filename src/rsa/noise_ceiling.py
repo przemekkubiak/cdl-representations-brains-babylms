@@ -51,8 +51,10 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
     common = sorted(set.intersection(*subject_session_stimuli))
     print(f"  DEBUG {session}: {len(subjects_with_session)} subjects, {len(common)} common stimuli")
     if len(subject_session_stimuli) > 0:
-        print(f"    First subject has {len(list(subject_session_stimuli[0]))} stimuli")
-        print(f"    Last subject has {len(list(subject_session_stimuli[-1]))} stimuli")
+        first_stim = list(subject_session_stimuli[0])[:3]
+        last_stim = list(subject_session_stimuli[-1])[:3]
+        print(f"    First subject ({subjects_with_session[0]}) stimuli sample: {first_stim}")
+        print(f"    Last subject ({subjects_with_session[-1]}) stimuli sample: {last_stim}")
     return common
 
 
