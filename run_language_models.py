@@ -79,6 +79,39 @@ class LanguageModelPipeline:
             return np.arange(len(characteristics))
         mask = characteristics["trial_type"] != "S_C"
         return np.where(mask.to_numpy())[0]
+
+    def export_brain_rdms_for_comparison(
+        self,
+        sessions: List[str],
+        task: str = "Sem",
+        exclude_controls: bool = True,
+    ):
+        """Save brain RDM matrices used for comparison (subsetted if needed)."""
+        keep_idx = self._non_control_indices(task) if exclude_controls else None
+
+        for session in sessions:
+            brain_rdm_file = self.brain_rdm_dir / f"session_rdm_{session}.npz"
+            if not brain_rdm_file.exists():
+                logger.warning(f"Brain RDM not found for export: {brain_rdm_file}")
+                continue
+
+            brain_data = np.load(brain_rdm_file)
+            brain_rdm = brain_data["rdm"]
+
+            if exclude_controls and keep_idx is not None:
+                if brain_rdm.shape[0] >= keep_idx.max() + 1:
+                    brain_rdm = brain_rdm[np.ix_(keep_idx, keep_idx)]
+                    out_file = self.output_dir / f"brain_rdm_{session}_{task}_no_controls.npz"
+                    np.savez_compressed(out_file, rdm=brain_rdm, keep_indices=keep_idx)
+                    logger.info(f"Saved subset brain RDM: {out_file} (shape={brain_rdm.shape})")
+                else:
+                    logger.warning(
+                        f"Skipping subset export for {session}: index exceeds matrix size {brain_rdm.shape}"
+                    )
+            else:
+                out_file = self.output_dir / f"brain_rdm_{session}_{task}_full.npz"
+                np.savez_compressed(out_file, rdm=brain_rdm)
+                logger.info(f"Saved full brain RDM: {out_file} (shape={brain_rdm.shape})")
     
     def compute_lm_rdm(
         self,
@@ -260,6 +293,13 @@ class LanguageModelPipeline:
             "models": [],
             "comparisons": []
         }
+
+        # Export brain RDM matrices that are actually used in LM comparison.
+        self.export_brain_rdms_for_comparison(
+            sessions=compare_sessions,
+            task=task,
+            exclude_controls=exclude_controls,
+        )
         
         for model_name in model_names:
             logger.info(f"\n{'='*60}")
