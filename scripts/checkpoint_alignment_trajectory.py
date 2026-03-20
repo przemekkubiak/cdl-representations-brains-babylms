@@ -256,6 +256,22 @@ def main() -> None:
 
     # Plot trajectory
     fig, ax = plt.subplots(figsize=(9, 5.5))
+    
+    # Try to load noise ceiling data for reference lines
+    ceiling_ceilings = {}
+    ceiling_path = Path(args.brain_rdm_dir) / "noise_ceiling_by_session.csv"
+    if ceiling_path.exists():
+        try:
+            ceiling_df = pd.read_csv(ceiling_path)
+            for _, row in ceiling_df.iterrows():
+                ceiling_ceilings[row["session"]] = {
+                    "lower": row["lower_ceiling"],
+                    "upper": row["upper_ceiling"],
+                }
+        except Exception as e:
+            print(f"Warning: Could not load ceiling file {ceiling_path}: {e}")
+    
+    session_colors = {}
     for session in sorted(df["brain_session"].dropna().unique()):
         sub = df[df["brain_session"] == session].sort_values("step")
         corr_vals = pd.to_numeric(sub["correlation"], errors="coerce").to_numpy(dtype=float)
@@ -267,6 +283,8 @@ def main() -> None:
             continue
 
         line = ax.plot(x_vals, corr_vals, marker="o", label=session)[0]
+        session_colors[session] = line.get_color()
+        
         if args.bootstrap_ci:
             lo = pd.to_numeric(sub["ci_lower"], errors="coerce").to_numpy(dtype=float)
             hi = pd.to_numeric(sub["ci_upper"], errors="coerce").to_numpy(dtype=float)
@@ -279,6 +297,20 @@ def main() -> None:
                     alpha=0.15,
                     color=line.get_color(),
                 )
+    
+    # Add noise ceiling reference bands (if available)
+    if ceiling_ceilings:
+        for session, ceilings in ceiling_ceilings.items():
+            if session not in session_colors:
+                continue
+            color = session_colors[session]
+            lower = ceilings["lower"]
+            upper = ceilings["upper"]
+            
+            # Only plot if both bounds are finite
+            if np.isfinite(lower) and np.isfinite(upper):
+                ax.axhline(lower, linestyle=":", linewidth=1.5, color=color, alpha=0.5, label=f"{session} ceiling")
+                ax.axhline(upper, linestyle=":", linewidth=1.5, color=color, alpha=0.7)
 
     ax.axhline(0.0, linestyle="--", linewidth=1)
     ax.set_xlabel("Checkpoint step")
