@@ -27,22 +27,28 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
     """Find stimuli shared across all subjects that have this session."""
     subject_session_stimuli = []
     subjects_with_session = []
+    
     for subject_id, subject_data in rsa.patterns_by_subject.items():
         if session not in subject_data:
             continue
 
+        run_data_dict = subject_data[session]
+        print(f"    {subject_id}: runs={list(run_data_dict.keys())}")
+        
         run_sets = [
             set(run_data.keys())
-            for run_data in subject_data[session].values()
+            for run_data in run_data_dict.values()
             if run_data
         ]
         if not run_sets:
+            print(f"      -> No valid runs")
             continue
 
         subject_union = set.union(*run_sets)
         if subject_union:
             subject_session_stimuli.append(subject_union)
             subjects_with_session.append(subject_id)
+            print(f"      -> {len(subject_union)} stimuli from {len(run_sets)} runs")
 
     if not subject_session_stimuli:
         print(f"  DEBUG {session}: No subjects with data")
