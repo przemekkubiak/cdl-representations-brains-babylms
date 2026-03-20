@@ -258,14 +258,27 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(9, 5.5))
     for session in sorted(df["brain_session"].dropna().unique()):
         sub = df[df["brain_session"] == session].sort_values("step")
-        ax.plot(sub["step"], sub["correlation"], marker="o", label=session)
+        corr_vals = pd.to_numeric(sub["correlation"], errors="coerce").to_numpy(dtype=float)
+        x_vals = sub["step"].to_numpy(dtype=float)
+        finite_corr = np.isfinite(corr_vals)
+
+        if not np.any(finite_corr):
+            print(f"Skipping line plot for {session}: all correlations are NaN")
+            continue
+
+        line = ax.plot(x_vals, corr_vals, marker="o", label=session)[0]
         if args.bootstrap_ci:
             lo = pd.to_numeric(sub["ci_lower"], errors="coerce").to_numpy(dtype=float)
             hi = pd.to_numeric(sub["ci_upper"], errors="coerce").to_numpy(dtype=float)
             valid = np.isfinite(lo) & np.isfinite(hi)
             if np.any(valid):
-                x = sub["step"].to_numpy(dtype=float)
-                ax.fill_between(x[valid], lo[valid], hi[valid], alpha=0.15)
+                ax.fill_between(
+                    x_vals[valid],
+                    lo[valid],
+                    hi[valid],
+                    alpha=0.15,
+                    color=line.get_color(),
+                )
 
     ax.axhline(0.0, linestyle="--", linewidth=1)
     ax.set_xlabel("Checkpoint step")

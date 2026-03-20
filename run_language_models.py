@@ -273,8 +273,16 @@ class LanguageModelPipeline:
         else:
             raise ValueError(f"Unknown metric: {distance_metric}")
 
+        # Guard against undefined correlations (e.g., constant vectors)
+        if np.isnan(corr):
+            logger.warning(
+                f"Correlation is NaN for session={brain_session}. "
+                "This can happen when one RDM vector is constant."
+            )
+
         ci_lower = None
         ci_upper = None
+        n_bootstrap_valid = None
         if bootstrap_ci:
             if not (0 < ci_level < 1):
                 raise ValueError("ci_level must be between 0 and 1")
@@ -283,7 +291,7 @@ class LanguageModelPipeline:
 
             rng = np.random.default_rng(random_seed)
             n = len(lm_flat)
-            boot_corrs = np.empty(n_bootstrap, dtype=float)
+            boot_corrs = np.full(n_bootstrap, np.nan, dtype=float)
             for i in range(n_bootstrap):
                 idx = rng.integers(0, n, size=n)
                 x = lm_flat[idx]
@@ -292,11 +300,21 @@ class LanguageModelPipeline:
                     boot_r, _ = spearmanr(x, y)
                 else:
                     boot_r, _ = pearsonr(x, y)
-                boot_corrs[i] = 0.0 if np.isnan(boot_r) else float(boot_r)
+                if np.isfinite(boot_r):
+                    boot_corrs[i] = float(boot_r)
 
-            alpha = 1.0 - ci_level
-            ci_lower = float(np.quantile(boot_corrs, alpha / 2.0))
-            ci_upper = float(np.quantile(boot_corrs, 1.0 - alpha / 2.0))
+            valid_boot = boot_corrs[np.isfinite(boot_corrs)]
+            n_bootstrap_valid = int(valid_boot.size)
+
+            if n_bootstrap_valid >= 100:
+                alpha = 1.0 - ci_level
+                ci_lower = float(np.quantile(valid_boot, alpha / 2.0))
+                ci_upper = float(np.quantile(valid_boot, 1.0 - alpha / 2.0))
+            else:
+                logger.warning(
+                    "Insufficient valid bootstrap samples for CI "
+                    f"(valid={n_bootstrap_valid}/{n_bootstrap})"
+                )
         
         result = {
             "brain_session": brain_session,
@@ -306,6 +324,7 @@ class LanguageModelPipeline:
             "n_comparisons": len(lm_flat),
             "ci_lower": ci_lower,
             "ci_upper": ci_upper,
+            "n_bootstrap_valid": n_bootstrap_valid,
         }
         
         logger.info(f"Correlation: {corr:.4f}, p-value: {pval:.4e}")
