@@ -31,8 +31,20 @@ STEP_PATTERNS = [
 ]
 
 
-def infer_step(label: str, fallback: int) -> int:
+def infer_step(label: str, fallback: int) -> int | float:
+    """
+    Extract numeric step from checkpoint label.
+    Special case: "main" maps to float('inf') so it sorts last.
+    """
     name = label.lower()
+    
+    # Special case: main branch comes last
+    if "main" in name and "@" in label:
+        # e.g., "BrainAlign/gpt2-babylm-9@main"
+        return float('inf')
+    elif name == "main":
+        return float('inf')
+    
     for pat in STEP_PATTERNS:
         m = pat.search(name)
         if m:
@@ -125,6 +137,14 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # Extract model variant (5, 7, 9) from HF repo if provided
+    model_variant = ""
+    if args.hf_repo:
+        # Extract from "BrainAlign/gpt2-babylm-5" -> "5"
+        match = re.search(r"babylm[-_](\d+)", args.hf_repo)
+        if match:
+            model_variant = f"_babylm{match.group(1)}"
+
     pipeline = LanguageModelPipeline(
         output_dir=str(output_dir),
         brain_rdm_dir=args.brain_rdm_dir,
@@ -183,7 +203,7 @@ def main() -> None:
         raise ValueError("No comparison rows were generated.")
 
     df = pd.DataFrame(rows).sort_values(["brain_session", "step"])
-    csv_path = output_dir / "checkpoint_alignment_trajectory.csv"
+    csv_path = output_dir / f"checkpoint_alignment_trajectory{model_variant}.csv"
     df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path}")
 
@@ -198,9 +218,20 @@ def main() -> None:
     ax.set_ylabel("Brain-LM RSA correlation")
     ax.set_title("Brain-LM alignment trajectory across checkpoints")
     ax.legend()
+    
+    # Format x-axis: replace inf with "main"
+    xticks = ax.get_xticks()
+    xticklabels = []
+    for tick in xticks:
+        if np.isinf(tick):
+            xticklabels.append("main")
+        else:
+            xticklabels.append(f"{int(tick)}")
+    ax.set_xticklabels(xticklabels)
+    
     fig.tight_layout()
 
-    fig_path = output_dir / "checkpoint_alignment_trajectory.png"
+    fig_path = output_dir / f"checkpoint_alignment_trajectory{model_variant}.png"
     fig.savefig(fig_path, dpi=180)
     plt.close(fig)
     print(f"Saved: {fig_path}")
