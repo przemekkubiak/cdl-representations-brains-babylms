@@ -31,20 +31,18 @@ STEP_PATTERNS = [
 ]
 
 
-def infer_step(label: str, fallback: int) -> int | float:
-    """
-    Extract numeric step from checkpoint label.
-    Special case: "main" maps to float('inf') so it sorts last.
+def infer_step(label: str, fallback: int) -> int:
+    """Extract numeric step from checkpoint label.
+
+    Returns -1 for the "main" revision so it can be remapped after all
+    checkpoints are scanned (to max_step + 1).
     """
     name = label.lower()
-    
-    # Special case: main branch comes last
-    if "main" in name and "@" in label:
-        # e.g., "BrainAlign/gpt2-babylm-9@main"
-        return float('inf')
-    elif name == "main":
-        return float('inf')
-    
+
+    # Special case: main branch/revision
+    if name == "main" or name.endswith("@main"):
+        return -1
+
     for pat in STEP_PATTERNS:
         m = pat.search(name)
         if m:
@@ -156,9 +154,11 @@ def main() -> None:
     )
 
     rows = []
+    raw_steps: list[int] = []
     for idx, ckpt in enumerate(checkpoints):
-        step = infer_step(ckpt, idx)
-        print(f"\n=== Checkpoint: {ckpt} (step={step}) ===")
+        raw_step = infer_step(ckpt, idx)
+        raw_steps.append(raw_step)
+        print(f"\n=== Checkpoint: {ckpt} (step={raw_step}) ===")
 
         lm_result = pipeline.compute_lm_rdm(
             model_name=ckpt,
@@ -186,7 +186,7 @@ def main() -> None:
                 rows.append(
                     {
                         "checkpoint": ckpt,
-                        "step": step,
+                        "step": raw_step,
                         "brain_session": session,
                         "correlation": np.nan,
                         "p_value": np.nan,
@@ -197,7 +197,7 @@ def main() -> None:
             rows.append(
                 {
                     "checkpoint": ckpt,
-                    "step": step,
+                    "step": raw_step,
                     "brain_session": session,
                     "correlation": comp["correlation"],
                     "p_value": comp["p_value"],
@@ -207,7 +207,18 @@ def main() -> None:
     if not rows:
         raise ValueError("No comparison rows were generated.")
 
-    df = pd.DataFrame(rows).sort_values(["brain_session", "step"])
+    df = pd.DataFrame(rows)
+
+    # Remap "main" sentinel (-1) to a finite value one step after the max.
+    max_step = max([s for s in raw_steps if s >= 0], default=0)
+    main_step = max_step + 1
+    df["step"] = df["step"].replace(-1, main_step)
+    df["step_label"] = df["checkpoint"].apply(
+        lambda c: "main" if str(c).lower().endswith("@main") or str(c).lower() == "main" else None
+    )
+    df["step_label"] = df["step_label"].fillna(df["step"].astype(int).astype(str))
+    df = df.sort_values(["brain_session", "step"])
+
     csv_path = output_dir / f"checkpoint_alignment_trajectory{model_variant}.csv"
     df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path}")
@@ -223,16 +234,11 @@ def main() -> None:
     ax.set_ylabel("Brain-LM RSA correlation")
     ax.set_title("Brain-LM alignment trajectory across checkpoints")
     ax.legend()
-    
-    # Format x-axis: replace inf with "main"
-    xticks = ax.get_xticks()
-    xticklabels = []
-    for tick in xticks:
-        if np.isinf(tick):
-            xticklabels.append("main")
-        else:
-            xticklabels.append(f"{int(tick)}")
-    ax.set_xticklabels(xticklabels)
+
+    # Use explicit tick positions/labels so final point is shown as "main".
+    tick_df = df[["step", "step_label"]].drop_duplicates().sort_values("step")
+    ax.set_xticks(tick_df["step"].to_list())
+    ax.set_xticklabels(tick_df["step_label"].to_list())
     
     fig.tight_layout()
 
