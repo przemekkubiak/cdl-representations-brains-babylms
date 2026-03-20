@@ -103,6 +103,9 @@ class LanguageModelEmbeddingExtractor:
             # Select layer (-1 for last)
             layer_output = hidden_states[self.layer]  # (batch, seq_len, hidden_dim)
             
+            # Convert to float32 (handles bfloat16 models)
+            layer_output = layer_output.to(torch.float32)
+            
             # Pool across tokens
             if self.pooling == "mean":
                 embedding = layer_output.mean(dim=1)[0].cpu().numpy()
