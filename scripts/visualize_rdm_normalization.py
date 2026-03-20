@@ -46,6 +46,7 @@ def visualize_rdm_comparison(
         raise FileNotFoundError(f"Brain RDM not found: {brain_rdm_file}")
     
     brain_rdm = load_rdm(str(brain_rdm_file))
+    brain_rdm_normalized = z_normalize_rdm(brain_rdm)
     
     if lm_rdm_path is None:
         raise ValueError("Must provide --lm-rdm-path")
@@ -61,64 +62,79 @@ def visualize_rdm_comparison(
     lm_name = lm_rdm_file.stem.replace("lm_rdm_", "").replace("_Sem_layer-1", "")
     
     # Create figure
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+    fig, axes = plt.subplots(2, 2, figsize=(12, 12))
     
-    # Set common colormap limits
+    # Set common colormap limits for raw RDMs
     if vmin is None:
         vmin = min(brain_rdm.min(), lm_rdm.min())
     if vmax is None:
         vmax = max(brain_rdm.max(), lm_rdm.max())
     
-    # Brain RDM
+    # Brain RDM (raw)
     sns.heatmap(
         brain_rdm,
-        ax=axes[0],
+        ax=axes[0, 0],
         cbar_kws={"label": "Dissimilarity"},
         cmap="viridis",
         square=True,
         vmin=vmin,
         vmax=vmax,
     )
-    axes[0].set_title(f"Brain RDM ({brain_session})\n{brain_rdm.shape}", fontsize=12, fontweight="bold")
-    axes[0].set_xlabel("Stimulus")
-    axes[0].set_ylabel("Stimulus")
+    axes[0, 0].set_title(f"Brain RDM ({brain_session}) - Raw\n{brain_rdm.shape}", fontsize=12, fontweight="bold")
+    axes[0, 0].set_xlabel("Stimulus")
+    axes[0, 0].set_ylabel("Stimulus")
+    
+    # Brain RDM (normalized)
+    brain_norm_lim = np.abs(brain_rdm_normalized).max()
+    sns.heatmap(
+        brain_rdm_normalized,
+        ax=axes[0, 1],
+        cbar_kws={"label": "Z-score"},
+        cmap="RdBu_r",
+        square=True,
+        vmin=-brain_norm_lim,
+        vmax=brain_norm_lim,
+    )
+    axes[0, 1].set_title(f"Brain RDM ({brain_session}) - Z-Normalized\nmean={brain_rdm_normalized.mean():.2e}, std={brain_rdm_normalized.std():.2f}", 
+                         fontsize=12, fontweight="bold")
+    axes[0, 1].set_xlabel("Stimulus")
+    axes[0, 1].set_ylabel("Stimulus")
     
     # LM RDM (raw)
     sns.heatmap(
         lm_rdm,
-        ax=axes[1],
+        ax=axes[1, 0],
         cbar_kws={"label": "Dissimilarity"},
         cmap="viridis",
         square=True,
         vmin=vmin,
         vmax=vmax,
     )
-    axes[1].set_title(f"LM RDM (Raw)\n{lm_rdm.shape}", fontsize=12, fontweight="bold")
-    axes[1].set_xlabel("Stimulus")
-    axes[1].set_ylabel("Stimulus")
+    axes[1, 0].set_title(f"LM RDM (Raw)\n{lm_rdm.shape}", fontsize=12, fontweight="bold")
+    axes[1, 0].set_xlabel("Stimulus")
+    axes[1, 0].set_ylabel("Stimulus")
     
     # LM RDM (normalized)
-    # For normalized, use symmetric colormap centered at 0
     lm_norm_lim = np.abs(lm_rdm_normalized).max()
     sns.heatmap(
         lm_rdm_normalized,
-        ax=axes[2],
+        ax=axes[1, 1],
         cbar_kws={"label": "Z-score"},
         cmap="RdBu_r",
         square=True,
         vmin=-lm_norm_lim,
         vmax=lm_norm_lim,
     )
-    axes[2].set_title(f"LM RDM (Z-Normalized)\nmean={lm_rdm_normalized.mean():.2e}, std={lm_rdm_normalized.std():.2f}", 
-                      fontsize=12, fontweight="bold")
-    axes[2].set_xlabel("Stimulus")
-    axes[2].set_ylabel("Stimulus")
+    axes[1, 1].set_title(f"LM RDM (Z-Normalized)\nmean={lm_rdm_normalized.mean():.2e}, std={lm_rdm_normalized.std():.2f}", 
+                         fontsize=12, fontweight="bold")
+    axes[1, 1].set_xlabel("Stimulus")
+    axes[1, 1].set_ylabel("Stimulus")
     
     plt.suptitle(
-        f"RDM Comparison: Brain vs {lm_name}",
+        f"RDM Comparison: Brain ({brain_session}) vs {lm_name}\nTop row: Brain RDM | Bottom row: LM RDM",
         fontsize=14,
         fontweight="bold",
-        y=1.00
+        y=0.995
     )
     
     fig.tight_layout()
@@ -133,10 +149,15 @@ def visualize_rdm_comparison(
     
     # Print statistics
     print(f"\n=== RDM Statistics ===")
-    print(f"\nBrain RDM ({brain_session}):")
+    print(f"\nBrain RDM ({brain_session}) - Raw:")
     print(f"  Shape: {brain_rdm.shape}")
     print(f"  Mean: {brain_rdm.mean():.4f}, Std: {brain_rdm.std():.4f}")
     print(f"  Min: {brain_rdm.min():.4f}, Max: {brain_rdm.max():.4f}")
+    
+    print(f"\nBrain RDM ({brain_session}) - Z-Normalized:")
+    print(f"  Shape: {brain_rdm_normalized.shape}")
+    print(f"  Mean: {brain_rdm_normalized.mean():.4e}, Std: {brain_rdm_normalized.std():.4f}")
+    print(f"  Min: {brain_rdm_normalized.min():.4f}, Max: {brain_rdm_normalized.max():.4f}")
     
     print(f"\nLM RDM (Raw):")
     print(f"  Shape: {lm_rdm.shape}")
@@ -152,19 +173,30 @@ def visualize_rdm_comparison(
     from scipy.stats import spearmanr
     triu_idx = np.triu_indices_from(brain_rdm, k=1)
     brain_vec = brain_rdm[triu_idx]
+    brain_vec_norm = brain_rdm_normalized[triu_idx]
     lm_vec = lm_rdm[triu_idx]
     lm_vec_norm = lm_rdm_normalized[triu_idx]
     
     corr_raw, p_raw = spearmanr(brain_vec, lm_vec)
-    corr_norm, p_norm = spearmanr(brain_vec, lm_vec_norm)
+    corr_norm, p_norm = spearmanr(brain_vec_norm, lm_vec_norm)
+    corr_mixed, p_mixed = spearmanr(brain_vec, lm_vec_norm)
     
-    print(f"\n=== Correlation with Brain RDM ===")
-    print(f"\nRaw LM RDM:")
-    print(f"  Spearman r: {corr_raw:.4f}, p-value: {p_raw:.4e}")
+    print(f"\n=== Correlation Comparisons ===")
+    print(f"\n1. RAW RDMs (Brain raw vs LM raw):")
+    print(f"   Spearman r: {corr_raw:.4f}, p-value: {p_raw:.4e}")
     
-    print(f"\nZ-Normalized LM RDM:")
-    print(f"  Spearman r: {corr_norm:.4f}, p-value: {p_norm:.4e}")
-    print(f"\nDifference (normalized - raw): {corr_norm - corr_raw:+.4f}")
+    print(f"\n2. BOTH Z-NORMALIZED (Brain norm vs LM norm):")
+    print(f"   Spearman r: {corr_norm:.4f}, p-value: {p_norm:.4e}")
+    
+    print(f"\n3. MIXED (Brain raw vs LM norm):")
+    print(f"   Spearman r: {corr_mixed:.4f}, p-value: {p_mixed:.4e}")
+    
+    print(f"\n=== Summary ===")
+    if abs(corr_norm) > abs(corr_raw):
+        improvement = ((corr_norm - corr_raw) / abs(corr_raw)) * 100 if corr_raw != 0 else 0
+        print(f"✓ Z-normalizing BOTH RDMs improved correlation by {improvement:+.1f}%")
+    else:
+        print(f"✗ Z-normalization did NOT improve correlation")
 
 
 if __name__ == "__main__":
