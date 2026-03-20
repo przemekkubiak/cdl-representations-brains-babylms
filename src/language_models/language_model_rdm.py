@@ -134,10 +134,28 @@ class LanguageModelEmbeddingExtractor:
             if (i + 1) % 50 == 0:
                 logger.info(f"Extracted {i + 1}/{len(words)} embeddings")
             
-            embedding = self.extract_word_embedding(word)
-            embeddings.append(embedding)
+            try:
+                embedding = self.extract_word_embedding(word)
+                
+                # Check for NaN
+                if np.any(np.isnan(embedding)):
+                    logger.warning(f"Word '{word}' produced NaN embedding, replacing with zeros")
+                    embedding = np.nan_to_num(embedding, nan=0.0)
+                
+                embeddings.append(embedding)
+            except Exception as e:
+                logger.error(f"Failed to embed word '{word}': {e}")
+                # Use zero vector as fallback
+                embeddings.append(np.zeros(embeddings[0].shape if embeddings else 768))
         
-        return np.array(embeddings)
+        result = np.array(embeddings)
+        
+        # Final check and cleanup
+        if np.any(np.isnan(result)):
+            logger.warning(f"Cleaning {np.sum(np.isnan(result))} NaN values from embeddings")
+            result = np.nan_to_num(result, nan=0.0)
+        
+        return result
 
 
 class LanguageModelRDMComputer:
@@ -223,6 +241,12 @@ class LanguageModelRDMComputer:
         Returns:
             RDM matrix (n_stimuli, n_stimuli)
         """
+        # Check for NaN in embeddings
+        if np.any(np.isnan(embeddings)):
+            logger.warning(f"Found {np.sum(np.isnan(embeddings))} NaN values in embeddings")
+            # Replace NaN with zeros
+            embeddings = np.nan_to_num(embeddings, nan=0.0)
+        
         stimulus_embeddings = []
         
         for idx, row in characteristics.iterrows():
@@ -240,18 +264,37 @@ class LanguageModelRDMComputer:
         stimulus_embeddings = np.array(stimulus_embeddings)
         logger.info(f"Computed {len(stimulus_embeddings)} stimulus embeddings")
         
+        # Check for NaN in stimulus embeddings
+        if np.any(np.isnan(stimulus_embeddings)):
+            logger.warning(f"Found {np.sum(np.isnan(stimulus_embeddings))} NaN values in stimulus embeddings")
+            stimulus_embeddings = np.nan_to_num(stimulus_embeddings, nan=0.0)
+        
         # Compute dissimilarity as 1 - cosine_similarity
-        # First normalize embeddings
-        embeddings_norm = stimulus_embeddings / np.linalg.norm(
-            stimulus_embeddings, axis=1, keepdims=True
-        )
+        # First normalize embeddings with safety check
+        norms = np.linalg.norm(stimulus_embeddings, axis=1, keepdims=True)
+        
+        # Handle zero-norm vectors (replace with small epsilon)
+        norms = np.where(norms < 1e-8, 1.0, norms)
+        embeddings_norm = stimulus_embeddings / norms
+        
+        # Ensure no NaN from normalization
+        embeddings_norm = np.nan_to_num(embeddings_norm, nan=0.0)
         
         # Compute cosine similarity and convert to dissimilarity
         cosine_sim = np.dot(embeddings_norm, embeddings_norm.T)
+        
+        # Clip to valid range [-1, 1] to handle numerical errors
+        cosine_sim = np.clip(cosine_sim, -1.0, 1.0)
+        
         dissimilarity = 1 - cosine_sim
         
         # Ensure diagonal is exactly 0
         np.fill_diagonal(dissimilarity, 0)
+        
+        # Final NaN check
+        if np.any(np.isnan(dissimilarity)):
+            logger.error(f"RDM contains {np.sum(np.isnan(dissimilarity))} NaN values after computation")
+            dissimilarity = np.nan_to_num(dissimilarity, nan=0.0)
         
         return dissimilarity
     
