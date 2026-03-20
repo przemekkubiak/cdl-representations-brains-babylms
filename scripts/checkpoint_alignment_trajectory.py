@@ -137,13 +137,18 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Extract model variant (5, 7, 9) from HF repo if provided
+    # Extract model variant from HF repo if provided
     model_variant = ""
     if args.hf_repo:
-        # Extract from "BrainAlign/gpt2-babylm-5" -> "5"
+        # Try babylm pattern: "BrainAlign/gpt2-babylm-5" -> "_babylm5"
         match = re.search(r"babylm[-_](\d+)", args.hf_repo)
         if match:
             model_variant = f"_babylm{match.group(1)}"
+        else:
+            # Try pythia pattern: "EleutherAI/pythia-160m" -> "_pythia160m"
+            match = re.search(r"pythia[-_](\d+m)", args.hf_repo)
+            if match:
+                model_variant = f"_pythia{match.group(1).replace('-', '')}"
 
     pipeline = LanguageModelPipeline(
         output_dir=str(output_dir),
