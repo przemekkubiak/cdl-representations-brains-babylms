@@ -26,7 +26,8 @@ from src.rsa.session_based_rsa import SessionBasedRSA
 def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]:
     """Find stimuli shared across all subjects that have this session."""
     subject_session_stimuli = []
-    for subject_data in rsa.patterns_by_subject.values():
+    subjects_with_session = []
+    for subject_id, subject_data in rsa.patterns_by_subject.items():
         if session not in subject_data:
             continue
 
@@ -41,11 +42,18 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
         subject_union = set.union(*run_sets)
         if subject_union:
             subject_session_stimuli.append(subject_union)
+            subjects_with_session.append(subject_id)
 
     if not subject_session_stimuli:
+        print(f"  DEBUG {session}: No subjects with data")
         return []
 
-    return sorted(set.intersection(*subject_session_stimuli))
+    common = sorted(set.intersection(*subject_session_stimuli))
+    print(f"  DEBUG {session}: {len(subjects_with_session)} subjects, {len(common)} common stimuli")
+    if len(subject_session_stimuli) > 0:
+        print(f"    First subject has {len(list(subject_session_stimuli[0]))} stimuli")
+        print(f"    Last subject has {len(list(subject_session_stimuli[-1]))} stimuli")
+    return common
 
 
 def estimate_noise_ceiling(
