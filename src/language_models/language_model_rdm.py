@@ -34,7 +34,8 @@ class LanguageModelEmbeddingExtractor:
         model_name: str,
         cache_dir: str = ".cache/huggingface",
         layer: int = -1,  # -1 for last layer
-        pooling: str = "mean"  # mean, max, or cls
+        pooling: str = "mean",  # mean, max, or cls
+        revision: str | None = None,
     ):
         """
         Initialize language model.
@@ -48,6 +49,7 @@ class LanguageModelEmbeddingExtractor:
         self.model_name = model_name
         self.layer = layer
         self.pooling = pooling
+        self.revision = revision
         
         logger.info(f"Loading model: {model_name}")
         os.environ["HF_HOME"] = cache_dir
@@ -56,13 +58,15 @@ class LanguageModelEmbeddingExtractor:
             self.tokenizer = AutoTokenizer.from_pretrained(
                 model_name,
                 cache_dir=cache_dir,
-                trust_remote_code=True
+                trust_remote_code=True,
+                revision=revision,
             )
             self.model = AutoModel.from_pretrained(
                 model_name,
                 cache_dir=cache_dir,
                 output_hidden_states=True,
-                trust_remote_code=True
+                trust_remote_code=True,
+                revision=revision,
             )
         except Exception as e:
             logger.error(f"Failed to load model {model_name}: {e}")

@@ -138,11 +138,20 @@ class LanguageModelPipeline:
         logger.info(f"Computing RDM for model: {model_name}")
         
         try:
+            # Optional format: <hf_repo>@<revision>
+            revision = None
+            model_id = model_name
+            if "@" in model_name and not model_name.startswith("/"):
+                parts = model_name.split("@", 1)
+                if len(parts) == 2 and parts[0] and parts[1]:
+                    model_id, revision = parts
+
             # Initialize extractor
             extractor = LanguageModelEmbeddingExtractor(
-                model_name=model_name,
+                model_name=model_id,
                 layer=layer,
-                pooling=pooling
+                pooling=pooling,
+                revision=revision,
             )
             
             # Load characteristics
@@ -169,6 +178,8 @@ class LanguageModelPipeline:
             
             result = {
                 "model": model_name,
+                "model_id": model_id,
+                "revision": revision,
                 "task": task,
                 "layer": layer,
                 "pooling": pooling,
@@ -183,6 +194,7 @@ class LanguageModelPipeline:
             # Save if requested
             if save:
                 model_safe_name = model_name.replace("/", "_")
+                model_safe_name = model_safe_name.replace("@", "_at_")
                 filename = f"lm_rdm_{model_safe_name}_{task}_layer{layer}.npz"
                 self.rdm_computer.save_rdm(rdm, filename)
                 result["filename"] = filename

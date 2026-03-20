@@ -49,6 +49,10 @@ def resolve_checkpoints(args: argparse.Namespace) -> list[str]:
         matches = sorted(Path().glob(args.checkpoints_glob))
         checkpoints.extend([str(m) for m in matches])
 
+    # Hugging Face checkpoints: --hf-repo BrainAlign/gpt2-babylm-9 --hf-revisions checkpoint-01 checkpoint-02
+    if args.hf_repo and args.hf_revisions:
+        checkpoints.extend([f"{args.hf_repo}@{rev}" for rev in args.hf_revisions])
+
     # Auto-discover fallback if nothing was passed explicitly.
     if not checkpoints:
         root = Path(args.checkpoint_root)
@@ -90,6 +94,17 @@ def main() -> None:
         "--checkpoints-glob",
         default=None,
         help="Glob pattern for checkpoints, e.g. 'checkpoints/gpt2-babylm-7/checkpoint-*'",
+    )
+    parser.add_argument(
+        "--hf-repo",
+        default=None,
+        help="Hugging Face repo id, e.g. BrainAlign/gpt2-babylm-9",
+    )
+    parser.add_argument(
+        "--hf-revisions",
+        nargs="*",
+        default=None,
+        help="Hugging Face revisions/branches/tags, e.g. checkpoint-01 checkpoint-02",
     )
     parser.add_argument(
         "--checkpoint-root",
