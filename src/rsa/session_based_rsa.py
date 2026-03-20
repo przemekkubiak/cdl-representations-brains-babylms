@@ -56,6 +56,47 @@ class SessionBasedRSA:
         self.pattern_dir = Path(pattern_dir)
         self.patterns_by_subject = {}
         self.session_rdms = {}
+    
+    def _get_non_control_stimuli(self, task: str = "Sem") -> Optional[set]:
+        """
+        Get set of non-control stimulus filenames for a task.
+        Controls are marked as 'S_C' trial_type in characteristics file.
+        
+        Parameters
+        ----------
+        task : str
+            Task name (Sem, Phon, Gram, Plaus)
+            
+        Returns
+        -------
+        set or None
+            Set of non-control stimulus filenames, or None if not available
+        """
+        # Path to stimulus characteristics
+        stimulus_dir = Path("data/brain/ds003604/stimuli")
+        char_file = stimulus_dir / f"Stimulus_Characteristics/task-{task}_Stimulus_Characteristics.tsv"
+        
+        if not char_file.exists():
+            return None
+            
+        try:
+            characteristics = pd.read_csv(
+                str(char_file),
+                sep="\t",
+                keep_default_na=False,
+                na_values=[""],
+            )
+            
+            if "trial_type" not in characteristics.columns or "stim_file" not in characteristics.columns:
+                return None
+                
+            # Get filenames of non-control trials (trial_type != "S_C")
+            mask = characteristics["trial_type"] != "S_C"
+            non_control_stimuli = set(characteristics.loc[mask, "stim_file"].values)
+            
+            return non_control_stimuli
+        except Exception as e:
+            return None
         
     def find_all_subjects(self) -> List[str]:
         """
@@ -460,12 +501,24 @@ class SessionBasedRSA:
             if not subject_session_stimuli:
                 raise ValueError(f"No stimuli found for session {session}")
 
+            # Get both common (intersection) and all (union) stimuli
             common_stimuli = sorted(set.intersection(*subject_session_stimuli))
+            all_stimuli = sorted(set.union(*subject_session_stimuli))
 
-            if not common_stimuli:
-                raise ValueError(f"No common stimuli found across subjects for session {session}")
-
-            print(f"  Common stimuli: {len(common_stimuli)}")
+            # Filter out control stimuli to match LM RDM computation
+            non_control_filenames = self._get_non_control_stimuli(task="Sem")
+            if non_control_filenames is not None:
+                # Filter to non-control stimuli only
+                all_stimuli_filtered = [s for s in all_stimuli if s in non_control_filenames]
+                common_stimuli_filtered = [s for s in common_stimuli if s in non_control_filenames]
+                
+                print(f"  All stimuli: {len(all_stimuli)} → {len(all_stimuli_filtered)} (controls excluded)")
+                print(f"  Common stimuli: {len(common_stimuli)} → {len(common_stimuli_filtered)} (controls excluded)")
+                
+                all_stimuli = all_stimuli_filtered
+                common_stimuli = common_stimuli_filtered
+            else:
+                print(f"  All stimuli: {len(all_stimuli)}, Common stimuli: {len(common_stimuli)}")
 
             if aggregation == "hyperalignment":
                 # Collect patterns from all subjects (before computing RDMs)
@@ -481,24 +534,30 @@ class SessionBasedRSA:
                     
                     # Average each stimulus across all runs where it is present.
                     avg_patterns = []
-                    for stim in common_stimuli:
+                    for stim in all_stimuli:
                         stim_patterns = []
                         for _, patterns in subject_data[session].items():
                             if stim in patterns:
                                 stim_patterns.append(patterns[stim])
 
                         if not stim_patterns:
-                            avg_patterns = []
-                            break
-
-                        stim_matrix = self._stack_with_min_features(stim_patterns)
-                        avg_patterns.append(np.mean(stim_matrix, axis=0))
+                            # Skip stimuli that this subject doesn't have
+                            # This allows us to use all stimuli while handling missing data
+                            avg_patterns.append(None)
+                        else:
+                            stim_matrix = self._stack_with_min_features(stim_patterns)
+                            avg_patterns.append(np.mean(stim_matrix, axis=0))
 
                     if avg_patterns:
-                        avg_patterns = self._stack_with_min_features(avg_patterns)
-                        subject_patterns.append(avg_patterns)
-                        subject_ids.append(subject_id)
-                        print(f"    {subject_id}: ✓ ({len(subject_data[session])} runs)")
+                        # Filter out None values (missing stimuli for this subject)
+                        valid_avg_patterns = [p for p in avg_patterns if p is not None]
+                        if valid_avg_patterns:
+                            valid_avg_patterns = self._stack_with_min_features(valid_avg_patterns)
+                            subject_patterns.append(valid_avg_patterns)
+                            subject_ids.append(subject_id)
+                            print(f"    {subject_id}: ✓ ({len(subject_data[session])} runs, {len(valid_avg_patterns)} stimuli)")
+                        else:
+                            print(f"    {subject_id}: ✗ (no valid runs)")
                     else:
                         print(f"    {subject_id}: ✗ (no valid runs)")
                 
@@ -522,6 +581,7 @@ class SessionBasedRSA:
                 
             else:
                 # Original approach: compute RDMs then aggregate
+                # Use all stimuli, not just common ones
                 subject_rdms = []
                 subject_ids = []
                 
@@ -529,7 +589,7 @@ class SessionBasedRSA:
                     rdm = self.compute_subject_rdm(
                         subject_id=subject_id,
                         session=session,
-                        common_stimuli=common_stimuli,
+                        common_stimuli=all_stimuli,
                         metric=metric
                     )
                     
@@ -560,7 +620,8 @@ class SessionBasedRSA:
         # Store
         self.session_rdms[session] = {
             "rdm": session_rdm,
-            "stimuli": common_stimuli,
+            "stimuli": all_stimuli,
+            "common_stimuli": common_stimuli,
             "n_subjects": len(subject_ids),
             "subject_ids": subject_ids,
             "metric": metric,
