@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -23,8 +23,12 @@ from src.rsa import compare_rdms
 from src.rsa.session_based_rsa import SessionBasedRSA
 
 
-def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]:
-    """Find stimuli shared across all subjects that have this session."""
+def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> Tuple[List[str], List[str]]:
+    """Find stimuli shared across all subjects that have this session.
+    
+    Filters out subjects with significantly fewer stimuli (likely incomplete/control subsets).
+    Returns: (common_stimuli, filtered_subject_ids)
+    """
     subject_session_stimuli = []
     subjects_with_session = []
     stimulus_counts = {}
@@ -51,25 +55,34 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
 
     if not subject_session_stimuli:
         print(f"  DEBUG {session}: No subjects with data")
-        return []
+        return [], []
 
-    common = sorted(set.intersection(*subject_session_stimuli))
+    # Find the most common stimulus count (majority of subjects)
+    sorted_counts = sorted(stimulus_counts.items(), key=lambda x: x[1], reverse=True)
+    majority_count, majority_freq = sorted_counts[0]
+    
+    # If there's a significant outlier group, filter them out
+    if len(sorted_counts) > 1:
+        outlier_count, outlier_freq = sorted_counts[1]
+        # If majority is >80% and outliers have significantly fewer stimuli, filter outliers
+        if (majority_freq / (majority_freq + outlier_freq) > 0.8 and 
+            majority_count > outlier_count):
+            print(f"  DEBUG {session}: Filtering {outlier_freq} outlier subjects with {outlier_count} stimuli")
+            # Keep only subjects with the majority stimulus count
+            filtered = [
+                (subj_id, stim_set) 
+                for subj_id, stim_set in zip(subjects_with_session, subject_session_stimuli)
+                if len(stim_set) == majority_count
+            ]
+            subjects_with_session = [subj_id for subj_id, _ in filtered]
+            subject_session_stimuli = [stim_set for _, stim_set in filtered]
+            print(f"    Kept {len(subjects_with_session)} subjects with {majority_count} stimuli")
+
+    common = sorted(set.intersection(*subject_session_stimuli)) if subject_session_stimuli else []
     print(f"  DEBUG {session}: {len(subjects_with_session)} subjects, {len(common)} common stimuli")
     print(f"    Stimulus counts distribution: {dict(sorted(stimulus_counts.items()))}")
     
-    if len(common) == 0 and len(subject_session_stimuli) > 1:
-        # Find which subjects differ
-        print(f"    WARNING: No common stimuli found. Finding mismatches...")
-        first_set = subject_session_stimuli[0]
-        for i, (subj, stim_set) in enumerate(zip(subjects_with_session, subject_session_stimuli)):
-            diff = first_set.symmetric_difference(stim_set)
-            if diff:
-                print(f"      {subj}: differs by {len(diff)} stimuli (first 3: {sorted(list(diff))[:3]})")
-                if i >= 5:  # Only show first 5 mismatches
-                    print(f"      ... and {len(subjects_with_session) - i - 1} more subjects")
-                    break
-    
-    return common
+    return common, subjects_with_session
 
 
 def estimate_noise_ceiling(
@@ -100,7 +113,7 @@ def estimate_noise_ceiling(
     rows = []
 
     for session in available_sessions:
-        common_stimuli = _common_stimuli_for_session(rsa, session)
+        common_stimuli, filtered_subjects = _common_stimuli_for_session(rsa, session)
 
         if not common_stimuli:
             rows.append(
@@ -121,7 +134,7 @@ def estimate_noise_ceiling(
         subject_ids = []
         subject_rdms = []
 
-        for subject_id in sorted(rsa.patterns_by_subject.keys()):
+        for subject_id in filtered_subjects:  # Use only filtered subjects
             rdm = rsa.compute_subject_rdm(
                 subject_id=subject_id,
                 session=session,
