@@ -151,6 +151,11 @@ def main() -> None:
         default=13,
         help="Random seed for bootstrap CI reproducibility",
     )
+    parser.add_argument(
+        "--normalize",
+        action="store_true",
+        help="Z-normalize RDMs before comparison to remove scale differences",
+    )
 
     args = parser.parse_args()
 
@@ -208,6 +213,7 @@ def main() -> None:
                 n_bootstrap=args.n_bootstrap,
                 ci_level=args.ci_level,
                 random_seed=args.random_seed,
+                normalize=args.normalize,
             )
             if comp is None:
                 rows.append(

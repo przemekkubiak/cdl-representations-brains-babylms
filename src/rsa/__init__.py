@@ -8,6 +8,27 @@ from scipy.spatial.distance import pdist, squareform
 from typing import Tuple, Optional
 
 
+def z_normalize_rdm(rdm: np.ndarray) -> np.ndarray:
+    """
+    Z-score normalize an RDM to remove scale differences.
+    
+    Parameters
+    ----------
+    rdm : np.ndarray
+        RDM to normalize (n_stimuli x n_stimuli)
+        
+    Returns
+    -------
+    np.ndarray
+        Z-normalized RDM with mean=0, std=1
+    """
+    mean = np.mean(rdm)
+    std = np.std(rdm)
+    if std == 0:
+        return rdm - mean  # Avoid division by zero
+    return (rdm - mean) / std
+
+
 def compute_rdm(
     representations: np.ndarray,
     metric: str = "correlation"
@@ -35,7 +56,8 @@ def compute_rdm(
 def compare_rdms(
     rdm1: np.ndarray,
     rdm2: np.ndarray,
-    method: str = "spearman"
+    method: str = "spearman",
+    normalize: bool = False
 ) -> Tuple[float, float]:
     """
     Compare two RDMs.
@@ -48,12 +70,18 @@ def compare_rdms(
         Second RDM
     method : str
         Correlation method ('spearman', 'pearson')
+    normalize : bool
+        If True, z-normalize RDMs before comparison to account for scale differences
         
     Returns
     -------
     Tuple[float, float]
         Correlation coefficient and p-value
     """
+    if normalize:
+        rdm1 = z_normalize_rdm(rdm1)
+        rdm2 = z_normalize_rdm(rdm2)
+    
     # Get upper triangle (excluding diagonal)
     triu_idx = np.triu_indices_from(rdm1, k=1)
     vec1 = rdm1[triu_idx]

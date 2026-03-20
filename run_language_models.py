@@ -216,6 +216,7 @@ class LanguageModelPipeline:
         n_bootstrap: int = 1000,
         ci_level: float = 0.95,
         random_seed: Optional[int] = None,
+        normalize: bool = False,
     ) -> Dict:
         """
         Compare language model RDM with brain RDM.
@@ -228,10 +229,13 @@ class LanguageModelPipeline:
             n_bootstrap: Number of bootstrap resamples
             ci_level: Confidence level for CI (e.g., 0.95)
             random_seed: Optional random seed for reproducibility
+            normalize: If True, z-normalize RDMs before comparison to remove scale differences
             
         Returns:
             Dictionary with correlation results
         """
+        from src.rsa import z_normalize_rdm
+        
         # Load brain RDM
         brain_rdm_file = self.brain_rdm_dir / f"session_rdm_{brain_session}.npz"
         if not brain_rdm_file.exists():
@@ -260,10 +264,14 @@ class LanguageModelPipeline:
             )
             return None
         
+        # Z-normalize if requested (removes scale/mean differences)
+        lm_rdm_comp = z_normalize_rdm(lm_rdm) if normalize else lm_rdm
+        brain_rdm_comp = z_normalize_rdm(brain_rdm) if normalize else brain_rdm
+        
         # Flatten upper triangles (avoid diagonal and redundancy)
-        triu_indices = np.triu_indices_from(lm_rdm, k=1)
-        lm_flat = lm_rdm[triu_indices]
-        brain_flat = brain_rdm[triu_indices]
+        triu_indices = np.triu_indices_from(lm_rdm_comp, k=1)
+        lm_flat = lm_rdm_comp[triu_indices]
+        brain_flat = brain_rdm_comp[triu_indices]
         
         # Compute correlation
         if distance_metric == "spearman":
@@ -321,6 +329,7 @@ class LanguageModelPipeline:
             "correlation": float(corr),
             "p_value": float(pval),
             "metric": distance_metric,
+            "normalized": normalize,
             "n_comparisons": len(lm_flat),
             "ci_lower": ci_lower,
             "ci_upper": ci_upper,
@@ -328,6 +337,7 @@ class LanguageModelPipeline:
         }
         
         logger.info(f"Correlation: {corr:.4f}, p-value: {pval:.4e}")
+
         if ci_lower is not None and ci_upper is not None:
             logger.info(f"Bootstrap {int(ci_level*100)}% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
         
