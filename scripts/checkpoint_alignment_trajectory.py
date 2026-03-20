@@ -128,6 +128,29 @@ def main() -> None:
     parser.add_argument("--layer", type=int, default=-1)
     parser.add_argument("--pooling", default="mean", choices=["mean", "max", "cls"])
     parser.add_argument("--include-controls", action="store_true")
+    parser.add_argument(
+        "--bootstrap-ci",
+        action="store_true",
+        help="Estimate confidence intervals for RSA correlation via bootstrap",
+    )
+    parser.add_argument(
+        "--n-bootstrap",
+        type=int,
+        default=1000,
+        help="Number of bootstrap resamples for CI (default: 1000)",
+    )
+    parser.add_argument(
+        "--ci-level",
+        type=float,
+        default=0.95,
+        help="Confidence level for CI (default: 0.95)",
+    )
+    parser.add_argument(
+        "--random-seed",
+        type=int,
+        default=13,
+        help="Random seed for bootstrap CI reproducibility",
+    )
 
     args = parser.parse_args()
 
@@ -181,6 +204,10 @@ def main() -> None:
                 brain_session=session,
                 task=args.task,
                 exclude_controls=not args.include_controls,
+                bootstrap_ci=args.bootstrap_ci,
+                n_bootstrap=args.n_bootstrap,
+                ci_level=args.ci_level,
+                random_seed=args.random_seed,
             )
             if comp is None:
                 rows.append(
@@ -190,6 +217,8 @@ def main() -> None:
                         "brain_session": session,
                         "correlation": np.nan,
                         "p_value": np.nan,
+                        "ci_lower": np.nan,
+                        "ci_upper": np.nan,
                     }
                 )
                 continue
@@ -201,6 +230,8 @@ def main() -> None:
                     "brain_session": session,
                     "correlation": comp["correlation"],
                     "p_value": comp["p_value"],
+                    "ci_lower": comp.get("ci_lower", np.nan),
+                    "ci_upper": comp.get("ci_upper", np.nan),
                 }
             )
 
@@ -228,6 +259,13 @@ def main() -> None:
     for session in sorted(df["brain_session"].dropna().unique()):
         sub = df[df["brain_session"] == session].sort_values("step")
         ax.plot(sub["step"], sub["correlation"], marker="o", label=session)
+        if args.bootstrap_ci:
+            lo = pd.to_numeric(sub["ci_lower"], errors="coerce").to_numpy(dtype=float)
+            hi = pd.to_numeric(sub["ci_upper"], errors="coerce").to_numpy(dtype=float)
+            valid = np.isfinite(lo) & np.isfinite(hi)
+            if np.any(valid):
+                x = sub["step"].to_numpy(dtype=float)
+                ax.fill_between(x[valid], lo[valid], hi[valid], alpha=0.15)
 
     ax.axhline(0.0, linestyle="--", linewidth=1)
     ax.set_xlabel("Checkpoint step")

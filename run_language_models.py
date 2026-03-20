@@ -17,7 +17,7 @@ import json
 
 import numpy as np
 import pandas as pd
-from scipy.stats import spearmanr
+from scipy.stats import spearmanr, pearsonr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -212,6 +212,10 @@ class LanguageModelPipeline:
         distance_metric: str = "spearman",
         task: str = "Sem",
         exclude_controls: bool = True,
+        bootstrap_ci: bool = False,
+        n_bootstrap: int = 1000,
+        ci_level: float = 0.95,
+        random_seed: Optional[int] = None,
     ) -> Dict:
         """
         Compare language model RDM with brain RDM.
@@ -219,7 +223,11 @@ class LanguageModelPipeline:
         Args:
             lm_rdm: Language model RDM matrix
             brain_session: Brain session to compare with (ses-5, ses-7, ses-9)
-            distance_metric: Distance metric for comparison (spearman, pearson, euclidean)
+            distance_metric: Correlation method for RDM comparison (spearman, pearson)
+            bootstrap_ci: Whether to estimate CI via bootstrap over upper-triangle pairs
+            n_bootstrap: Number of bootstrap resamples
+            ci_level: Confidence level for CI (e.g., 0.95)
+            random_seed: Optional random seed for reproducibility
             
         Returns:
             Dictionary with correlation results
@@ -261,20 +269,48 @@ class LanguageModelPipeline:
         if distance_metric == "spearman":
             corr, pval = spearmanr(lm_flat, brain_flat)
         elif distance_metric == "pearson":
-            corr = np.corrcoef(lm_flat, brain_flat)[0, 1]
-            pval = 1 - corr  # Placeholder
+            corr, pval = pearsonr(lm_flat, brain_flat)
         else:
             raise ValueError(f"Unknown metric: {distance_metric}")
+
+        ci_lower = None
+        ci_upper = None
+        if bootstrap_ci:
+            if not (0 < ci_level < 1):
+                raise ValueError("ci_level must be between 0 and 1")
+            if n_bootstrap < 100:
+                raise ValueError("n_bootstrap should be >= 100 for stable CI estimates")
+
+            rng = np.random.default_rng(random_seed)
+            n = len(lm_flat)
+            boot_corrs = np.empty(n_bootstrap, dtype=float)
+            for i in range(n_bootstrap):
+                idx = rng.integers(0, n, size=n)
+                x = lm_flat[idx]
+                y = brain_flat[idx]
+                if distance_metric == "spearman":
+                    boot_r, _ = spearmanr(x, y)
+                else:
+                    boot_r, _ = pearsonr(x, y)
+                boot_corrs[i] = 0.0 if np.isnan(boot_r) else float(boot_r)
+
+            alpha = 1.0 - ci_level
+            ci_lower = float(np.quantile(boot_corrs, alpha / 2.0))
+            ci_upper = float(np.quantile(boot_corrs, 1.0 - alpha / 2.0))
         
         result = {
             "brain_session": brain_session,
             "correlation": float(corr),
             "p_value": float(pval),
             "metric": distance_metric,
-            "n_comparisons": len(lm_flat)
+            "n_comparisons": len(lm_flat),
+            "ci_lower": ci_lower,
+            "ci_upper": ci_upper,
         }
         
         logger.info(f"Correlation: {corr:.4f}, p-value: {pval:.4e}")
+        if ci_lower is not None and ci_upper is not None:
+            logger.info(f"Bootstrap {int(ci_level*100)}% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
         
         return result
     

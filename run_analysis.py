@@ -1,7 +1,7 @@
 """
 Analysis pipeline for ds003604.
 
-Runs preprocessing + RSA only.
+Runs preprocessing + session RSA + noise ceiling estimation.
 """
 
 import sys
@@ -33,7 +33,7 @@ def find_reference_bold(data_dir: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run preprocessing + RSA only")
+    parser = argparse.ArgumentParser(description="Run preprocessing + RSA + noise ceiling")
     parser.add_argument("--data-dir", type=str, default="data/brain/ds003604")
     parser.add_argument("--output-dir", type=str, default="data/processed/fmri")
     parser.add_argument("--subjects", nargs="+")
@@ -56,6 +56,15 @@ def main():
     parser.add_argument("--aggregation", type=str, default="hyperalignment", choices=["hyperalignment", "mean", "median", "stimulus_mean"])
     parser.add_argument("--n-iter", type=int, default=10)
     parser.add_argument("--features", type=int)
+    parser.add_argument("--skip-preprocessing", action="store_true")
+    parser.add_argument("--skip-noise-ceiling", action="store_true")
+    parser.add_argument(
+        "--comparison-method",
+        type=str,
+        default="spearman",
+        choices=["spearman", "pearson"],
+        help="Method for comparing RDMs in noise ceiling estimation"
+    )
     parser.add_argument("--dry-run", action="store_true")
 
     args = parser.parse_args()
@@ -107,7 +116,9 @@ def main():
     if args.sessions:
         preprocess_cmd.extend(["--sessions"] + args.sessions)
 
-    if args.dry_run:
+    if args.skip_preprocessing:
+        print("\nSkipping preprocessing (--skip-preprocessing).")
+    elif args.dry_run:
         print(f"\n[DRY RUN] Would execute: {' '.join(preprocess_cmd)}")
     else:
         run_command(preprocess_cmd, "STEP 2: Preprocessing fMRI data")
@@ -134,6 +145,26 @@ def main():
         print(f"\n[DRY RUN] Would execute: {' '.join(rsa_cmd)}")
     else:
         run_command(rsa_cmd, "STEP 3: Session-based RSA")
+
+    ceiling_cmd = [
+        sys.executable,
+        "src/rsa/noise_ceiling.py",
+        "--pattern-dir", args.output_dir,
+        "--output-dir", args.output_dir,
+        "--metric", args.metric,
+        "--method", args.comparison_method,
+    ]
+    if args.subjects:
+        ceiling_cmd.extend(["--subjects"] + args.subjects)
+    if args.sessions:
+        ceiling_cmd.extend(["--sessions"] + args.sessions)
+
+    if args.skip_noise_ceiling:
+        print("\nSkipping noise ceiling estimation (--skip-noise-ceiling).")
+    elif args.dry_run:
+        print(f"\n[DRY RUN] Would execute: {' '.join(ceiling_cmd)}")
+    else:
+        run_command(ceiling_cmd, "STEP 4: Noise ceiling estimation")
 
     print("\nAnalysis pipeline complete.")
 
