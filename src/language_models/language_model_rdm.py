@@ -179,7 +179,8 @@ class LanguageModelRDMComputer:
     def load_stimulus_characteristics(
         self,
         characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
-        task: str = "Sem"
+        task: str = "Sem",
+        exclude_controls: bool = False,
     ) -> Tuple[pd.DataFrame, List[str], Dict]:
         """
         Load stimulus characteristics and extract word list.
@@ -187,6 +188,7 @@ class LanguageModelRDMComputer:
         Args:
             characteristics_dir: Directory with stimulus characteristic TSV files
             task: Task name (Sem, Gram, Phon, Plaus)
+            exclude_controls: Whether to exclude control trials (trial_type == "S_C")
             
         Returns:
             Tuple of (characteristics_df, unique_words, word_to_idx)
@@ -198,6 +200,13 @@ class LanguageModelRDMComputer:
             keep_default_na=False,
             na_values=[""],
         )
+
+        if exclude_controls and "trial_type" in characteristics.columns:
+            before_n = len(characteristics)
+            characteristics = characteristics[characteristics["trial_type"] != "S_C"].reset_index(drop=True)
+            logger.info(
+                f"Excluded control rows (S_C): {before_n - len(characteristics)} removed, {len(characteristics)} remain"
+            )
         
         # Extract unique words
         all_words = []
@@ -371,6 +380,7 @@ def main():
     parser.add_argument("--layer", type=int, default=-1, help="Which layer to extract")
     parser.add_argument("--pooling", default="mean", choices=["mean", "max", "cls"])
     parser.add_argument("--output-dir", default="data/processed/language_models")
+    parser.add_argument("--include-controls", action="store_true", help="Include control trials (S_C)")
     
     args = parser.parse_args()
     
@@ -385,7 +395,8 @@ def main():
     
     # Load stimulus characteristics
     characteristics, words, word_to_idx = rdm_computer.load_stimulus_characteristics(
-        task=args.task
+        task=args.task,
+        exclude_controls=not args.include_controls,
     )
     
     # Extract embeddings

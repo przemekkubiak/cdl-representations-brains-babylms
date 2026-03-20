@@ -44,7 +44,8 @@ class LanguageModelPipeline:
     def __init__(
         self,
         output_dir: str = "data/processed/language_models",
-        brain_rdm_dir: str = "data/processed/fmri"
+        brain_rdm_dir: str = "data/processed/fmri",
+        characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
     ):
         """
         Initialize pipeline.
@@ -57,12 +58,27 @@ class LanguageModelPipeline:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         self.brain_rdm_dir = Path(brain_rdm_dir)
+        self.characteristics_dir = Path(characteristics_dir)
         self.rdm_computer = LanguageModelRDMComputer(output_dir=str(self.output_dir))
         
         self.results = {
             "language_models": {},
             "comparisons": {}
         }
+
+    def _non_control_indices(self, task: str) -> np.ndarray:
+        """Return row indices of non-control trials based on stimulus characteristics."""
+        char_file = self.characteristics_dir / f"task-{task}_Stimulus_Characteristics.tsv"
+        characteristics = pd.read_csv(
+            char_file,
+            sep="\t",
+            keep_default_na=False,
+            na_values=[""],
+        )
+        if "trial_type" not in characteristics.columns:
+            return np.arange(len(characteristics))
+        mask = characteristics["trial_type"] != "S_C"
+        return np.where(mask.to_numpy())[0]
     
     def compute_lm_rdm(
         self,
@@ -70,7 +86,8 @@ class LanguageModelPipeline:
         task: str = "Sem",
         layer: int = -1,
         pooling: str = "mean",
-        save: bool = True
+        save: bool = True,
+        exclude_controls: bool = True,
     ) -> Dict:
         """
         Compute RDM for a language model.
@@ -97,7 +114,10 @@ class LanguageModelPipeline:
             
             # Load characteristics
             characteristics, words, word_to_idx = (
-                self.rdm_computer.load_stimulus_characteristics(task=task)
+                self.rdm_computer.load_stimulus_characteristics(
+                    task=task,
+                    exclude_controls=exclude_controls,
+                )
             )
             
             # Extract embeddings
@@ -144,7 +164,9 @@ class LanguageModelPipeline:
         self,
         lm_rdm: np.ndarray,
         brain_session: str = "ses-7",
-        distance_metric: str = "spearman"
+        distance_metric: str = "spearman",
+        task: str = "Sem",
+        exclude_controls: bool = True,
     ) -> Dict:
         """
         Compare language model RDM with brain RDM.
@@ -165,6 +187,16 @@ class LanguageModelPipeline:
         
         brain_data = np.load(brain_rdm_file)
         brain_rdm = brain_data["rdm"]
+
+        if exclude_controls:
+            keep_idx = self._non_control_indices(task)
+            if brain_rdm.shape[0] >= keep_idx.max() + 1:
+                brain_rdm = brain_rdm[np.ix_(keep_idx, keep_idx)]
+                logger.info(f"Using non-control brain RDM subset: {brain_rdm.shape}")
+            else:
+                logger.warning(
+                    "Could not subset brain RDM to non-control trials; index exceeds matrix size"
+                )
         
         logger.info(f"Comparing with brain RDM {brain_session}: {brain_rdm.shape}")
         
@@ -206,7 +238,8 @@ class LanguageModelPipeline:
         model_names: List[str],
         task: str = "Sem",
         compare_sessions: List[str] = None,
-        save: bool = True
+        save: bool = True,
+        exclude_controls: bool = True,
     ) -> Dict:
         """
         Compute RDMs for all models and compare with brain.
@@ -235,7 +268,10 @@ class LanguageModelPipeline:
             
             # Compute RDM
             lm_result = self.compute_lm_rdm(
-                model_name, task=task, save=save
+                model_name,
+                task=task,
+                save=save,
+                exclude_controls=exclude_controls,
             )
             
             if lm_result is None:
@@ -249,7 +285,12 @@ class LanguageModelPipeline:
             # Compare with brain RDMs
             for session in compare_sessions:
                 logger.info(f"Comparing with {session}")
-                comp_result = self.compare_rdms(rdm, brain_session=session)
+                comp_result = self.compare_rdms(
+                    rdm,
+                    brain_session=session,
+                    task=task,
+                    exclude_controls=exclude_controls,
+                )
                 
                 if comp_result:
                     comp_result["model"] = model_name
@@ -272,7 +313,9 @@ class LanguageModelPipeline:
         lm_rdm: np.ndarray,
         brain_session: str = "ses-7",
         model_name: str = "unknown",
-        save: bool = True
+        save: bool = True,
+        task: str = "Sem",
+        exclude_controls: bool = True,
     ):
         """
         Plot RDM heatmaps and comparison.
@@ -291,6 +334,11 @@ class LanguageModelPipeline:
         
         brain_data = np.load(brain_rdm_file)
         brain_rdm = brain_data["rdm"]
+
+        if exclude_controls:
+            keep_idx = self._non_control_indices(task)
+            if brain_rdm.shape[0] >= keep_idx.max() + 1:
+                brain_rdm = brain_rdm[np.ix_(keep_idx, keep_idx)]
         
         if lm_rdm.shape != brain_rdm.shape:
             logger.warning("Shape mismatch, skipping plot")
@@ -368,6 +416,11 @@ def main():
         action="store_true",
         help="Generate comparison plots"
     )
+    parser.add_argument(
+        "--include-controls",
+        action="store_true",
+        help="Include control trials (S_C). Default excludes them."
+    )
     
     args = parser.parse_args()
     
@@ -382,7 +435,8 @@ def main():
         model_names=args.models,
         task=args.task,
         compare_sessions=args.compare_sessions,
-        save=not args.no_save
+        save=not args.no_save,
+        exclude_controls=not args.include_controls,
     )
     
     # Generate plots if requested
@@ -392,7 +446,10 @@ def main():
                 extractor = LanguageModelEmbeddingExtractor(model_name=model)
                 rdm_computer = LanguageModelRDMComputer(output_dir=args.output_dir)
                 characteristics, words, word_to_idx = (
-                    rdm_computer.load_stimulus_characteristics(task=args.task)
+                    rdm_computer.load_stimulus_characteristics(
+                        task=args.task,
+                        exclude_controls=not args.include_controls,
+                    )
                 )
                 embeddings = extractor.extract_batch_embeddings(words)
                 rdm = rdm_computer.compute_stimulus_rdm(
@@ -401,7 +458,12 @@ def main():
                 
                 for session in args.compare_sessions:
                     pipeline.plot_comparison(
-                        rdm, brain_session=session, model_name=model, save=True
+                        rdm,
+                        brain_session=session,
+                        model_name=model,
+                        save=True,
+                        task=args.task,
+                        exclude_controls=not args.include_controls,
                     )
             except Exception as e:
                 logger.error(f"Failed to plot for {model}: {e}")
