@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from language_models.language_model_rdm import (
     LanguageModelEmbeddingExtractor,
@@ -324,10 +324,17 @@ def main():
         description="Compute and compare language model RDMs with brain RDMs"
     )
     
+    # BrainAlign BabyLM models from HuggingFace
+    default_models = [
+        "BrainAlign/gpt2-babylm-5",
+        "BrainAlign/gpt2-babylm-7",
+        "BrainAlign/gpt2-babylm-9"
+    ]
+    
     parser.add_argument(
         "--models",
         nargs="+",
-        default=["gpt2"],
+        default=default_models,
         help="Model names to compute RDMs for (HuggingFace format)"
     )
     parser.add_argument(
@@ -338,7 +345,7 @@ def main():
     parser.add_argument(
         "--compare-sessions",
         nargs="+",
-        default=["ses-7"],
+        default=["ses-5", "ses-7", "ses-9"],
         help="Brain sessions to compare with"
     )
     parser.add_argument(
