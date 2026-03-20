@@ -53,7 +53,7 @@ def main():
     parser.add_argument("--generated-mask-path", type=str)
 
     parser.add_argument("--metric", type=str, default="correlation", choices=["correlation", "euclidean", "cosine"])
-    parser.add_argument("--aggregation", type=str, default="hyperalignment", choices=["hyperalignment", "mean", "median"])
+    parser.add_argument("--aggregation", type=str, default="hyperalignment", choices=["hyperalignment", "mean", "median", "stimulus_mean"])
     parser.add_argument("--n-iter", type=int, default=10)
     parser.add_argument("--features", type=int)
     parser.add_argument("--dry-run", action="store_true")

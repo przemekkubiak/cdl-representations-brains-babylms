@@ -345,6 +345,9 @@ class SessionBasedRSA:
             - 'hyperalignment': Use SRM to align subjects to common space (default)
             - 'mean': Simple mean of RDMs
             - 'median': Median of RDMs
+                        - 'stimulus_mean': For each stimulus, average subject patterns
+                            across all subjects where that stimulus is available, then
+                            compute one session RDM from those aggregated stimulus patterns.
         n_iter : int
             Number of SRM iterations (only for hyperalignment)
         features : int, optional
@@ -359,36 +362,7 @@ class SessionBasedRSA:
         n_subjects : int
             Number of subjects included
         """
-        # Find common stimuli for this session only.
-        # For each subject, take union across runs in this session,
-        # then intersect across subjects.
-        subject_session_stimuli = []
-        for subject_data in self.patterns_by_subject.values():
-            if session not in subject_data:
-                continue
-
-            run_sets = [
-                set(run_data.keys())
-                for run_data in subject_data[session].values()
-                if run_data
-            ]
-            if not run_sets:
-                continue
-
-            subject_union = set.union(*run_sets)
-            if subject_union:
-                subject_session_stimuli.append(subject_union)
-
-        if not subject_session_stimuli:
-            raise ValueError(f"No stimuli found for session {session}")
-
-        common_stimuli = sorted(set.intersection(*subject_session_stimuli))
-
-        if not common_stimuli:
-            raise ValueError(f"No common stimuli found across subjects for session {session}")
-        
         print(f"\nComputing session RDM for {session}")
-        print(f"  Common stimuli: {len(common_stimuli)}")
         print(f"  Aggregation: {aggregation}")
         
         if aggregation == "hyperalignment" and not HYPERALIGNMENT_AVAILABLE:
@@ -398,95 +372,190 @@ class SessionBasedRSA:
             )
             aggregation = "mean"
 
-        if aggregation == "hyperalignment":
-            # Collect patterns from all subjects (before computing RDMs)
-            subject_patterns = []
-            subject_ids = []
-            
+        if aggregation == "stimulus_mean":
+            # Aggregate directly at the stimulus-pattern level across subjects.
+            # This avoids requiring stimuli to be shared by all subjects.
+            from collections import defaultdict
+
+            stim_to_subject_patterns = defaultdict(list)
+            included_subject_ids = []
+
             for subject_id in sorted(self.patterns_by_subject.keys()):
                 subject_data = self.patterns_by_subject[subject_id]
-                
+
                 if session not in subject_data:
                     print(f"    {subject_id}: ✗ (no data)")
                     continue
-                
-                # Average each stimulus across all runs where it is present.
-                avg_patterns = []
-                for stim in common_stimuli:
-                    stim_patterns = []
-                    for _, patterns in subject_data[session].items():
-                        if stim in patterns:
-                            stim_patterns.append(patterns[stim])
 
-                    if not stim_patterns:
-                        avg_patterns = []
-                        break
+                # Subject-level per-stimulus averaging across runs.
+                per_stim = defaultdict(list)
+                for _, patterns in subject_data[session].items():
+                    for stim, vec in patterns.items():
+                        per_stim[stim].append(vec)
 
-                    stim_matrix = self._stack_with_min_features(stim_patterns)
-                    avg_patterns.append(np.mean(stim_matrix, axis=0))
-
-                if avg_patterns:
-                    avg_patterns = self._stack_with_min_features(avg_patterns)
-                    subject_patterns.append(avg_patterns)
-                    subject_ids.append(subject_id)
-                    print(f"    {subject_id}: ✓ ({len(subject_data[session])} runs)")
-                else:
+                if not per_stim:
                     print(f"    {subject_id}: ✗ (no valid runs)")
-            
-            if len(subject_patterns) < 2:
-                raise ValueError(f"Hyperalignment requires at least 2 subjects, found {len(subject_patterns)}")
-            
-            # Apply hyperalignment
-            aligned_patterns, _ = self.hyperalign_subjects(
-                subject_patterns,
-                n_iter=n_iter,
-                features=features
+                    continue
+
+                included_subject_ids.append(subject_id)
+
+                for stim, vecs in per_stim.items():
+                    stim_matrix = self._stack_with_min_features(vecs)
+                    subj_mean = np.mean(stim_matrix, axis=0)
+                    stim_to_subject_patterns[stim].append(subj_mean)
+
+                print(f"    {subject_id}: ✓ ({len(per_stim)} stimuli)")
+
+            if not stim_to_subject_patterns:
+                raise ValueError(f"No subjects have usable data for {session}")
+
+            common_stimuli = sorted(stim_to_subject_patterns.keys())
+            aggregated_patterns = []
+            subject_counts_per_stim = []
+
+            for stim in common_stimuli:
+                subj_patterns = stim_to_subject_patterns[stim]
+                subject_counts_per_stim.append(len(subj_patterns))
+                subj_matrix = self._stack_with_min_features(subj_patterns)
+                stim_group_mean = np.mean(subj_matrix, axis=0)
+                aggregated_patterns.append(stim_group_mean)
+
+            aggregated_patterns = self._stack_with_min_features(aggregated_patterns)
+            session_rdm = compute_rdm(aggregated_patterns, metric=metric)
+
+            print(f"  Stimuli included: {len(common_stimuli)}")
+            print(f"  Subjects contributing to session: {len(included_subject_ids)}")
+            print(
+                "  Subjects per stimulus: "
+                f"min={min(subject_counts_per_stim)}, "
+                f"median={int(np.median(subject_counts_per_stim))}, "
+                f"max={max(subject_counts_per_stim)}"
             )
-            
-            # Compute RDM from aligned patterns
-            session_rdm = compute_rdm(aligned_patterns, metric=metric)
-            
-            print(f"  Hyperaligned {len(subject_patterns)} subjects")
-            print(f"  Aligned pattern shape: {aligned_patterns.shape}")
             print(f"  RDM shape: {session_rdm.shape}")
             print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
-            
+
+            subject_ids = included_subject_ids
+
         else:
-            # Original approach: compute RDMs then aggregate
-            subject_rdms = []
-            subject_ids = []
-            
-            for subject_id in sorted(self.patterns_by_subject.keys()):
-                rdm = self.compute_subject_rdm(
-                    subject_id=subject_id,
-                    session=session,
-                    common_stimuli=common_stimuli,
-                    metric=metric
+            # Find common stimuli for this session only.
+            # For each subject, take union across runs in this session,
+            # then intersect across subjects.
+            subject_session_stimuli = []
+            for subject_data in self.patterns_by_subject.values():
+                if session not in subject_data:
+                    continue
+
+                run_sets = [
+                    set(run_data.keys())
+                    for run_data in subject_data[session].values()
+                    if run_data
+                ]
+                if not run_sets:
+                    continue
+
+                subject_union = set.union(*run_sets)
+                if subject_union:
+                    subject_session_stimuli.append(subject_union)
+
+            if not subject_session_stimuli:
+                raise ValueError(f"No stimuli found for session {session}")
+
+            common_stimuli = sorted(set.intersection(*subject_session_stimuli))
+
+            if not common_stimuli:
+                raise ValueError(f"No common stimuli found across subjects for session {session}")
+
+            print(f"  Common stimuli: {len(common_stimuli)}")
+
+            if aggregation == "hyperalignment":
+                # Collect patterns from all subjects (before computing RDMs)
+                subject_patterns = []
+                subject_ids = []
+                
+                for subject_id in sorted(self.patterns_by_subject.keys()):
+                    subject_data = self.patterns_by_subject[subject_id]
+                    
+                    if session not in subject_data:
+                        print(f"    {subject_id}: ✗ (no data)")
+                        continue
+                    
+                    # Average each stimulus across all runs where it is present.
+                    avg_patterns = []
+                    for stim in common_stimuli:
+                        stim_patterns = []
+                        for _, patterns in subject_data[session].items():
+                            if stim in patterns:
+                                stim_patterns.append(patterns[stim])
+
+                        if not stim_patterns:
+                            avg_patterns = []
+                            break
+
+                        stim_matrix = self._stack_with_min_features(stim_patterns)
+                        avg_patterns.append(np.mean(stim_matrix, axis=0))
+
+                    if avg_patterns:
+                        avg_patterns = self._stack_with_min_features(avg_patterns)
+                        subject_patterns.append(avg_patterns)
+                        subject_ids.append(subject_id)
+                        print(f"    {subject_id}: ✓ ({len(subject_data[session])} runs)")
+                    else:
+                        print(f"    {subject_id}: ✗ (no valid runs)")
+                
+                if len(subject_patterns) < 2:
+                    raise ValueError(f"Hyperalignment requires at least 2 subjects, found {len(subject_patterns)}")
+                
+                # Apply hyperalignment
+                aligned_patterns, _ = self.hyperalign_subjects(
+                    subject_patterns,
+                    n_iter=n_iter,
+                    features=features
                 )
                 
-                if rdm is not None:
-                    subject_rdms.append(rdm)
-                    subject_ids.append(subject_id)
-                    print(f"    {subject_id}: ✓")
-                else:
-                    print(f"    {subject_id}: ✗ (no data)")
-            
-            if not subject_rdms:
-                raise ValueError(f"No subjects have data for {session}")
-            
-            # Aggregate across subjects
-            subject_rdms = np.array(subject_rdms)
-            
-            if aggregation == "mean":
-                session_rdm = np.mean(subject_rdms, axis=0)
-            elif aggregation == "median":
-                session_rdm = np.median(subject_rdms, axis=0)
+                # Compute RDM from aligned patterns
+                session_rdm = compute_rdm(aligned_patterns, metric=metric)
+                
+                print(f"  Hyperaligned {len(subject_patterns)} subjects")
+                print(f"  Aligned pattern shape: {aligned_patterns.shape}")
+                print(f"  RDM shape: {session_rdm.shape}")
+                print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
+                
             else:
-                raise ValueError(f"Unknown aggregation: {aggregation}")
-            
-            print(f"  Aggregated {len(subject_rdms)} subjects ({aggregation})")
-            print(f"  RDM shape: {session_rdm.shape}")
-            print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
+                # Original approach: compute RDMs then aggregate
+                subject_rdms = []
+                subject_ids = []
+                
+                for subject_id in sorted(self.patterns_by_subject.keys()):
+                    rdm = self.compute_subject_rdm(
+                        subject_id=subject_id,
+                        session=session,
+                        common_stimuli=common_stimuli,
+                        metric=metric
+                    )
+                    
+                    if rdm is not None:
+                        subject_rdms.append(rdm)
+                        subject_ids.append(subject_id)
+                        print(f"    {subject_id}: ✓")
+                    else:
+                        print(f"    {subject_id}: ✗ (no data)")
+                
+                if not subject_rdms:
+                    raise ValueError(f"No subjects have data for {session}")
+                
+                # Aggregate across subjects
+                subject_rdms = np.array(subject_rdms)
+                
+                if aggregation == "mean":
+                    session_rdm = np.mean(subject_rdms, axis=0)
+                elif aggregation == "median":
+                    session_rdm = np.median(subject_rdms, axis=0)
+                else:
+                    raise ValueError(f"Unknown aggregation: {aggregation}")
+                
+                print(f"  Aggregated {len(subject_rdms)} subjects ({aggregation})")
+                print(f"  RDM shape: {session_rdm.shape}")
+                print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
         
         # Store
         self.session_rdms[session] = {
@@ -518,7 +587,8 @@ class SessionBasedRSA:
         metric : str
             Distance metric
         aggregation : str
-            Aggregation method ('hyperalignment', 'mean', or 'median')
+            Aggregation method ('hyperalignment', 'mean', 'median',
+            or 'stimulus_mean')
         n_iter : int
             Number of SRM iterations (only for hyperalignment)
         features : int, optional
@@ -792,7 +862,7 @@ def main():
         "--aggregation",
         type=str,
         default="hyperalignment",
-        choices=["hyperalignment", "mean", "median"],
+        choices=["hyperalignment", "mean", "median", "stimulus_mean"],
         help="Aggregation method (default: hyperalignment)"
     )
     parser.add_argument(
