@@ -27,28 +27,27 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
     """Find stimuli shared across all subjects that have this session."""
     subject_session_stimuli = []
     subjects_with_session = []
+    stimulus_counts = {}
     
     for subject_id, subject_data in rsa.patterns_by_subject.items():
         if session not in subject_data:
             continue
 
         run_data_dict = subject_data[session]
-        print(f"    {subject_id}: runs={list(run_data_dict.keys())}")
-        
         run_sets = [
             set(run_data.keys())
             for run_data in run_data_dict.values()
             if run_data
         ]
         if not run_sets:
-            print(f"      -> No valid runs")
             continue
 
         subject_union = set.union(*run_sets)
         if subject_union:
             subject_session_stimuli.append(subject_union)
             subjects_with_session.append(subject_id)
-            print(f"      -> {len(subject_union)} stimuli from {len(run_sets)} runs")
+            count = len(subject_union)
+            stimulus_counts[count] = stimulus_counts.get(count, 0) + 1
 
     if not subject_session_stimuli:
         print(f"  DEBUG {session}: No subjects with data")
@@ -56,11 +55,20 @@ def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> List[str]
 
     common = sorted(set.intersection(*subject_session_stimuli))
     print(f"  DEBUG {session}: {len(subjects_with_session)} subjects, {len(common)} common stimuli")
-    if len(subject_session_stimuli) > 0:
-        first_stim = list(subject_session_stimuli[0])[:3]
-        last_stim = list(subject_session_stimuli[-1])[:3]
-        print(f"    First subject ({subjects_with_session[0]}) stimuli sample: {first_stim}")
-        print(f"    Last subject ({subjects_with_session[-1]}) stimuli sample: {last_stim}")
+    print(f"    Stimulus counts distribution: {dict(sorted(stimulus_counts.items()))}")
+    
+    if len(common) == 0 and len(subject_session_stimuli) > 1:
+        # Find which subjects differ
+        print(f"    WARNING: No common stimuli found. Finding mismatches...")
+        first_set = subject_session_stimuli[0]
+        for i, (subj, stim_set) in enumerate(zip(subjects_with_session, subject_session_stimuli)):
+            diff = first_set.symmetric_difference(stim_set)
+            if diff:
+                print(f"      {subj}: differs by {len(diff)} stimuli (first 3: {sorted(list(diff))[:3]})")
+                if i >= 5:  # Only show first 5 mismatches
+                    print(f"      ... and {len(subjects_with_session) - i - 1} more subjects")
+                    break
+    
     return common
 
 
