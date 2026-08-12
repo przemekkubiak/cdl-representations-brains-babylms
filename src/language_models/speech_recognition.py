@@ -1,6 +1,6 @@
 """
 Speech recognition pipeline for converting stimulus .wav files to text.
-Uses OpenAI Whisper for robust speech-to-text transcription.
+Uses OpenAI Whisper for speech-to-text transcription.
 """
 
 import os

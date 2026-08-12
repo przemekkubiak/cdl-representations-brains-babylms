@@ -119,10 +119,29 @@ def find_all_subjects(data_dir: Path) -> list:
     return subjects
 
 
+def _normalize_tasks(task: str = None, tasks: list = None) -> list:
+    """Return a deduplicated task list while preserving order."""
+    resolved = []
+    if tasks:
+        resolved.extend(tasks)
+    elif task:
+        resolved.append(task)
+
+    unique_tasks = []
+    seen = set()
+    for task_name in resolved:
+        if task_name not in seen:
+            unique_tasks.append(task_name)
+            seen.add(task_name)
+
+    return unique_tasks
+
+
 def find_bold_files(
     data_dir: Path,
     subjects: list = None,
-    task: str = "Sem",
+    task: str = None,
+    tasks: list = None,
     sessions: list = None
 ) -> list:
     """
@@ -134,8 +153,10 @@ def find_bold_files(
         Dataset directory
     subjects : list, optional
         Subject IDs to include (default: all)
-    task : str
-        Task name to filter
+    task : str, optional
+        Single task name to filter
+    tasks : list, optional
+        Multiple task names to filter
     sessions : list, optional
         Sessions to include (default: all)
         
@@ -146,6 +167,10 @@ def find_bold_files(
     """
     if subjects is None:
         subjects = find_all_subjects(data_dir)
+
+    task_names = _normalize_tasks(task=task, tasks=tasks)
+    if not task_names:
+        raise ValueError("At least one task must be provided")
     
     bold_files = []
     
@@ -155,14 +180,15 @@ def find_bold_files(
         if not subject_path.exists():
             continue
         
-        # Find BOLD files
-        if sessions:
-            for session in sessions:
-                pattern = f"{session}/func/*task-{task}*_bold.nii.gz"
+        # Find BOLD files for each requested task
+        for task_name in task_names:
+            if sessions:
+                for session in sessions:
+                    pattern = f"{session}/func/*task-{task_name}*_bold.nii.gz"
+                    bold_files.extend(subject_path.glob(pattern))
+            else:
+                pattern = f"ses-*/func/*task-{task_name}*_bold.nii.gz"
                 bold_files.extend(subject_path.glob(pattern))
-        else:
-            pattern = f"ses-*/func/*task-{task}*_bold.nii.gz"
-            bold_files.extend(subject_path.glob(pattern))
     
     return sorted(bold_files)
 
@@ -219,7 +245,8 @@ def download_bold_file(bold_file: Path, data_dir: Path) -> dict:
 def batch_download(
     data_dir: str = "data/brain/ds003604",
     subjects: list = None,
-    task: str = "Sem",
+    task: str = None,
+    tasks: list = None,
     sessions: list = None,
     max_workers: int = 4,
     dry_run: bool = False
@@ -233,8 +260,10 @@ def batch_download(
         Path to the dataset directory
     subjects : list, optional
         Subject IDs to include (default: all)
-    task : str
-        Task name to filter
+    task : str, optional
+        Single task name to filter
+    tasks : list, optional
+        Multiple task names to filter
     sessions : list, optional
         Sessions to include (default: all)
     max_workers : int
@@ -243,6 +272,7 @@ def batch_download(
         If True, only list files without downloading
     """
     data_path = Path(data_dir)
+    task_names = _normalize_tasks(task=task, tasks=tasks)
     
     if not data_path.exists():
         print(f"Error: Dataset directory not found: {data_path}")
@@ -250,7 +280,7 @@ def batch_download(
     
     # Find all BOLD files
     print("Scanning for BOLD files...")
-    bold_files = find_bold_files(data_path, subjects=subjects, task=task, sessions=sessions)
+    bold_files = find_bold_files(data_path, subjects=subjects, tasks=task_names, sessions=sessions)
     
     if not bold_files:
         print("No BOLD files found")
@@ -338,8 +368,12 @@ def main():
     parser.add_argument(
         "--task",
         type=str,
-        default="Sem",
-        help="Task name to filter (default: Sem)"
+        help="Single task name to filter (legacy; use --tasks for multiple tasks)"
+    )
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        help="Task names to filter (e.g. Sem Phon Gram Plaus)"
     )
     parser.add_argument(
         "--sessions",
@@ -361,10 +395,13 @@ def main():
     
     args = parser.parse_args()
     
+    task_names = args.tasks if args.tasks else ([args.task] if args.task else ["Sem"])
+
     batch_download(
         data_dir=args.data_dir,
         subjects=args.subjects,
-        task=args.task,
+        task=task_names[0] if len(task_names) == 1 else None,
+        tasks=task_names,
         sessions=args.sessions,
         max_workers=args.workers,
         dry_run=args.dry_run

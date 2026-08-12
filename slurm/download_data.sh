@@ -33,10 +33,10 @@ mkdir -p logs
 # Download BOLD files for all subjects
 echo ""
 echo "Downloading BOLD files..."
-python scripts/batch_download_bold.py \
+python run_download.py \
     --data-dir data/brain/ds003604 \
-    --task Sem \
-    --workers 4
+    --tasks Sem Phon Gram Plaus \
+    --download-workers 4
 
 echo ""
 echo "=========================================="

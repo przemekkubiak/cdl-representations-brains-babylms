@@ -35,6 +35,7 @@ class FMRIPreprocessor:
         self, 
         data_dir: str, 
         subject_id: str = "sub-5007",
+        task: str = "Sem",
         smoothing_fwhm: float = 6.0,
         high_pass: float = 0.01,
         use_glm: bool = True,
@@ -62,6 +63,7 @@ class FMRIPreprocessor:
         """
         self.data_dir = Path(data_dir)
         self.subject_id = subject_id
+        self.task = task
         self.subject_dir = self.data_dir / subject_id
         self.smoothing_fwhm = smoothing_fwhm
         self.high_pass = high_pass
@@ -75,9 +77,9 @@ class FMRIPreprocessor:
         if self.mask_path and not self.mask_path.exists():
             raise ValueError(f"Mask file not found: {self.mask_path}")
     
-    def find_semantic_runs(self) -> List[Dict[str, Path]]:
+    def find_task_runs(self) -> List[Dict[str, Path]]:
         """
-        Find all semantic task runs across sessions.
+        Find all task runs across sessions.
         
         Returns
         -------
@@ -92,8 +94,8 @@ class FMRIPreprocessor:
             if not func_dir.exists():
                 continue
             
-            # Find all semantic task BOLD files
-            for bold_file in sorted(func_dir.glob("*task-Sem*_bold.nii.gz")):
+            # Find all task-specific BOLD files
+            for bold_file in sorted(func_dir.glob(f"*task-{self.task}*_bold.nii.gz")):
                 # Construct corresponding events file
                 events_file = bold_file.parent / bold_file.name.replace("_bold.nii.gz", "_events.tsv")
                 
@@ -377,7 +379,7 @@ class FMRIPreprocessor:
         save_results: bool = True
     ) -> Dict[str, Dict[str, np.ndarray]]:
         """
-        Process all semantic task runs for the subject.
+        Process all task runs for the subject.
         
         Parameters
         ----------
@@ -391,12 +393,12 @@ class FMRIPreprocessor:
         dict
             Nested dictionary: {session: {run: {stim_file: pattern}}}
         """
-        runs = self.find_semantic_runs()
+        runs = self.find_task_runs()
         
         if not runs:
-            raise ValueError(f"No semantic task runs found for {self.subject_id}")
+            raise ValueError(f"No {self.task} task runs found for {self.subject_id}")
         
-        print(f"Found {len(runs)} semantic task runs")
+        print(f"Found {len(runs)} {self.task} task runs")
         print("=" * 60)
         
         all_patterns = {}

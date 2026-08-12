@@ -33,29 +33,40 @@ pip install -r requirements.txt
 
 ## Quick Start
 
+```bash
+# Download all tasks used in the study
+python run_download.py
+
+# Run the analysis for one task
+python run_analysis.py --task Sem
+
+# Run ROI sweeps with human-readable labels
+python scripts/run_roi_pipeline.py --task Sem
+```
+
+Tasks: `Sem`, `Phon`, `Gram`, `Plaus`.
+
 ### Local Execution
 
 ```bash
-# Run full pipeline
-python run_pipeline.py
+# Download data for all tasks
+python run_download.py
 
-# Run specific steps
-python run_pipeline.py --steps preprocess rsa
+# Run one task end to end
+python run_analysis.py --task Sem
 
-# Specify subjects/sessions
-python run_pipeline.py --subjects sub-5007 --sessions ses-7 ses-9
+# Run ROI sweeps for one task
+python scripts/run_roi_pipeline.py --task Sem
 ```
 
 ### SLURM Cluster
 
 ```bash
-# Full pipeline
-sbatch slurm/full_pipeline.sh
-
-# Individual steps
+# Download data
 sbatch slurm/download_data.sh
-sbatch slurm/preprocess.sh
-sbatch slurm/run_rsa.sh
+
+# Parallel ROI runs
+python scripts/run_roi_pipeline.py --task Sem
 
 # Parallel preprocessing (one job per subject)
 sbatch slurm/preprocess_parallel.sh
@@ -65,28 +76,30 @@ sbatch slurm/preprocess_parallel.sh
 
 ### 1. Download Data
 ```bash
-python scripts/batch_download_bold.py --data-dir data/brain/ds003604
+python run_download.py
 ```
 
-Downloads BOLD fMRI files from OpenNeuro for all subjects.
+Downloads BOLD fMRI files for Sem, Phon, Gram, and Plaus.
 
 ### 2. Preprocess
 ```bash
 python src/preprocessing/batch_preprocessing.py \
     --data-dir data/brain/ds003604 \
-    --output-dir data/processed/fmri
+    --output-dir data/processed/fmri \
+    --task Sem
 ```
 
-Applies spatial smoothing (6mm FWHM), high-pass filtering (0.01 Hz), GLM with canonical HRF, and extracts stimulus-specific patterns.
+Applies spatial smoothing, high-pass filtering, GLM with canonical HRF, and extracts task-specific patterns.
 
 ### 3. Session-Based RSA
 ```bash
 python src/rsa/session_based_rsa.py \
     --pattern-dir data/processed/fmri \
+    --task Sem \
     --aggregation hyperalignment
 ```
 
-Creates 3 session-level RDMs (ses-5, ses-7, ses-9) using hyperalignment to align subjects to shared representational space before aggregation.
+Creates session-level RDMs for the selected task across ses-5, ses-7, and ses-9.
 
 ## Output Files
 
@@ -100,6 +113,7 @@ Creates 3 session-level RDMs (ses-5, ses-7, ses-9) using hyperalignment to align
 Pipeline parameters:
 - `--smoothing-fwhm`: Spatial smoothing (default: 6.0mm)
 - `--high-pass`: Filter cutoff (default: 0.01 Hz)
+- `--task`: Task to process or download (`Sem`, `Phon`, `Gram`, `Plaus`)
 - `--aggregation`: hyperalignment, mean, or median (default: hyperalignment)
 - `--n-iter`: SRM iterations (default: 10)
 - `--metric`: correlation, euclidean, or cosine (default: correlation)

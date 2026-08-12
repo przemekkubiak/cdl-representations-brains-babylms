@@ -8,11 +8,40 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from src.rsa.semantic_metadata import semantic_categories_from_trial_types
+
 
 def load_neural_rdm(filepath: str):
     """Load saved neural RDM."""
-    data = np.load(filepath)
-    return data['rdm'], data['stimuli'], data.get('metadata', {})
+    data = np.load(filepath, allow_pickle=True)
+    metadata = {}
+
+    for key in [
+        "stimuli",
+        "n_subjects",
+        "subject_ids",
+        "metric",
+        "aggregation",
+        "trial_types",
+        "semantic_categories",
+    ]:
+        if key in data.files:
+            metadata[key] = data[key]
+
+    return data["rdm"], data["stimuli"], metadata
+
+
+def _categories_from_metadata(stimuli: list, metadata: dict):
+    """Infer semantic categories from saved metadata when available."""
+    trial_types = metadata.get("trial_types")
+    if trial_types is not None and len(trial_types) == len(stimuli):
+        return semantic_categories_from_trial_types(trial_types), "trial_types"
+
+    semantic_categories = metadata.get("semantic_categories")
+    if semantic_categories is not None and len(semantic_categories) == len(stimuli):
+        return [str(category) for category in semantic_categories], "semantic_categories"
+
+    return None, None
 
 
 def analyze_rdm_structure(rdm: np.ndarray, stimuli: list):
@@ -78,31 +107,40 @@ def analyze_stimulus_categories(rdm: np.ndarray, stimuli: list):
     print("Stimulus Category Analysis")
     print("=" * 70)
     
-    # Try to extract categories from stimulus names
-    # Example: stereo_1SU41A0 -> SU (Semantic Unrelated?)
-    # ContS29 -> Cont (Control?)
-    
-    categories = []
-    for stim in stimuli:
-        stem = Path(stim).stem
-        if 'Cont' in stem:
-            categories.append('Control')
-        elif 'SU' in stem:
-            categories.append('SU')  # Semantic Unrelated
-        elif 'SH' in stem:
-            categories.append('SH')  # Semantic High
-        elif 'SL' in stem:
-            categories.append('SL')  # Semantic Low
-        elif 'SC' in stem:
-            categories.append('SC')  # Semantic Control
-        else:
-            categories.append('Unknown')
+    categories = None
+    category_source = None
+
+    if isinstance(stimuli, tuple) and len(stimuli) == 2:
+        stim_values, metadata = stimuli
+        categories, category_source = _categories_from_metadata(list(stim_values), metadata)
+        stimuli = list(stim_values)
+
+    if categories is None:
+        # Fallback: infer categories from stimulus names only.
+        categories = []
+        for stim in stimuli:
+            stem = Path(stim).stem
+            if 'Cont' in stem:
+                categories.append('control')
+            elif 'SU' in stem:
+                categories.append('unrelated')
+            elif 'SH' in stem:
+                categories.append('high_association')
+            elif 'SL' in stem:
+                categories.append('low_association')
+            elif 'SC' in stem:
+                categories.append('control')
+            else:
+                categories.append('unknown')
     
     # Count categories
     from collections import Counter
     cat_counts = Counter(categories)
     
-    print(f"\nStimulus categories found:")
+    if category_source:
+        print(f"\nStimulus categories found (source: {category_source}):")
+    else:
+        print(f"\nStimulus categories found (source: filename heuristic):")
     for cat, count in sorted(cat_counts.items()):
         print(f"  {cat}: {count} stimuli")
     
@@ -165,7 +203,7 @@ def main():
     analyze_rdm_structure(rdm, list(stimuli))
     
     # Analyze by stimulus categories
-    analyze_stimulus_categories(rdm, list(stimuli))
+    analyze_stimulus_categories(rdm, (list(stimuli), metadata))
     
     # Load and summarize comparison results
     comparison_path = "data/processed/fmri/rdm_comparison.csv"

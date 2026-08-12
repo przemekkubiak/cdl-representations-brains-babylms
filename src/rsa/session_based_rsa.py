@@ -37,6 +37,7 @@ except Exception as e:
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.rsa import compute_rdm, compare_rdms
+from src.rsa.semantic_metadata import load_semantic_metadata
 
 
 class SessionBasedRSA:
@@ -44,7 +45,11 @@ class SessionBasedRSA:
     Compute session-level RDMs aggregated across subjects.
     """
     
-    def __init__(self, pattern_dir: str = "data/processed/fmri"):
+    def __init__(
+        self,
+        pattern_dir: str = "data/processed/fmri",
+        characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
+    ):
         """
         Initialize session-based RSA analyzer.
         
@@ -54,6 +59,7 @@ class SessionBasedRSA:
             Directory containing pattern .npz files from all subjects
         """
         self.pattern_dir = Path(pattern_dir)
+        self.characteristics_dir = Path(characteristics_dir)
         self.patterns_by_subject = {}
         self.session_rdms = {}
     
@@ -73,8 +79,7 @@ class SessionBasedRSA:
             Set of non-control stimulus filenames, or None if not available
         """
         # Path to stimulus characteristics
-        stimulus_dir = Path("data/brain/ds003604/stimuli")
-        char_file = stimulus_dir / f"Stimulus_Characteristics/task-{task}_Stimulus_Characteristics.tsv"
+        char_file = self.characteristics_dir / f"task-{task}_Stimulus_Characteristics.tsv"
         
         if not char_file.exists():
             return None
@@ -367,6 +372,7 @@ class SessionBasedRSA:
     def compute_session_rdm(
         self,
         session: str,
+        task: str = "Sem",
         metric: str = "correlation",
         aggregation: str = "hyperalignment",
         n_iter: int = 10,
@@ -451,6 +457,7 @@ class SessionBasedRSA:
                 raise ValueError(f"No subjects have usable data for {session}")
 
             common_stimuli = sorted(stim_to_subject_patterns.keys())
+            session_stimuli = common_stimuli
             aggregated_patterns = []
             subject_counts_per_stim = []
 
@@ -506,7 +513,7 @@ class SessionBasedRSA:
             all_stimuli = sorted(set.union(*subject_session_stimuli))
 
             # Filter out control stimuli to match LM RDM computation
-            non_control_filenames = self._get_non_control_stimuli(task="Sem")
+            non_control_filenames = self._get_non_control_stimuli(task=task)
             if non_control_filenames is not None:
                 # Filter to non-control stimuli only
                 all_stimuli_filtered = [s for s in all_stimuli if s in non_control_filenames]
@@ -519,6 +526,8 @@ class SessionBasedRSA:
                 common_stimuli = common_stimuli_filtered
             else:
                 print(f"  All stimuli: {len(all_stimuli)}, Common stimuli: {len(common_stimuli)}")
+
+            session_stimuli = all_stimuli
 
             if aggregation == "hyperalignment":
                 # Collect patterns from all subjects (before computing RDMs)
@@ -618,14 +627,27 @@ class SessionBasedRSA:
                 print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
         
         # Store
+        stimulus_metadata = load_semantic_metadata(
+            session_stimuli,
+            task=task,
+            characteristics_dir=str(self.characteristics_dir),
+        )
         self.session_rdms[session] = {
             "rdm": session_rdm,
-            "stimuli": all_stimuli,
+            "stimuli": session_stimuli,
             "common_stimuli": common_stimuli,
             "n_subjects": len(subject_ids),
             "subject_ids": subject_ids,
             "metric": metric,
-            "aggregation": aggregation
+            "aggregation": aggregation,
+            "trial_types": stimulus_metadata.get(
+                "trial_types",
+                np.asarray(["unknown"] * len(session_stimuli), dtype=object),
+            ),
+            "semantic_categories": stimulus_metadata.get(
+                "semantic_categories",
+                np.asarray(["unknown"] * len(session_stimuli), dtype=object),
+            ),
         }
         
         return session_rdm, common_stimuli, len(subject_ids)
@@ -633,6 +655,7 @@ class SessionBasedRSA:
     def compute_all_sessions(
         self,
         sessions: Optional[List[str]] = None,
+        task: str = "Sem",
         metric: str = "correlation",
         aggregation: str = "hyperalignment",
         n_iter: int = 10,
@@ -681,6 +704,7 @@ class SessionBasedRSA:
             try:
                 self.compute_session_rdm(
                     session=session,
+                    task=task,
                     metric=metric,
                     aggregation=aggregation,
                     n_iter=n_iter,
@@ -849,7 +873,9 @@ class SessionBasedRSA:
             "n_subjects": data["n_subjects"],
             "subject_ids": np.array(data["subject_ids"]),
             "metric": data["metric"],
-            "aggregation": data["aggregation"]
+            "aggregation": data["aggregation"],
+            "trial_types": np.array(data.get("trial_types", []), dtype=object),
+            "semantic_categories": np.array(data.get("semantic_categories", []), dtype=object),
         }
         
         np.savez_compressed(str(output_path), **save_dict)
@@ -913,6 +939,13 @@ def main():
         help="Sessions to analyze (default: all)"
     )
     parser.add_argument(
+        "--task",
+        type=str,
+        default="Sem",
+        choices=["Sem", "Phon", "Gram", "Plaus"],
+        help="Task to analyze (default: Sem)"
+    )
+    parser.add_argument(
         "--metric",
         type=str,
         default="correlation",
@@ -937,11 +970,20 @@ def main():
         type=int,
         help="Number of shared features for hyperalignment (default: auto)"
     )
+    parser.add_argument(
+        "--characteristics-dir",
+        type=str,
+        default="data/brain/ds003604/stimuli/Stimulus_Characteristics",
+        help="Directory containing task-*_Stimulus_Characteristics.tsv files",
+    )
     
     args = parser.parse_args()
     
     # Initialize
-    rsa = SessionBasedRSA(pattern_dir=args.pattern_dir)
+    rsa = SessionBasedRSA(
+        pattern_dir=args.pattern_dir,
+        characteristics_dir=args.characteristics_dir,
+    )
     
     # Load patterns
     rsa.load_all_patterns(subjects=args.subjects, sessions=args.sessions)
@@ -949,6 +991,7 @@ def main():
     # Compute session RDMs
     session_rdms = rsa.compute_all_sessions(
         sessions=args.sessions,
+        task=args.task,
         metric=args.metric,
         aggregation=args.aggregation,
         n_iter=args.n_iter,

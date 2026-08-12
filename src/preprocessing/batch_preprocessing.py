@@ -26,6 +26,7 @@ class BatchPreprocessor:
         self,
         data_dir: str = "data/brain/ds003604",
         output_dir: str = "data/processed/fmri",
+        task: str = "Sem",
         smoothing_fwhm: float = 6.0,
         high_pass: float = 0.01,
         use_glm: bool = True,
@@ -51,6 +52,7 @@ class BatchPreprocessor:
         """
         self.data_dir = Path(data_dir)
         self.output_dir = Path(output_dir)
+        self.task = task
         self.smoothing_fwhm = smoothing_fwhm
         self.high_pass = high_pass
         self.use_glm = use_glm
@@ -93,8 +95,8 @@ class BatchPreprocessor:
             if not func_dir.exists():
                 continue
             
-            # Find semantic task BOLD files
-            bold_files = sorted(func_dir.glob("*task-Sem*_bold.nii.gz"))
+            # Find task-specific BOLD files
+            bold_files = sorted(func_dir.glob(f"*task-{self.task}*_bold.nii.gz"))
             
             if bold_files:
                 runs = []
@@ -137,7 +139,7 @@ class BatchPreprocessor:
         sessions_runs = self.check_subject_sessions(subject_id)
         
         if not sessions_runs:
-            print(f"  No semantic task data found for {subject_id}")
+            print(f"  No {self.task} task data found for {subject_id}")
             return {}
         
         print(f"  Found sessions: {list(sessions_runs.keys())}")
@@ -156,6 +158,7 @@ class BatchPreprocessor:
             preprocessor = FMRIPreprocessor(
                 data_dir=str(self.data_dir),
                 subject_id=subject_id,
+                task=self.task,
                 smoothing_fwhm=self.smoothing_fwhm,
                 high_pass=self.high_pass,
                 use_glm=self.use_glm,
@@ -288,6 +291,13 @@ def main():
         help="Sessions to process (default: all)"
     )
     parser.add_argument(
+        "--task",
+        type=str,
+        default="Sem",
+        choices=["Sem", "Phon", "Gram", "Plaus"],
+        help="Task name to process (default: Sem)"
+    )
+    parser.add_argument(
         "--smoothing-fwhm",
         type=float,
         default=6.0,
@@ -316,6 +326,7 @@ def main():
     batch = BatchPreprocessor(
         data_dir=args.data_dir,
         output_dir=args.output_dir,
+        task=args.task,
         smoothing_fwhm=args.smoothing_fwhm,
         high_pass=args.high_pass,
         use_glm=not args.no_glm,

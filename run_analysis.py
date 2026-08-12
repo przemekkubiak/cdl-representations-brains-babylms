@@ -26,7 +26,7 @@ def run_command(cmd: list, description: str):
 
 def find_reference_bold(data_dir: str):
     data_path = Path(data_dir)
-    matches = sorted(data_path.glob("sub-*/ses-*/func/*task-Sem*_bold.nii.gz"))
+    matches = sorted(data_path.glob("sub-*/ses-*/func/*task-*_bold.nii.gz"))
     if matches:
         return str(matches[0])
     return None
@@ -36,6 +36,19 @@ def main():
     parser = argparse.ArgumentParser(description="Run preprocessing + RSA + noise ceiling")
     parser.add_argument("--data-dir", type=str, default="data/brain/ds003604")
     parser.add_argument("--output-dir", type=str, default="data/processed/fmri")
+    parser.add_argument(
+        "--task",
+        type=str,
+        default="Sem",
+        choices=["Sem", "Phon", "Gram", "Plaus"],
+        help="Task to process (default: Sem)",
+    )
+    parser.add_argument(
+        "--characteristics-dir",
+        type=str,
+        default="data/brain/ds003604/stimuli/Stimulus_Characteristics",
+        help="Directory containing task-*_Stimulus_Characteristics.tsv files",
+    )
     parser.add_argument("--subjects", nargs="+")
     parser.add_argument("--sessions", nargs="+", choices=["ses-5", "ses-7", "ses-9"])
 
@@ -58,6 +71,16 @@ def main():
     parser.add_argument("--features", type=int)
     parser.add_argument("--skip-preprocessing", action="store_true")
     parser.add_argument("--skip-noise-ceiling", action="store_true")
+    parser.add_argument(
+        "--semantic-distance-summary",
+        action="store_true",
+        help="Summarize semantic-distance structure after session RSA",
+    )
+    parser.add_argument(
+        "--roi-label",
+        type=str,
+        help="Optional label to attach to semantic-distance summary outputs",
+    )
     parser.add_argument(
         "--comparison-method",
         type=str,
@@ -105,6 +128,7 @@ def main():
         "src/preprocessing/batch_preprocessing.py",
         "--data-dir", args.data_dir,
         "--output-dir", args.output_dir,
+        "--task", args.task,
         "--smoothing-fwhm", str(args.smoothing_fwhm),
         "--high-pass", str(args.high_pass),
     ]
@@ -128,6 +152,8 @@ def main():
         "src/rsa/session_based_rsa.py",
         "--pattern-dir", args.output_dir,
         "--output-dir", args.output_dir,
+        "--characteristics-dir", args.characteristics_dir,
+        "--task", args.task,
         "--metric", args.metric,
         "--aggregation", args.aggregation,
     ]
@@ -165,6 +191,24 @@ def main():
         print(f"\n[DRY RUN] Would execute: {' '.join(ceiling_cmd)}")
     else:
         run_command(ceiling_cmd, "STEP 4: Noise ceiling estimation")
+
+    if args.semantic_distance_summary:
+        summary_cmd = [
+            sys.executable,
+            "scripts/semantic_distance_summary.py",
+            "--input-dir", args.output_dir,
+        ]
+        if args.output_dir:
+            summary_cmd.extend(["--output-dir", args.output_dir])
+        if args.roi_label:
+            summary_cmd.extend(["--roi-label", args.roi_label])
+        if args.sessions:
+            summary_cmd.extend(["--sessions"] + args.sessions)
+
+        if args.dry_run:
+            print(f"\n[DRY RUN] Would execute: {' '.join(summary_cmd)}")
+        else:
+            run_command(summary_cmd, "STEP 5: Semantic-distance summary")
 
     print("\nAnalysis pipeline complete.")
 

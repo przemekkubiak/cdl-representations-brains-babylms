@@ -58,6 +58,12 @@ def ensure_dataset_checkout(
 def main():
     parser = argparse.ArgumentParser(description="Download ds003604 data only")
     parser.add_argument("--data-dir", type=str, default="data/brain/ds003604")
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        default=["Sem", "Phon", "Gram", "Plaus"],
+        help="Task names to download (default: Sem Phon Gram Plaus)",
+    )
     parser.add_argument("--subjects", nargs="+")
     parser.add_argument("--sessions", nargs="+", choices=["ses-5", "ses-7", "ses-9"])
     parser.add_argument("--download-workers", type=int, default=4)
@@ -78,9 +84,10 @@ def main():
         sys.executable,
         "scripts/batch_download_bold.py",
         "--data-dir", args.data_dir,
-        "--task", "Sem",
-        "--workers", str(args.download_workers),
+        "--tasks",
     ]
+    cmd.extend(args.tasks)
+    cmd.extend(["--workers", str(args.download_workers)])
 
     if args.subjects:
         cmd.extend(["--subjects"] + args.subjects)
