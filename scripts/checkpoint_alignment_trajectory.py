@@ -52,6 +52,15 @@ def infer_step(label: str, fallback: int) -> int:
 
 def resolve_checkpoints(args: argparse.Namespace) -> list[str]:
     checkpoints: list[str] = []
+
+    # Model-zoo family: resolve the ordered checkpoint trajectory from config.
+    if getattr(args, "model", None):
+        from src.language_models.babylm_integration import ModelZoo
+
+        zoo = ModelZoo(args.model_zoo)
+        for ckpt in zoo.resolve_checkpoints(args.model):
+            checkpoints.append(ckpt["ref"])
+
     if args.checkpoints:
         checkpoints.extend(args.checkpoints)
 
@@ -94,6 +103,16 @@ def resolve_checkpoints(args: argparse.Namespace) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Brain alignment trajectory over checkpoints")
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Model-zoo family name (configs/model_zoo.yaml); auto-resolves checkpoints",
+    )
+    parser.add_argument(
+        "--model-zoo",
+        default="configs/model_zoo.yaml",
+        help="Path to model zoo config",
+    )
     parser.add_argument(
         "--checkpoints",
         nargs="*",

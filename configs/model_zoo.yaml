@@ -1,0 +1,81 @@
+# Model zoo: families with ordered training checkpoints.
+#
+# Each entry defines a model family and the checkpoints (HF revisions or local
+# dirs) that make up its *developmental trajectory*. Consumed by
+# src/language_models/babylm_integration.py::ModelZoo and the checkpoint /
+# localization runners. Checkpoints are the LM analogue of child ages (ses-5/7/9).
+#
+# Fields per family:
+#   hf_repo:        HuggingFace repo id (mutually exclusive with checkpoint_glob)
+#   checkpoint_glob: local glob for checkpoint dirs (used if hf_repo absent)
+#   revisions:      ordered list of {name, step, tokens?} (HF branch/tag per ckpt)
+#   arch:           architecture family hint (gpt2 | gptneox) for layer discovery
+#   developmental_map: optional {step: ses-*} nearest-brain-session anchoring
+#   notes:          free text
+
+families:
+
+  # ---- Pythia suite: dense training trajectory (compute-confound robustness) ----
+  # Public branches are named step0..step143000. We log-space-sample early steps
+  # (where representations change fastest) and thin the tail.
+  pythia-160m:
+    hf_repo: EleutherAI/pythia-160m
+    arch: gptneox
+    revisions:
+      - {name: step0,      step: 0,      tokens: 0}
+      - {name: step1,      step: 1,      tokens: 2097152}
+      - {name: step2,      step: 2,      tokens: 4194304}
+      - {name: step4,      step: 4,      tokens: 8388608}
+      - {name: step8,      step: 8,      tokens: 16777216}
+      - {name: step16,     step: 16,     tokens: 33554432}
+      - {name: step32,     step: 32,     tokens: 67108864}
+      - {name: step64,     step: 64,     tokens: 134217728}
+      - {name: step128,    step: 128,    tokens: 268435456}
+      - {name: step256,    step: 256,    tokens: 536870912}
+      - {name: step512,    step: 512,    tokens: 1073741824}
+      - {name: step1000,   step: 1000,   tokens: 2097152000}
+      - {name: step2000,   step: 2000,   tokens: 4194304000}
+      - {name: step4000,   step: 4000,   tokens: 8388608000}
+      - {name: step8000,   step: 8000,   tokens: 16777216000}
+      - {name: step16000,  step: 16000,  tokens: 33554432000}
+      - {name: step32000,  step: 32000,  tokens: 67108864000}
+      - {name: step64000,  step: 64000,  tokens: 134217728000}
+      - {name: step143000, step: 143000, tokens: 299892736000}
+    notes: "step*tokens ~ step * 2^21 (batch 1024 x seq 2048). Use for dense trajectory."
+
+  pythia-410m:
+    hf_repo: EleutherAI/pythia-410m
+    arch: gptneox
+    revisions:
+      - {name: step0,      step: 0}
+      - {name: step8,      step: 8}
+      - {name: step64,     step: 64}
+      - {name: step512,    step: 512}
+      - {name: step2000,   step: 2000}
+      - {name: step8000,   step: 8000}
+      - {name: step32000,  step: 32000}
+      - {name: step143000, step: 143000}
+    notes: "Larger Pythia for model-size covariate in the compute-confound analysis."
+
+  # ---- BabyLM GPT-2 runs: in-domain, child-scale (headline developmental claim) ----
+  # NOTE: confirm the exact HF revision/branch names for these repos before running.
+  # The existing checkpoint_alignment_trajectory.py references BrainAlign/gpt2-babylm-*.
+  # If you instead have local training checkpoints, set checkpoint_glob and delete
+  # hf_repo/revisions.
+  babylm-gpt2:
+    hf_repo: BrainAlign/gpt2-babylm-9   # <-- CONFIRM repo id / that revisions exist
+    arch: gpt2
+    revisions:
+      - {name: checkpoint-1000,   step: 1000}
+      - {name: checkpoint-5000,   step: 5000}
+      - {name: checkpoint-10000,  step: 10000}
+      - {name: checkpoint-25000,  step: 25000}
+      - {name: checkpoint-50000,  step: 50000}
+      - {name: main,              step: -1}   # -1 => remapped to max+1 (final)
+    developmental_map: {5000: ses-5, 25000: ses-7, 50000: ses-9}
+    notes: "CONFIRM revision names on the Hub. child-scale data => dev-honest."
+
+  babylm-gpt2-local:
+    checkpoint_glob: "checkpoints/gpt2-babylm-*/checkpoint-*"
+    arch: gpt2
+    notes: "Use when training checkpoints live on local disk (auto-discovered, sorted)."

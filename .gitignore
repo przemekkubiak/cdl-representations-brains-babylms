@@ -93,3 +93,8 @@ wandb/
 tmp/
 temp/
 *.tmp
+
+# Private research notes (never commit)
+PRIVATE_NOTES.md
+*.private.md
+notes/private/

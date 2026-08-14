@@ -13,6 +13,79 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
+class ModelZoo:
+    """Registry of model families with ordered training checkpoints.
+
+    Reads ``configs/model_zoo.yaml`` and resolves, for any family, the ordered
+    list of checkpoint references (HF ``repo@revision`` strings or local dirs)
+    that make up its developmental trajectory. This is Deliverable (1): a
+    first-class notion that "a model = a family + an ordered list of checkpoints".
+    """
+
+    def __init__(self, zoo_path: str = "configs/model_zoo.yaml"):
+        self.zoo_path = Path(zoo_path)
+        self.families = self._load()
+
+    def _load(self) -> dict:
+        if not self.zoo_path.exists():
+            logger.warning(f"Model zoo not found: {self.zoo_path}")
+            return {}
+        with open(self.zoo_path) as f:
+            data = yaml.safe_load(f) or {}
+        families = data.get("families", {})
+        logger.info(f"Loaded {len(families)} model families from {self.zoo_path}")
+        return families
+
+    def list_families(self) -> List[str]:
+        return list(self.families.keys())
+
+    def get_family(self, name: str) -> Optional[dict]:
+        return self.families.get(name)
+
+    def get_arch(self, name: str) -> Optional[str]:
+        fam = self.families.get(name, {})
+        return fam.get("arch")
+
+    def resolve_checkpoints(self, name: str) -> List[dict]:
+        """Return ordered checkpoint descriptors for a family.
+
+        Each descriptor is ``{"ref": <hf repo@rev or local path>, "step": int,
+        "tokens": int|None, "name": str}``. HF revisions become ``repo@rev``
+        strings (understood by LanguageModelPipeline / the trajectory script);
+        local families expand ``checkpoint_glob``.
+        """
+        fam = self.families.get(name)
+        if fam is None:
+            raise KeyError(f"Unknown model family '{name}'. Have: {self.list_families()}")
+
+        out: List[dict] = []
+        hf_repo = fam.get("hf_repo")
+        if hf_repo and fam.get("revisions"):
+            for rev in fam["revisions"]:
+                ref = f"{hf_repo}@{rev['name']}"
+                out.append(
+                    {
+                        "ref": ref,
+                        "name": rev["name"],
+                        "step": rev.get("step"),
+                        "tokens": rev.get("tokens"),
+                    }
+                )
+        elif fam.get("checkpoint_glob"):
+            for m in sorted(Path().glob(fam["checkpoint_glob"])):
+                if m.is_dir():
+                    out.append({"ref": str(m), "name": m.name, "step": None, "tokens": None})
+        else:
+            raise ValueError(
+                f"Family '{name}' has neither hf_repo+revisions nor checkpoint_glob."
+            )
+        return out
+
+    def developmental_map(self, name: str) -> dict:
+        """step -> brain session anchoring, if provided."""
+        return (self.families.get(name) or {}).get("developmental_map", {})
+
+
 class BabyLMModelRegistry:
     """
     Registry for BabyLM models defined in configs/.
