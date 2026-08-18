@@ -3,22 +3,22 @@
     "disk_floor_gb": 350,
     "ended": "2026-08-18T21:01:25Z",
     "gpus": "0,1,2",
-    "pid": 3003663,
-    "started": "2026-08-18T20:38:17Z",
-    "status": "finished_all_failed",
+    "pid": 3010883,
+    "started": "2026-08-18T21:54:31Z",
+    "status": "running",
     "summary": "ALL 4 STAGES FAILED -- tier0=failed(aborted_disk_floor) tier1=aborted_disk(disk_floor) tier2=aborted_disk(disk_floor) tier3=aborted_disk(disk_floor)"
   },
   "tier0": {
     "attempt": 1,
-    "duration_s": 1384,
-    "ended": "2026-08-18T21:01:24Z",
-    "exit_code": 143,
-    "failure": "aborted_disk_floor",
+    "duration_s": 7423,
+    "ended": "2026-08-18T23:58:18Z",
+    "exit_code": 0,
+    "failure": "none",
     "log": "logs/tier0.log",
     "outputs_check": "ok",
-    "peak_gpu_mem_mib_gpu012": 0,
-    "started": "2026-08-18T20:38:20Z",
-    "status": "failed"
+    "peak_gpu_mem_mib_gpu012": 2183,
+    "started": "2026-08-18T21:54:35Z",
+    "status": "ok"
   },
   "tier1": {
     "failure": "disk_floor",
