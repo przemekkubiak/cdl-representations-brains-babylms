@@ -1,44 +1,36 @@
 {
   "driver": {
     "disk_floor_gb": 350,
-    "ended": "2026-08-18T13:35:04Z",
+    "ended": "2026-08-18T14:49:38Z",
     "gpus": "0,1,2",
-    "pid": 2955824,
-    "started": "2026-08-18T13:34:32Z",
-    "status": "finished"
+    "pid": 2958022,
+    "started": "2026-08-18T13:45:29Z",
+    "status": "finished_all_failed",
+    "summary": "ALL 4 STAGES FAILED -- tier0=failed(aborted_disk_floor) tier1=aborted_disk(disk_floor) tier2=aborted_disk(disk_floor) tier3=aborted_disk(disk_floor)"
+  },
+  "tier0": {
+    "attempt": 1,
+    "duration_s": 3846,
+    "ended": "2026-08-18T14:49:38Z",
+    "exit_code": 143,
+    "failure": "aborted_disk_floor",
+    "log": "logs/tier0.log",
+    "outputs_check": "no_session_rdms",
+    "peak_gpu_mem_mib_gpu012": 0,
+    "started": "2026-08-18T13:45:32Z",
+    "status": "failed"
   },
   "tier1": {
-    "attempt": 1,
-    "duration_s": 4,
-    "ended": "2026-08-18T13:34:40Z",
-    "exit_code": 1,
-    "failure": "code_or_data",
-    "log": "logs/tier1.log",
-    "peak_gpu_mem_mib_gpu012": 0,
-    "started": "2026-08-18T13:34:35Z",
-    "status": "failed"
+    "failure": "disk_floor",
+    "status": "aborted_disk"
   },
   "tier2": {
-    "attempt": 1,
-    "duration_s": 4,
-    "ended": "2026-08-18T13:34:50Z",
-    "exit_code": 1,
-    "failure": "code_or_data",
-    "log": "logs/tier2.log",
-    "peak_gpu_mem_mib_gpu012": 0,
-    "started": "2026-08-18T13:34:45Z",
-    "status": "failed"
+    "failure": "disk_floor",
+    "status": "aborted_disk"
   },
   "tier3": {
-    "attempt": 1,
-    "duration_s": 5,
-    "ended": "2026-08-18T13:35:00Z",
-    "exit_code": 1,
-    "failure": "code_or_data",
-    "log": "logs/tier3.log",
-    "peak_gpu_mem_mib_gpu012": 0,
-    "started": "2026-08-18T13:34:55Z",
-    "status": "failed"
+    "failure": "disk_floor",
+    "status": "aborted_disk"
   },
   "tier3b": {
     "reason": "Runbook DATASET=ds00XXXX is a placeholder, not a real accession. scripts/batch_download_bold.py hardcodes every download URL to OpenNeuroDatasets/ds003604 and contrasts are built from ds003604 stimuli, so any other DATASET tag would re-download ds003604 and mislabel it as a second study. Not guessed, not fabricated -- needs a real accession plus a dataset-aware download path.",
