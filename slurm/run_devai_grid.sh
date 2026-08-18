@@ -137,6 +137,17 @@ python scripts/make_figures.py --families "${FAMILIES[@]}" \
     --devai-dir "$DEVAI_DIR" --out "${FIG_DIR:-figures}/$DATASET" \
     || echo "  ! figure generation failed"
 
+# ---- F. back up results: git summaries + HuggingFace dataset ------------- #
+if [ "${BACKUP:-1}" = "1" ]; then
+  echo ""; echo "######## BACKUP ########"
+  HF_ARG=(); [ -n "${BACKUP_HF_REPO:-}" ] && HF_ARG=(--hf-repo "$BACKUP_HF_REPO")
+  python scripts/backup_results.py \
+      --results "$GRID_PARENT" "${DEVAI_DIR%/*}" "${FIG_DIR:-figures}" \
+      --git-summary-dir "${GIT_SUMMARY_DIR:-paper_results}" \
+      "${HF_ARG[@]}" ${BACKUP_PRIVATE:+--private} || echo "  ! backup step failed"
+  echo "  -> commit paper_results to GitHub:  git add ${GIT_SUMMARY_DIR:-paper_results} && git commit && git push"
+fi
+
 echo ""
 echo "=========================================="
 echo "DONE  $(date)"
