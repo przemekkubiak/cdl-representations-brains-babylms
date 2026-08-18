@@ -117,10 +117,17 @@ for FAM in "${FAMILIES[@]}"; do
       || echo "  ! join failed for $FAM"
 done
 
+# ---- E. publication figures + LaTeX tables ------------------------------- #
+echo ""; echo "######## FIGURES ########"
+python scripts/make_figures.py --families "${FAMILIES[@]}" \
+    --grid-dir "$GRID_DIR" --devai-dir "$DEVAI_DIR" --out "${FIG_DIR:-figures}" \
+    || echo "  ! figure generation failed"
+
 echo ""
 echo "=========================================="
 echo "DONE  $(date)"
-echo "Per-checkpoint: $GRID_DIR/{alignment,isolation,mechanistic}_<family>.csv"
+echo "Per-checkpoint: $GRID_DIR/{alignment,isolation,mechanistic,mechanistic_layer}_<family>.csv"
 echo "Claims summary: $DEVAI_DIR/devai_summary_<family>.csv"
 echo "Isolation cmp:  $DEVAI_DIR/isolation_comparison_<family>.csv"
+echo "Figures:        ${FIG_DIR:-figures}/fig{1..6}_*.pdf  + table{1,2}_*.tex"
 echo "=========================================="

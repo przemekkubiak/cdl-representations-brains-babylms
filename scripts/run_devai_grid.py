@@ -127,7 +127,7 @@ def main() -> None:
 
     print(f"> {family}: {len(checkpoints)} checkpoints | tasks={tasks} | probe={len(probe)}")
 
-    align_rows, iso_rows, mech_rows = [], [], []
+    align_rows, iso_rows, mech_rows, mech_layer_rows = [], [], [], []
     prev_probe_acts = None
 
     for ck in checkpoints:
@@ -194,6 +194,16 @@ def main() -> None:
             row = {"family": family, "model_ref": ref, "step": step, "tokens": tokens}
             row.update({k: m[k] for k in SCALAR_METRICS})
             mech_rows.append(row)
+            # per-layer rows (for the layer x training-stage heatmap, Fig 3)
+            for li in range(len(m["per_by_layer"])):
+                mech_layer_rows.append({
+                    "family": family, "step": step, "layer": li,
+                    "per": float(m["per_by_layer"][li]),
+                    "gini": float(m["gini_by_layer"][li]),
+                    "hoyer": float(m["hoyer_by_layer"][li]),
+                    "norm": float(m["norm_by_layer"][li]),
+                    "condition_number": float(m["condition_number_by_layer"][li]),
+                })
         except Exception as e:
             print(f"  ! mechanistic failed: {e}")
 
@@ -220,6 +230,7 @@ def main() -> None:
     _save(align_rows, "alignment", ["task", "session", "step"])
     _save(iso_rows, "isolation", ["phenomenon", "step"])
     _save(mech_rows, "mechanistic", ["step"])
+    _save(mech_layer_rows, "mechanistic_layer", ["step", "layer"])
     print("\nDone.")
 
 
