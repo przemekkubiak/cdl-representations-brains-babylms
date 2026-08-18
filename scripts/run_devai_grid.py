@@ -298,8 +298,9 @@ def main() -> None:
             # Prefer reconstructed stimulus text; refuse to fall back to filenames,
             # because an alignment computed over .wav names is a number without a
             # meaning and must not be published as a result.
-            stim = next((bt[s]["texts"] for s in args.sessions
-                         if bt.get(s) and bt[s].get("texts")), None)
+            ref_session = next((s for s in args.sessions
+                                if bt.get(s) and bt[s].get("texts")), None)
+            stim = bt[ref_session]["texts"] if ref_session else None
             if stim is None:
                 have = [s for s in args.sessions if bt.get(s)]
                 if have:
@@ -332,6 +333,25 @@ def main() -> None:
                 if not b:
                     continue
                 brdm = b["rdm"]
+                # The LM RDM is built ONCE, from ref_session's stimulus order, and then
+                # compared against every session's brain RDM. Matching on shape alone is
+                # not enough: two sessions can both have 72 stimuli in a different order,
+                # or a different 72, and the correlation would silently be computed
+                # between mismatched stimulus pairs. Align by stimulus identity, and
+                # reorder the brain RDM when it merely differs in order.
+                b_stim = b.get("texts") or b.get("stimuli")
+                if b_stim is not None and ref_session is not None and session != ref_session:
+                    if list(b_stim) != list(stim):
+                        pos = {t: i for i, t in enumerate(b_stim)}
+                        if set(stim) <= set(pos) and len(set(b_stim)) == len(b_stim):
+                            idx = np.array([pos[t] for t in stim])
+                            brdm = brdm[np.ix_(idx, idx)]
+                            print(f"  ~ reordered {task}/{session} brain RDM to match "
+                                  f"{ref_session} stimulus order")
+                        else:
+                            print(f"  ~ stimulus mismatch {task}/{session} vs "
+                                  f"{ref_session}: skipping (not a reordering)")
+                            continue
                 if brdm.shape != lm_rdm.shape:
                     print(f"  ~ shape mismatch {task}/{session}: {lm_rdm.shape} vs {brdm.shape}")
                     continue
