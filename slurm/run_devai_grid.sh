@@ -9,6 +9,12 @@
 #SBATCH --gres=gpu:a100:1
 #SBATCH --partition=gpu
 #
+# CLUSTER PATH. The #SBATCH headers above are what make this safe on a scheduler.
+# On a bare box they are inert comments -- nothing scopes CUDA_VISIBLE_DEVICES (GPUs
+# 4-7 belong to another project), nothing caps wall-clock, nothing caps memory. There,
+# use the bare-metal entry point instead:  bash run_devai_bare.sh --tier {0,1,2,3}
+# which supplies the pinning and limits the scheduler would have. See PICKUP.md.
+#
 # ONE-SCRIPT DevAI experimental grid (single A100 allocation):
 #
 #   A. CPU brain (per task): download BOLD -> preprocess -> session RDMs   [reused]
