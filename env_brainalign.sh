@@ -21,5 +21,20 @@ export OMP_NUM_THREADS=8
 # ses-7 is the large one (217 subjects, ~250 GB of transient patterns) and has aborted two runs;
 # ses-5 and ses-9 complete inside ~90 GB. Clear ONLY_SESSIONS once the sweep has finished and the
 # disk is ours, then rerun -- sessions with an RDM already present are skipped, so it resumes.
-export ONLY_SESSIONS="${ONLY_SESSIONS:-ses-5,ses-9}"
-export DISK_FLOOR_GB="${DISK_FLOOR_GB:-400}"
+# With MAX_SUBJECTS capping every batch to the same size, the large session costs no more than a
+# small one, so full task x session coverage is affordable again. Left empty deliberately.
+export ONLY_SESSIONS="${ONLY_SESSIONS:-}"
+export DISK_FLOOR_GB="${DISK_FLOOR_GB:-350}"
+
+# Cap subjects per session batch. A session RDM is an atom -- it aggregates across every subject
+# in the session -- so the ONLY way to shrink a batch is to build it from fewer subjects.
+# Measured cost per subject, which varies a lot by task and is what three aborted runs got wrong:
+#     Sem/ses-5   91 subj -> 180 patterns,  ~60 GB  = 0.66 GB/subject
+#     Phon/ses-5 122 subj -> 231 patterns,  173 GB  = 1.42 GB/subject
+# Sharing the filesystem with a merge sweep that aborts below 250 GB, the headroom above our own
+# 350 GB floor is ~80 GB, so 40 subjects (~57 GB at the Phon rate) fits every task with margin.
+# 40 subjects is a real RDM, just a noisier one than 122 would give. It gets full task x session
+# coverage onto the Hub in about an hour and unblocks Tier 1, instead of a fourth abort with
+# nothing to show. Clear MAX_SUBJECTS and rerun once the sweep is done to rebuild at full N --
+# rdm_cache_hf.py push overwrites, so the cached RDMs upgrade in place.
+export MAX_SUBJECTS="${MAX_SUBJECTS:-40}"
