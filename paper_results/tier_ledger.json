@@ -16,5 +16,16 @@
     "peak_gpu_mem_mib_gpu012": 0,
     "started": "2026-08-18T13:34:35Z",
     "status": "failed"
+  },
+  "tier2": {
+    "attempt": 1,
+    "duration_s": 4,
+    "ended": "2026-08-18T13:34:50Z",
+    "exit_code": 1,
+    "failure": "code_or_data",
+    "log": "logs/tier2.log",
+    "peak_gpu_mem_mib_gpu012": 0,
+    "started": "2026-08-18T13:34:45Z",
+    "status": "failed"
   }
 }
