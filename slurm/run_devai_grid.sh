@@ -40,6 +40,14 @@ SKIP_BRAIN="${SKIP_BRAIN:-0}"
 MAX_CKPT="${MAX_CKPT:-25}"          # log-subsample dense pico trajectories (0 = all 126)
 BATCH_SIZE="${BATCH_SIZE:-16}"
 
+# SMOKE=1: ~2-min sanity run — one small family, 2 checkpoints, no brain, no RSA.
+# Confirms pico/Beetle actually load + extract on THIS cluster before the full sweep.
+if [ "${SMOKE:-0}" = "1" ]; then
+  SKIP_BRAIN=1; MAX_CKPT=2
+  [ $# -eq 0 ] && set -- pico-decoder-tiny
+  echo ">> SMOKE MODE: family=$* max_ckpt=$MAX_CKPT (isolation+mechanistic only; RSA skipped without brain RDMs)"
+fi
+
 # DevAI full-paper default grid: pico scale ladder + Beetle English data-budget axis.
 FAMILIES=("$@")
 [ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(
