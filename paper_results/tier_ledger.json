@@ -1,10 +1,11 @@
 {
   "driver": {
     "disk_floor_gb": 350,
+    "ended": "2026-08-18T13:35:04Z",
     "gpus": "0,1,2",
     "pid": 2955824,
     "started": "2026-08-18T13:34:32Z",
-    "status": "running"
+    "status": "finished"
   },
   "tier1": {
     "attempt": 1,
@@ -38,5 +39,9 @@
     "peak_gpu_mem_mib_gpu012": 0,
     "started": "2026-08-18T13:34:55Z",
     "status": "failed"
+  },
+  "tier3b": {
+    "reason": "Runbook DATASET=ds00XXXX is a placeholder, not a real accession. scripts/batch_download_bold.py hardcodes every download URL to OpenNeuroDatasets/ds003604 and contrasts are built from ds003604 stimuli, so any other DATASET tag would re-download ds003604 and mislabel it as a second study. Not guessed, not fabricated -- needs a real accession plus a dataset-aware download path.",
+    "status": "skipped"
   }
 }
