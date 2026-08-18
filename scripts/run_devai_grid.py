@@ -19,6 +19,7 @@ specialization table to test the correlations (alignment~mechanistic; LM~brain i
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -128,6 +129,76 @@ def _rsa(lm_rdm, brdm, normalize=False, bootstrap=0, seed=0):
             out["rsa_lo"], out["rsa_hi"] = (float(np.percentile(vals, 2.5)),
                                             float(np.percentile(vals, 97.5)))
     return out
+
+
+
+def _hf_cache_dirs():
+    """Every HF cache this process might actually be writing to."""
+    # Both layouts are live in practice: some transformers/hub versions put the
+    # models--* dirs under <HF_HOME>/hub, others directly under <HF_HOME>. Measured on
+    # this box: HF_HOME=/root/hf_cache_brainalign holds models--* at the TOP level, so
+    # scanning only <HF_HOME>/hub found nothing and evicted nothing. Take whichever
+    # directories actually contain a models--* entry.
+    cands = []
+    for env in ("HF_HUB_CACHE", "TRANSFORMERS_CACHE", "HF_HOME"):
+        v = os.environ.get(env)
+        if v:
+            cands += [Path(v), Path(v) / "hub"]
+    cands += [Path(".cache/huggingface"), Path(".cache/huggingface/hub")]
+    seen, out = set(), []
+    for c in cands:
+        if not c.is_dir():
+            continue
+        c = c.resolve()
+        if str(c) in seen:
+            continue
+        if not any(c.glob("models--*")):
+            continue
+        seen.add(str(c)); out.append(c)
+    return out
+
+
+def _evict_hf_revision(ref: str) -> None:
+    """Drop a checkpoint's weights from the HF cache once it has been measured.
+
+    WHY. Tier 1 is 180 checkpoint loads and the HF cache never evicts anything, so it
+    would accumulate roughly 500 GB (pico-decoder-large alone is 12.3 GB x 25). This box
+    shares one 1.8T overlay with a 96-hour merge sweep that aborts itself below 250 GB
+    free, and our own floor is 350 GB, so an un-evicted cache does not merely waste disk
+    -- it aborts the tier and endangers the neighbouring job. The loop never revisits a
+    revision, so the one just finished is always safe to drop. Peak cache becomes one
+    checkpoint instead of the whole sweep.
+
+    Set DEVAI_KEEP_HF_CACHE=1 to disable (only sensible with disk to spare).
+    """
+    if os.environ.get("DEVAI_KEEP_HF_CACHE") == "1" or "@" not in ref:
+        return
+    repo, rev = ref.split("@", 1)
+    try:
+        from huggingface_hub import scan_cache_dir
+    except Exception:
+        return
+    for cdir in _hf_cache_dirs():
+        try:
+            info = scan_cache_dir(cdir)
+        except Exception:
+            continue
+        hashes = []
+        for r in info.repos:
+            if r.repo_id != repo:
+                continue
+            for rv in r.revisions:
+                if rv.commit_hash == rev or rev in set(rv.refs):
+                    hashes.append(rv.commit_hash)
+        if not hashes:
+            continue
+        try:
+            strategy = info.delete_revisions(*hashes)
+            freed = strategy.expected_freed_size_str
+            strategy.execute()
+            print(f"  [cache] evicted {repo}@{rev[:12]} ({freed})")
+        except Exception as e:
+            print(f"  [cache] evict failed for {repo}@{rev[:12]}: {type(e).__name__}")
 
 
 def _load_brain(brain_root: str, task: str, session: str):
@@ -322,6 +393,7 @@ def main() -> None:
             torch.cuda.empty_cache()
         except Exception:
             pass
+        _evict_hf_revision(ref)
 
     # ---- write outputs ----------------------------------------------------
     def _save(rows, name, sort_cols):
