@@ -1,23 +1,23 @@
 {
   "driver": {
     "disk_floor_gb": 350,
-    "ended": "2026-08-18T14:49:38Z",
+    "ended": "2026-08-18T19:38:09Z",
     "gpus": "0,1,2",
-    "pid": 2958022,
-    "started": "2026-08-18T13:45:29Z",
+    "pid": 2988622,
+    "started": "2026-08-18T18:26:57Z",
     "status": "finished_all_failed",
     "summary": "ALL 4 STAGES FAILED -- tier0=failed(aborted_disk_floor) tier1=aborted_disk(disk_floor) tier2=aborted_disk(disk_floor) tier3=aborted_disk(disk_floor)"
   },
   "tier0": {
     "attempt": 1,
-    "duration_s": 3846,
-    "ended": "2026-08-18T14:49:38Z",
+    "duration_s": 4269,
+    "ended": "2026-08-18T19:38:09Z",
     "exit_code": 143,
     "failure": "aborted_disk_floor",
     "log": "logs/tier0.log",
-    "outputs_check": "no_session_rdms",
+    "outputs_check": "ok",
     "peak_gpu_mem_mib_gpu012": 0,
-    "started": "2026-08-18T13:45:32Z",
+    "started": "2026-08-18T18:27:00Z",
     "status": "failed"
   },
   "tier1": {
