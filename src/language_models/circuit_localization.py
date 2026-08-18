@@ -135,6 +135,7 @@ def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
         ("gpt_neox.layers", "gpt_neox"),           # Pythia / GPT-NeoX
         ("model.layers", "model"),                 # LLaMA / Mistral / OLMo
         ("model.decoder.layers", "model.decoder"), # OPT
+        ("pico_decoder.layers", "pico_decoder"),   # pico-lm / Beetle (PicoDecoderHF)
     ]
     for block_path, _root in candidates:
         try:
@@ -144,6 +145,20 @@ def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
                 return [f"{block_path}.{i}" for i in range(n)], n
         except (AttributeError, TypeError):
             continue
+
+    # Generic fallback: the largest nn.ModuleList of repeated blocks is almost
+    # always the transformer stack. Works for custom architectures we don't list.
+    best_path, best_n = None, 0
+    for mod_name, mod in model.named_modules():
+        if isinstance(mod, torch.nn.ModuleList) and len(mod) > best_n:
+            # require homogeneous children (same type) to avoid embeddings lists
+            child_types = {type(c).__name__ for c in mod}
+            if len(child_types) == 1:
+                best_path, best_n = mod_name, len(mod)
+    if best_path is not None:
+        logger.info(f"discover_block_layer_names: generic fallback -> {best_path} ({best_n} blocks)")
+        return [f"{best_path}.{i}" for i in range(best_n)], best_n
+
     raise ValueError(
         "Could not discover transformer blocks; add this architecture to "
         "discover_block_layer_names()."

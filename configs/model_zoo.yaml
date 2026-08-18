@@ -164,3 +164,49 @@ families:
     checkpoint_glob: "checkpoints/gpt2-babylm-*/checkpoint-*"
     arch: gpt2
     notes: "Use when training checkpoints live on local disk (auto-discovered, sorted)."
+
+  # ---- pico-lm scale ladder: PicoDecoderHF, dense checkpoints + learning dynamics -
+  # Verified on Hub 2026-08-18. Per-step weights live in the run branch's commit
+  # history (no step* branches), so we use commit_trajectory: each "Saving HF Model
+  # -- Step N" commit is a checkpoint (~126, every 1000 steps to 125000). These are
+  # the pico-analyze native models. arch: pico => generic block discovery
+  # (pico_decoder.layers). Loading needs trust_remote_code (already set) and a
+  # transformers compatible with pico's custom modeling_*.py.
+  pico-decoder-tiny:
+    hf_repo: pico-lm/pico-decoder-tiny
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-tiny-1
+    notes: "pico scale ladder (smallest). dense commit-history checkpoints."
+  pico-decoder-small:
+    hf_repo: pico-lm/pico-decoder-small
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-small-1
+    notes: "pico 65M (12L/384). dense checkpoints + learning_dynamics."
+  pico-decoder-medium:
+    hf_repo: pico-lm/pico-decoder-medium
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-medium-1
+    notes: "pico scale ladder (medium)."
+  pico-decoder-large:
+    hf_repo: pico-lm/pico-decoder-large
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-large-1
+    notes: "pico scale ladder (largest, ~500M)."
+
+  # ---- Beetle English monolingual: data-budget axis (matches ds003604 English) ----
+  # PicoDecoderHF (14L/768). Checkpoints exposed as clean step-<N> branches
+  # (log-spaced powers of 2), resolved via all_revisions. Verified on Hub.
+  beetle-humanscale-eng:
+    hf_repo: Beetle-HumanScale/beetle-monolingual-humanscale-eng
+    arch: pico
+    all_revisions: true
+    notes: "Human-scale English (developmentally plausible budget). 35 step branches."
+  beetle-fineweb3-eng:
+    hf_repo: Beetle-FineWeb3-24B/beetle-monolingual-fineweb3-eng
+    arch: pico
+    all_revisions: true
+    notes: "FineWeb 24B English (web-scale budget). 19 step branches."

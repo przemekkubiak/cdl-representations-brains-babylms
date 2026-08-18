@@ -60,15 +60,32 @@ class ModelZoo:
 
         out: List[dict] = []
         hf_repo = fam.get("hf_repo")
-        if hf_repo and fam.get("all_revisions"):
-            # Enumerate *every* step* checkpoint on the Hub (full trajectory).
-            steps = self._all_hub_steps(hf_repo)
+        if hf_repo and fam.get("commit_trajectory"):
+            # Per-step weights live in the run branch's commit history (pico-lm
+            # layout): each "Saving HF Model -- Step <N>" commit is a checkpoint.
+            run_branch = fam.get("run_branch")
+            title_re = fam.get(
+                "commit_title_regex", r"Saving HF Model\s*--\s*Step\s*(\d+)"
+            )
             tokens_per_step = fam.get("tokens_per_step")
-            for s in steps:
+            for name, step, sha in self._commit_checkpoints(hf_repo, run_branch, title_re):
                 out.append(
                     {
-                        "ref": f"{hf_repo}@step{s}",
-                        "name": f"step{s}",
+                        "ref": f"{hf_repo}@{sha}",
+                        "name": name,
+                        "step": step,
+                        "tokens": (step * tokens_per_step) if tokens_per_step else None,
+                    }
+                )
+        elif hf_repo and fam.get("all_revisions"):
+            # Enumerate every step* branch on the Hub (full trajectory). Uses the
+            # actual branch names (handles both `step1000` and `step-1024`).
+            tokens_per_step = fam.get("tokens_per_step")
+            for branch, s in self._all_hub_steps(hf_repo):
+                out.append(
+                    {
+                        "ref": f"{hf_repo}@{branch}",
+                        "name": branch,
                         "step": s,
                         "tokens": (s * tokens_per_step) if tokens_per_step else None,
                     }
@@ -99,11 +116,11 @@ class ModelZoo:
     _PYTHIA_STEPS = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512] + list(range(1000, 143001, 1000))
 
     @staticmethod
-    def _all_hub_steps(hf_repo: str) -> List[int]:
-        """All ``step<N>`` branches for a repo, sorted ascending by N.
+    def _all_hub_steps(hf_repo: str):
+        """All ``step<N>`` / ``step-<N>`` branches, as ``(branch_name, step)`` sorted by step.
 
-        Queries the Hub; falls back to the Pythia schedule if that fails so the
-        pipeline still runs offline against a warm HF cache.
+        Queries the Hub; falls back to reconstructed Pythia ``stepN`` branch names
+        if that fails so the pipeline still runs offline against a warm HF cache.
         """
         import re
 
@@ -111,15 +128,44 @@ class ModelZoo:
             from huggingface_hub import HfApi
 
             branches = [b.name for b in HfApi().list_repo_refs(hf_repo).branches]
-            steps = sorted(
-                {int(m.group(1)) for b in branches if (m := re.fullmatch(r"step(\d+)", b))}
-            )
-            if steps:
-                return steps
+            pairs = {
+                (b, int(m.group(1)))
+                for b in branches
+                if (m := re.fullmatch(r"step[-_]?(\d+)", b))
+            }
+            if pairs:
+                return sorted(pairs, key=lambda p: p[1])
             logger.warning(f"No step* branches found on {hf_repo}; using Pythia schedule.")
         except Exception as e:  # network/auth/repo issues -> offline fallback
             logger.warning(f"Could not list Hub refs for {hf_repo} ({e}); using Pythia schedule.")
-        return list(ModelZoo._PYTHIA_STEPS)
+        return [(f"step{s}", s) for s in ModelZoo._PYTHIA_STEPS]
+
+    @staticmethod
+    def _commit_checkpoints(hf_repo: str, run_branch: Optional[str], title_re: str):
+        """Return ``(name, step, commit_sha)`` for each checkpoint commit on a run
+        branch (pico-lm layout), sorted ascending by step.
+
+        pico-train commits one "Saving HF Model -- Step <N>" per checkpoint; the
+        commit tree at that SHA holds that step's ``model.safetensors``.
+        """
+        import re
+
+        from huggingface_hub import HfApi
+
+        api = HfApi()
+        if run_branch is None:
+            # default run branch = first non-main, non-PR branch
+            branches = [b.name for b in api.list_repo_refs(hf_repo).branches]
+            cand = [b for b in branches if b != "main" and not b.startswith("pr/")]
+            run_branch = cand[0] if cand else "main"
+        pat = re.compile(title_re)
+        out = {}
+        for c in api.list_repo_commits(hf_repo, revision=run_branch):
+            m = pat.search(c.title or "")
+            if m:
+                step = int(m.group(1))
+                out.setdefault(step, (f"step{step}", step, c.commit_id))
+        return [out[s] for s in sorted(out)]
 
     def developmental_map(self, name: str) -> dict:
         """step -> brain session anchoring, if provided."""
