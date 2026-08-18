@@ -124,6 +124,66 @@ def _get_submodule(root: torch.nn.Module, dotted: str) -> torch.nn.Module:
     return cur
 
 
+def _assert_fits_on_device(model: torch.nn.Module, device: torch.device,
+                           headroom: float = 0.75) -> None:
+    """Refuse a load that would not comfortably fit in free VRAM.
+
+    This box is shared: an OOM here does not just fail our run, it can disturb other
+    work on the card. So we never "see if it works" -- we require the parameter
+    footprint (x2, a slack allowance for activations and workspace) to fit inside
+    ``headroom`` of what is actually free, and raise otherwise so the caller skips
+    this checkpoint and records it rather than risking the device.
+
+    These are small models (pico-decoder, GPT-2 scale), so in practice this is
+    uneventful -- but the check has to exist for the case where it is not.
+    """
+    if device.type != "cuda" or not torch.cuda.is_available():
+        return
+    try:
+        free_b, _total_b = torch.cuda.mem_get_info(device.index or 0)
+    except Exception:  # pragma: no cover - driver/runtime disagreement
+        return
+    need_b = sum(p.numel() * p.element_size() for p in model.parameters()) * 2
+    if need_b > headroom * free_b:
+        raise RuntimeError(
+            f"refusing to load: needs ~{need_b/2**30:.1f}GiB but only "
+            f"{free_b/2**30:.1f}GiB free on {device} (limit {headroom:.0%})"
+        )
+
+
+def resolve_hidden_dim(model: torch.nn.Module) -> int:
+    """Width of a transformer block's residual stream, across config dialects.
+
+    ``config.hidden_size`` is the HF norm, but custom architectures loaded with
+    ``trust_remote_code=True`` are free to name it whatever they like and are not
+    required to provide an ``attribute_map``. PicoDecoderHFConfig (pico-lm and the
+    Beetle families, which are the backbone of this study) exposes ``d_model`` and
+    no ``hidden_size`` at all, so reading ``hidden_size`` directly raised
+    AttributeError and every pico/Beetle checkpoint was skipped by the grid.
+
+    Falls back to the true width of an actual parameter so an unknown config that
+    names the field something else still works instead of aborting the checkpoint.
+    """
+    cfg = model.config
+    for attr in ("hidden_size", "d_model", "n_embd", "hidden_dim", "embed_dim", "model_dim"):
+        val = getattr(cfg, attr, None)
+        if isinstance(val, int) and val > 0:
+            return int(val)
+
+    # Last resort: infer from the input embedding matrix [vocab, width].
+    try:
+        emb = model.get_input_embeddings()
+        if emb is not None and getattr(emb, "weight", None) is not None:
+            return int(emb.weight.shape[-1])
+    except (AttributeError, NotImplementedError, IndexError):
+        pass
+
+    raise AttributeError(
+        f"could not determine hidden width for {type(cfg).__name__}; "
+        "add its width field to resolve_hidden_dim()"
+    )
+
+
 def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
     """Return (ordered block module paths, num_blocks) for common architectures.
 
@@ -199,10 +259,11 @@ class ActivationExtractor:
         self.device = torch.device(
             device or ("cuda" if torch.cuda.is_available() else "cpu")
         )
+        _assert_fits_on_device(self.model, self.device)
         self.model.to(self.device).eval()
 
         self.layer_names, self.num_layers = discover_block_layer_names(self.model)
-        self.hidden_dim = int(self.model.config.hidden_size)
+        self.hidden_dim = resolve_hidden_dim(self.model)
         logger.info(f"  {self.num_layers} blocks x {self.hidden_dim} units")
 
     def _pool(self, hidden: torch.Tensor, mask: torch.Tensor, pooling: str) -> torch.Tensor:
