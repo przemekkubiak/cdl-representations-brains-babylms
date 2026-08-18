@@ -78,6 +78,15 @@ for T in "${PHENOMENA[@]}"; do
     if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
       log "$T/$S: RDM already present -- skip"; continue
     fi
+    # Try the Hub cache before doing hours of CPU. Session RDMs are deterministic given the
+    # dataset, so a run that has already produced one anywhere never needs to produce it again;
+    # `rdm_cache_hf.py pull` exits 0 only if it actually placed the file.
+    if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
+         pull --task "$T" --session "$S" --dir "$OUT" 2>&1 | sed "s/^/  /"; then
+      if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
+        log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
+      fi
+    fi
     # Re-check the floor per session, not just per task: a session batch is the unit that can now
     # actually move the needle, so it is the unit that must be gated.
     if [ "$(free_gb)" -lt "$((DISK_FLOOR_GB + 40))" ]; then
@@ -119,6 +128,8 @@ for T in "${PHENOMENA[@]}"; do
         log "$T/$S: RDM built -- reclaiming $NP pattern files"
         find "$OUT" -name "*${S}*_patterns.npz" -type f -delete
       fi
+      [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
+          push --task "$T" --session "$S" --dir "$OUT" 2>&1 | sed "s/^/  /"
       log "$T/$S: done, $(free_gb)GB free"
     else
       log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"
