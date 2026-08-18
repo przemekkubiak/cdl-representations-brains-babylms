@@ -13,6 +13,8 @@
 #   actual work -- this only sets the environment and the tier's variables.
 #
 # TIERS  (previously long ABLATE=... MAX_CKPT=... incantations in someone's shell history)
+#   --tier 0   brain prep : BOLD -> preprocess -> session RDMs, streamed per task
+#              (must run first; the tiers need the RDMs to produce alignment rows)
 #   --tier 1   DevAI/workshop : alignment + isolation + mechanistic, no causal ablation
 #   --tier 2   ICLR core      : + causal ablation, behaviour, encoding, bootstrap CIs, held-out CV
 #   --tier 3   ICLR strong    : dense trajectory (all 126 checkpoints)
@@ -38,6 +40,7 @@ if [ "$SMOKE_MODE" = "1" ]; then
 fi
 
 case "$TIER" in
+  0) exec bash "$ROOT/prepare_brain_rdms.sh" ;;
   1) exec env ABLATE=0 MAX_CKPT=25 bash slurm/run_devai_grid.sh \
        pico-decoder-tiny pico-decoder-small pico-decoder-medium pico-decoder-large \
        beetle-humanscale-eng beetle-fineweb3-eng \
@@ -54,5 +57,5 @@ case "$TIER" in
   # after a different study and label it as a second dataset. That is fabricated data, so
   # this stage stays unimplemented until someone supplies the real accession AND a
   # download path that honours it. See PICKUP.md.
-  *) echo "usage: $0 --tier {1,2,3} | --smoke" >&2; exit 2 ;;
+  *) echo "usage: $0 --tier {0,1,2,3} | --smoke" >&2; exit 2 ;;
 esac

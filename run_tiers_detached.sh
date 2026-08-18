@@ -98,6 +98,29 @@ classify() { # classify <logfile> <exit_code>
   if [ "$rc" = "0" ]; then echo "none"; else echo "code_or_data"; fi
 }
 
+# ---- did the tier actually produce anything? ---------------------------- #
+# Exit 0 is necessary but NOT sufficient. slurm/run_devai_grid.sh swallows a
+# per-family failure ("! grid failed for $FAM"; continue) and still exits 0, so a
+# run in which every single family died looks identical to a good one from the exit
+# code alone. A tier counts as ok only if it exited 0 AND wrote its declared outputs
+# AND -- for the GPU tiers -- actually touched GPU memory on 0-2. A "GPU tier" that
+# never put a byte on a card did not run, whatever it exited with.
+GRID_DIR="$ROOT/data/processed/language_models/devai_grid/ds003604"
+RDM_ROOT="$ROOT/data/processed/fmri/ds003604"
+
+verify_tier_outputs() { # verify_tier_outputs <tier_id> <peak_mib> ; echo reason or "ok"
+  local tier="$1" peak="$2" n
+  if [ "$tier" = "0" ]; then
+    n=$(find "$RDM_ROOT" -name "session_rdm_ses-*.npz" 2>/dev/null | wc -l)
+    [ "$n" -gt 0 ] && echo ok || echo "no_session_rdms"
+    return
+  fi
+  n=$(find "$GRID_DIR" -name "mechanistic_*.csv" -size +1c 2>/dev/null | wc -l)
+  if [ "$n" -eq 0 ]; then echo "no_grid_outputs"; return; fi
+  if [ "${peak:-0}" -le 0 ]; then echo "never_used_gpu"; return; fi
+  echo ok
+}
+
 # ---- run one tier ------------------------------------------------------- #
 run_tier() { # run_tier <tier_id> <cap_seconds>
   local tier="$1" cap="$2" lg="$ROOT/logs/tier${1}.log" rc cls attempt=1
@@ -149,7 +172,17 @@ run_tier() { # run_tier <tier_id> <cap_seconds>
     ledger_set "tier$tier" exit_code="$rc" duration_s="$dur" failure="\"$cls\"" \
         peak_gpu_mem_mib_gpu012="${peak:-0}" ended=\"$(date -u +%FT%TZ)\"
 
-    if [ "$rc" = "0" ]; then ledger_set "tier$tier" status=\"ok\"; break; fi
+    local verdict; verdict=$(verify_tier_outputs "$tier" "$peak")
+    ledger_set "tier$tier" outputs_check="\"$verdict\""
+    if [ "$rc" = "0" ] && [ "$verdict" = "ok" ]; then
+      ledger_set "tier$tier" status=\"ok\"; log "tier$tier verified ok"; break
+    fi
+    if [ "$rc" = "0" ]; then
+      # exited clean but produced nothing usable -- that is a failure, not a success
+      log "tier$tier exited 0 but FAILED verification: $verdict"
+      cls="$verdict"
+      ledger_set "tier$tier" failure="\"$verdict\""
+    fi
 
     # NEVER retry a corrupt CUDA context; at most one retry for transient fs/network.
     if [ "$cls" = "transient_network" ] && [ "$attempt" -lt 2 ]; then
@@ -161,7 +194,13 @@ run_tier() { # run_tier <tier_id> <cap_seconds>
   done
 
   verify_gpu_baseline
-  publish "tier$tier"
+  # Only publish a tier that actually succeeded. paper_results is pushed to a
+  # collaborator's repository as well as ours; a failed run must not land there.
+  if [ "$(ledger_get "tier$tier" status)" = "ok" ]; then
+    publish "tier$tier"
+  else
+    log "tier$tier not ok -- NOT publishing (ledger records the failure)"
+  fi
   return 0
 }
 
@@ -197,6 +236,10 @@ print('driver CUDA check: True |',torch.cuda.device_count(),'devices |',torch.cu
   || { log "FATAL: torch cannot see a GPU -- refusing to run tiers on CPU"; \
        ledger_set driver status=\"aborted_no_cuda\"; exit 1; }
 
+# Stage 0 must come first: without brain session RDMs the grid emits no alignment
+# rows at all (exactly what the smoke run shows). Given its own 24h cap so a slow
+# ~578GiB streamed download cannot eat Tier 1's budget.
+run_tier 0 86400    # 24h
 run_tier 1 43200    # 12h
 run_tier 2 64800    # 18h
 run_tier 3 172800   # 48h
@@ -205,6 +248,25 @@ run_tier 3 172800   # 48h
 ledger_set tier3b status=\"skipped\" \
   reason="\"Runbook DATASET=ds00XXXX is a placeholder, not a real accession. scripts/batch_download_bold.py hardcodes every download URL to OpenNeuroDatasets/ds003604 and contrasts are built from ds003604 stimuli, so any other DATASET tag would re-download ds003604 and mislabel it as a second study. Not guessed, not fabricated -- needs a real accession plus a dataset-aware download path.\""
 
-ledger_set driver status=\"finished\" ended=\"$(date -u +%FT%TZ)\"
-publish "final"
-log "ALL TIERS DONE"
+# Final state must distinguish "30 GPU-hours of results" from "everything failed in
+# thirteen seconds". A bare DONE is exactly the line someone returning will look for,
+# so it is never printed unless the tiers actually succeeded.
+OK=0; BAD=0; DETAIL=""
+for t in 0 1 2 3; do
+  st=$(ledger_get "tier$t" status)
+  [ -z "$st" ] && continue
+  if [ "$st" = "ok" ]; then OK=$((OK+1)); else BAD=$((BAD+1))
+    DETAIL="$DETAIL tier$t=$st($(ledger_get "tier$t" failure))"; fi
+done
+if [ "$BAD" -eq 0 ] && [ "$OK" -gt 0 ]; then
+  FINAL="ALL $OK STAGES OK"; DSTATUS="finished_ok"
+elif [ "$OK" -eq 0 ]; then
+  FINAL="ALL $BAD STAGES FAILED --$DETAIL"; DSTATUS="finished_all_failed"
+else
+  FINAL="$BAD of $((OK+BAD)) STAGES FAILED --$DETAIL"; DSTATUS="finished_partial"
+fi
+ledger_set driver status="\"$DSTATUS\"" summary="\"$FINAL\"" ended=\"$(date -u +%FT%TZ)\"
+# publish the ledger itself even on failure, so the record travels; publish() is a
+# no-op for artefacts when nothing changed, and per-tier publishing already gated on ok.
+publish "final ($FINAL)"
+log "$FINAL"
