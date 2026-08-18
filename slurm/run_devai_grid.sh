@@ -30,11 +30,13 @@ cd "$ROOT"
 
 # --- config (override via env) -------------------------------------------- #
 PHENOMENA=(${PHENOMENA:-Sem Phon Gram Plaus})
-DATA_DIR="${DATA_DIR:-data/brain/ds003604}"
-BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri}"
+DATASET="${DATASET:-ds003604}"          # neuro dataset tag (Tier-3 cross-dataset axis)
+DATA_DIR="${DATA_DIR:-data/brain/$DATASET}"
+BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri/$DATASET}"
 CONTRASTS="${CONTRASTS:-contrasts}"
-GRID_DIR="${GRID_DIR:-data/processed/language_models/devai_grid}"
-DEVAI_DIR="${DEVAI_DIR:-data/processed/language_models/devai}"
+GRID_PARENT="${GRID_PARENT:-data/processed/language_models/devai_grid}"
+GRID_DIR="$GRID_PARENT/$DATASET"        # per-dataset so multiple datasets don't collide
+DEVAI_DIR="${DEVAI_DIR:-data/processed/language_models/devai}/$DATASET"
 BRAIN_SPEC="$BRAIN_RDM_ROOT/localization/brain_specialization.csv"
 SKIP_BRAIN="${SKIP_BRAIN:-0}"
 MAX_CKPT="${MAX_CKPT:-25}"          # log-subsample dense pico trajectories (0 = all 126)
@@ -111,7 +113,7 @@ BOOT_FLAG=(); [ "${BOOTSTRAP:-0}" != "0" ] && BOOT_FLAG=(--bootstrap "$BOOTSTRAP
 
 for FAM in "${FAMILIES[@]}"; do
   echo ""; echo "######## GRID: $FAM ########"
-  python scripts/run_devai_grid.py --model "$FAM" \
+  python scripts/run_devai_grid.py --model "$FAM" --dataset "$DATASET" \
       --contrast-dir "$CONTRASTS" --phenomena "${PHENOMENA[@]}" \
       --brain-rdm-root "$BRAIN_RDM_ROOT" --max-checkpoints "$MAX_CKPT" \
       --batch-size "$BATCH_SIZE" --normalize --output-dir "$GRID_DIR" \
@@ -128,8 +130,11 @@ python scripts/heldout_predictor.py --families "${FAMILIES[@]}" \
 
 # ---- E. publication figures + LaTeX tables ------------------------------- #
 echo ""; echo "######## FIGURES ########"
+# cross-dataset figure (Fig 10) aggregates every per-dataset grid dir present
+GRID_DIRS=("$GRID_PARENT"/*/); [ ${#GRID_DIRS[@]} -eq 0 ] && GRID_DIRS=("$GRID_DIR")
 python scripts/make_figures.py --families "${FAMILIES[@]}" \
-    --grid-dir "$GRID_DIR" --devai-dir "$DEVAI_DIR" --out "${FIG_DIR:-figures}" \
+    --grid-dir "$GRID_DIR" --grid-dirs "${GRID_DIRS[@]}" \
+    --devai-dir "$DEVAI_DIR" --out "${FIG_DIR:-figures}/$DATASET" \
     || echo "  ! figure generation failed"
 
 echo ""

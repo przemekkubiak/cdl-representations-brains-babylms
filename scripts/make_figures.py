@@ -302,7 +302,7 @@ def fig9_robustness(grid, families, out):
     cols = family, cells = Spearman(alignment, log-tokens) — does the rise survive
     the choice of alignment metric?"""
     variants = [("rsa", "Spearman RSA"), ("rsa_pearson", "Pearson RSA"),
-                ("rsa_kendall", "Kendall RSA")]
+                ("rsa_kendall", "Kendall RSA"), ("encoding_r", "Encoding R")]
     M = np.full((len(variants), len(families)), np.nan)
     from scipy.stats import spearmanr as _sp
     for j, fam in enumerate(families):
@@ -315,9 +315,12 @@ def fig9_robustness(grid, families, out):
                 s = a.groupby("tokens", as_index=False)[col].mean().dropna()
                 if len(s) >= 3:
                     M[i, j] = _sp(np.log1p(s["tokens"]), s[col])[0]
-    if np.all(np.isnan(M)):
+    keep = ~np.all(np.isnan(M), axis=1)          # drop metrics with no data (e.g. no encoding)
+    if not keep.any():
         print("  (fig9 skipped: no multi-metric alignment columns)")
         return
+    M = M[keep]
+    variants = [v for v, k in zip(variants, keep) if k]
     fig, ax = plt.subplots(figsize=(0.7 * len(families) + 1.5, 2.2))
     im = ax.imshow(M, aspect="auto", cmap=DIVERGING, vmin=-1, vmax=1)
     ax.set_yticks(range(len(variants))); ax.set_yticklabels([v[1] for v in variants])
@@ -326,6 +329,44 @@ def fig9_robustness(grid, families, out):
     ax.set_title("Alignment rise is metric-robust\n(corr with log-tokens)")
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     _save(fig, out, "fig9_alignment_robustness")
+
+
+def fig10_cross_dataset(grid_dirs, families, out):
+    """HEATMAP: cross-dataset generalisation (Tier-3). rows = dataset, cols =
+    phenomenon; cells = peak brain alignment (mean over families). Shows the
+    effect is not an artifact of one neuro dataset."""
+    frames = []
+    for gd in grid_dirs:
+        for fam in families:
+            f = Path(gd) / f"alignment_{fam}.csv"
+            if f.exists():
+                frames.append(pd.read_csv(f))
+    if not frames:
+        print("  (fig10 skipped: no alignment CSVs)")
+        return
+    d = pd.concat(frames, ignore_index=True)
+    if "dataset" not in d.columns:
+        d["dataset"] = "ds003604"
+    datasets = sorted(d["dataset"].unique())
+    if len(datasets) < 2:
+        print(f"  (fig10 skipped: only {len(datasets)} dataset — need >=2 for cross-dataset)")
+        return
+    # peak-over-training alignment per (dataset, phenomenon), mean over families
+    peak = (d.groupby(["dataset", "family", "task"])["rsa"].max()
+            .groupby(level=[0, 2]).mean().reset_index())
+    M = np.full((len(datasets), len(PHENOMENA)), np.nan)
+    for i, ds in enumerate(datasets):
+        for j, ph in enumerate(PHENOMENA):
+            v = peak[(peak["dataset"] == ds) & (peak["task"] == ph)]["rsa"]
+            if len(v):
+                M[i, j] = v.iloc[0]
+    fig, ax = plt.subplots(figsize=(3.2, 0.6 * len(datasets) + 1.2))
+    im = ax.imshow(M, aspect="auto", cmap=SEQUENTIAL)
+    ax.set_xticks(range(len(PHENOMENA))); ax.set_xticklabels(PHENOMENA)
+    ax.set_yticks(range(len(datasets))); ax.set_yticklabels(datasets)
+    ax.set_title("Cross-dataset generalisation (peak RSA)")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="peak RSA")
+    _save(fig, out, "fig10_cross_dataset")
 
 
 # --------------------------------------------------------------------------- #
@@ -359,7 +400,7 @@ def tables(grid, devai, families, out):
 
 
 # --------------------------------------------------------------------------- #
-def _synthesize(grid, devai, families):
+def _synthesize(grid, devai, families, DS="ds003604"):
     """Write schema-correct synthetic CSVs so the whole script is testable offline."""
     Path(grid).mkdir(parents=True, exist_ok=True)
     Path(devai).mkdir(parents=True, exist_ok=True)
@@ -372,9 +413,10 @@ def _synthesize(grid, devai, families):
             prog = np.log1p(st) / np.log1p(125000)
             for task in PHENOMENA:
                 for si, ses in enumerate(SESSIONS):
-                    al.append(dict(family=fam, model_ref=f"r@{st}", step=st, tokens=st * 2 + 1,
-                                   task=task, session=ses,
+                    al.append(dict(dataset=DS, family=fam, model_ref=f"r@{st}", step=st,
+                                   tokens=st * 2 + 1, task=task, session=ses,
                                    rsa=0.1 + 0.4 * prog * scale - 0.03 * si + 0.01 * rng.standard_normal(),
+                                   encoding_r=0.05 + 0.3 * prog * scale,
                                    n_stim=20))
                 iso.append(dict(family=fam, model_ref=f"r@{st}", step=st, phenomenon=task,
                                 gini=0.2 + 0.5 * prog * scale + 0.02 * PHENOMENA.index(task),
@@ -427,6 +469,8 @@ def main():
     ap.add_argument("--families", nargs="+", default=[
         "pico-decoder-small", "pico-decoder-large", "beetle-humanscale-eng", "beetle-fineweb3-eng"])
     ap.add_argument("--grid-dir", default="data/processed/language_models/devai_grid")
+    ap.add_argument("--grid-dirs", nargs="+", default=None,
+                    help="Multiple per-dataset grid dirs for the cross-dataset figure (Fig 10)")
     ap.add_argument("--devai-dir", default="data/processed/language_models/devai")
     ap.add_argument("--out", default="figures")
     ap.add_argument("--layer-family", default=None, help="family for the layerwise heatmap (Fig 3)")
@@ -436,7 +480,11 @@ def main():
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     if args.self_test:
-        _synthesize(args.grid_dir, args.devai_dir, args.families)
+        _synthesize(args.grid_dir, args.devai_dir, args.families, DS="ds003604")
+        # a second synthetic dataset so the cross-dataset figure (Fig 10) renders
+        gd2 = args.grid_dir + "_ds002_synth"
+        _synthesize(gd2, args.devai_dir + "_ds002", args.families, DS="ds-second")
+        args.grid_dirs = [args.grid_dir, gd2]
 
     fams = args.families
     layer_fam = args.layer_family or next(
@@ -452,6 +500,7 @@ def main():
     fig7_ablation(args.grid_dir, fams, out)
     fig8_behaviour(args.grid_dir, fams, out)
     fig9_robustness(args.grid_dir, fams, out)
+    fig10_cross_dataset(args.grid_dirs or [args.grid_dir], fams, out)
     tables(args.grid_dir, args.devai_dir, fams, out)
     print(f"Done -> {out}/")
 

@@ -40,6 +40,7 @@ from src.language_models.mechanistic_metrics import (  # noqa: E402
     SCALAR_METRICS,
     checkpoint_metrics,
 )
+from src.rsa.encoding_model import encoding_score  # noqa: E402
 from scipy.stats import kendalltau, pearsonr  # noqa: E402
 
 try:
@@ -79,6 +80,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--n-random", type=int, default=4, help="random-circuit controls for ablation")
     p.add_argument("--bootstrap", type=int, default=0,
                    help="Bootstrap resamples for RSA CI over RDM pairs (T2.5); 0=off")
+    p.add_argument("--dataset", default="ds003604", help="Neuro dataset tag (for cross-dataset generalisation)")
+    p.add_argument("--encoding", action="store_true", default=True,
+                   help="Voxelwise ridge encoding score when brain patterns are available (T2.3)")
+    p.add_argument("--no-encoding", dest="encoding", action="store_false")
     p.add_argument("--output-dir", default="data/processed/language_models/devai_grid")
     return p.parse_args()
 
@@ -135,7 +140,8 @@ def _load_brain(brain_root: str, task: str, session: str):
         return None
     d = np.load(f, allow_pickle=True)
     stimuli = [str(s) for s in d["stimuli"]] if "stimuli" in d else None
-    return {"rdm": d["rdm"], "stimuli": stimuli}
+    patterns = d["patterns"] if "patterns" in d.files else None
+    return {"rdm": d["rdm"], "stimuli": stimuli, "patterns": patterns}
 
 
 def main() -> None:
@@ -241,8 +247,13 @@ def main() -> None:
                     print(f"  ~ shape mismatch {task}/{session}: {lm_rdm.shape} vs {brdm.shape}")
                     continue
                 m = _rsa(lm_rdm, brdm, args.normalize, args.bootstrap, seed=step or 0)
-                align_rows.append({"family": family, "model_ref": ref, "step": step,
-                                   "tokens": tokens, "task": task, "session": session,
+                # T2.3 strong: voxelwise encoding predictivity when patterns exist
+                if args.encoding and b.get("patterns") is not None:
+                    Y = np.asarray(b["patterns"])
+                    if Y.shape[0] == acts.shape[0]:
+                        m["encoding_r"] = encoding_score(acts[:, args.layer, :], Y)
+                align_rows.append({"dataset": args.dataset, "family": family, "model_ref": ref,
+                                   "step": step, "tokens": tokens, "task": task, "session": session,
                                    "n_stim": int(lm_rdm.shape[0]), **m})
                 if abl_rdm is not None:
                     abl_align_rows.append({

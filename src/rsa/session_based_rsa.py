@@ -469,6 +469,7 @@ class SessionBasedRSA:
                 aggregated_patterns.append(stim_group_mean)
 
             aggregated_patterns = self._stack_with_min_features(aggregated_patterns)
+            session_patterns = aggregated_patterns  # [stimuli x voxels] for encoding models
             session_rdm = compute_rdm(aggregated_patterns, metric=metric)
 
             print(f"  Stimuli included: {len(common_stimuli)}")
@@ -581,8 +582,9 @@ class SessionBasedRSA:
                 )
                 
                 # Compute RDM from aligned patterns
+                session_patterns = aligned_patterns  # [stimuli x voxels] for encoding models
                 session_rdm = compute_rdm(aligned_patterns, metric=metric)
-                
+
                 print(f"  Hyperaligned {len(subject_patterns)} subjects")
                 print(f"  Aligned pattern shape: {aligned_patterns.shape}")
                 print(f"  RDM shape: {session_rdm.shape}")
@@ -634,6 +636,7 @@ class SessionBasedRSA:
         )
         self.session_rdms[session] = {
             "rdm": session_rdm,
+            "patterns": locals().get("session_patterns"),  # [stim x voxels] or None
             "stimuli": session_stimuli,
             "common_stimuli": common_stimuli,
             "n_subjects": len(subject_ids),
@@ -877,6 +880,9 @@ class SessionBasedRSA:
             "trial_types": np.array(data.get("trial_types", []), dtype=object),
             "semantic_categories": np.array(data.get("semantic_categories", []), dtype=object),
         }
+        # stimulus x voxel matrix for voxelwise encoding models (T2.3), if available
+        if data.get("patterns") is not None:
+            save_dict["patterns"] = np.asarray(data["patterns"])
         
         np.savez_compressed(str(output_path), **save_dict)
         print(f"Saved {session} RDM to: {output_path}")
