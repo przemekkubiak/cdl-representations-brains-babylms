@@ -239,8 +239,8 @@ class FMRIPreprocessor:
                 mask_img=mask_img,
                 standardize=False,
                 detrend=False,
-                memory='nilearn_cache',
-                memory_level=1
+                memory=None,   # disabled: joblib cache is write-only here (every
+                memory_level=0 # subject is a unique input) and reached 361GB on 2026-08-18
             )
             masker.fit(bold_img)
         else:
@@ -249,8 +249,8 @@ class FMRIPreprocessor:
             masker = NiftiMasker(
                 standardize=False,
                 detrend=False,  # Already detrended in preprocessing
-                memory='nilearn_cache',
-                memory_level=1
+                memory=None,   # disabled: joblib cache is write-only here (every
+                memory_level=0 # subject is a unique input) and reached 361GB on 2026-08-18
             )
             masker.fit(bold_img)
         

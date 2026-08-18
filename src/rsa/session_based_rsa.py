@@ -8,6 +8,7 @@ Uses hyperalignment (Shared Response Model) to align subjects to a common
 representational space before computing RDMs.
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -95,9 +96,26 @@ class SessionBasedRSA:
             if "trial_type" not in characteristics.columns or "stim_file" not in characteristics.columns:
                 return None
                 
-            # Get filenames of non-control trials (trial_type != "S_C")
-            mask = characteristics["trial_type"] != "S_C"
-            non_control_stimuli = set(characteristics.loc[mask, "stim_file"].values)
+            # Get filenames of non-control trials.
+            # The control trial_type code is TASK-SPECIFIC, not "S_C" everywhere:
+            #   Sem -> S_C, Phon -> P_C, Gram -> G_C, Plaus -> SP_C  (measured from the
+            # four task-*_Stimulus_Characteristics.tsv files on 2026-08-18). Hardcoding
+            # "S_C" silently excluded nothing for Phon/Gram/Plaus, so those three tasks
+            # kept their 24/20 control trials while Sem dropped its 24 -- an inconsistency
+            # between tasks that also breaks the "match the LM RDM" intent of this filter.
+            # Every control code ends in "_C", so match on that instead.
+            tt = characteristics["trial_type"].astype(str)
+            mask = ~tt.str.endswith("_C")
+            # Return BASENAMES. ds003604 is not internally consistent about stim_file:
+            # Sem events give a bare filename ("stereo_1SH03A0.wav") while Phon/Gram/Plaus
+            # give a nested path ("Phon/Phon_run-01/PC009.wav"), and the characteristics
+            # TSVs always give the bare name. Comparing the two forms directly matched
+            # zero stimuli for Phon on 2026-08-18 ("All stimuli: 96 -> 0"), which made the
+            # session RDM impossible to compute for three of the four tasks. Callers
+            # compare os.path.basename(key) against this set.
+            non_control_stimuli = {
+                os.path.basename(str(v)) for v in characteristics.loc[mask, "stim_file"].values
+            }
             
             return non_control_stimuli
         except Exception as e:
@@ -517,8 +535,14 @@ class SessionBasedRSA:
             non_control_filenames = self._get_non_control_stimuli(task=task)
             if non_control_filenames is not None:
                 # Filter to non-control stimuli only
-                all_stimuli_filtered = [s for s in all_stimuli if s in non_control_filenames]
-                common_stimuli_filtered = [s for s in common_stimuli if s in non_control_filenames]
+                # Compare on basename: the pattern keys may be nested paths while the
+                # characteristics table always stores bare filenames (see
+                # _get_non_control_stimuli). The ORIGINAL key is kept, because it is what
+                # indexes run_data below.
+                all_stimuli_filtered = [s for s in all_stimuli
+                                        if os.path.basename(str(s)) in non_control_filenames]
+                common_stimuli_filtered = [s for s in common_stimuli
+                                           if os.path.basename(str(s)) in non_control_filenames]
                 
                 print(f"  All stimuli: {len(all_stimuli)} → {len(all_stimuli_filtered)} (controls excluded)")
                 print(f"  Common stimuli: {len(common_stimuli)} → {len(common_stimuli_filtered)} (controls excluded)")
@@ -650,6 +674,13 @@ class SessionBasedRSA:
             "semantic_categories": stimulus_metadata.get(
                 "semantic_categories",
                 np.asarray(["unknown"] * len(session_stimuli), dtype=object),
+            ),
+            # The linguistic text of each stimulus, parallel to `stimuli`. Consumers that
+            # feed the stimulus list to a language model MUST use this, not `stimuli`,
+            # which holds audio filenames. See src/rsa/semantic_metadata.py.
+            "stimulus_texts": stimulus_metadata.get(
+                "stimulus_texts",
+                np.asarray([""] * len(session_stimuli), dtype=object),
             ),
         }
         
@@ -879,6 +910,9 @@ class SessionBasedRSA:
             "aggregation": data["aggregation"],
             "trial_types": np.array(data.get("trial_types", []), dtype=object),
             "semantic_categories": np.array(data.get("semantic_categories", []), dtype=object),
+            # Parallel to "stimuli": the actual linguistic text of each stimulus. LM-side
+            # consumers must read this, because "stimuli" holds .wav filenames.
+            "stimulus_texts": np.array(data.get("stimulus_texts", []), dtype=object),
         }
         # stimulus x voxel matrix for voxelwise encoding models (T2.3), if available
         if data.get("patterns") is not None:
@@ -947,9 +981,9 @@ def main():
     parser.add_argument(
         "--task",
         type=str,
-        default="Sem",
+        default=None,
         choices=["Sem", "Phon", "Gram", "Plaus"],
-        help="Task to analyze (default: Sem)"
+        help="Task to analyze (default: infer from the --pattern-dir name)"
     )
     parser.add_argument(
         "--metric",
@@ -995,9 +1029,20 @@ def main():
     rsa.load_all_patterns(subjects=args.subjects, sessions=args.sessions)
     
     # Compute session RDMs
+    # Resolve the task. This used to default to "Sem" and prepare_brain_rdms.sh never
+    # passed --task, so EVERY task's RDM was filtered against Sem's stimulus list. Sem
+    # therefore worked (96 -> 72) while Phon/Gram/Plaus matched zero stimuli
+    # ("All stimuli: 96 -> 0") and produced no session RDM at all -- three of the four
+    # tasks were structurally unable to complete. Infer it from the pattern directory,
+    # which is always <root>/<Task>, unless the caller states it explicitly.
+    task = args.task
+    if task is None:
+        cand = os.path.basename(os.path.normpath(args.pattern_dir))
+        task = cand if cand in ("Sem", "Phon", "Gram", "Plaus") else "Sem"
+        print(f"  [task] inferred task={task} from pattern-dir")
     session_rdms = rsa.compute_all_sessions(
         sessions=args.sessions,
-        task=args.task,
+        task=task,
         metric=args.metric,
         aggregation=args.aggregation,
         n_iter=args.n_iter,

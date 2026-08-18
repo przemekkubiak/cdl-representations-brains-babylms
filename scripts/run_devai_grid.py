@@ -141,7 +141,16 @@ def _load_brain(brain_root: str, task: str, session: str):
     d = np.load(f, allow_pickle=True)
     stimuli = [str(s) for s in d["stimuli"]] if "stimuli" in d else None
     patterns = d["patterns"] if "patterns" in d.files else None
-    return {"rdm": d["rdm"], "stimuli": stimuli, "patterns": patterns}
+    # The LM must be fed the stimulus TEXT, not the audio filename. `stimuli` holds
+    # names like "stereo_1SH01A0.wav" / "PC009.wav"; feeding those to the tokenizer
+    # yields activations over filenames and an alignment number that means nothing.
+    # `stimulus_texts` is written parallel to `stimuli` by src/rsa/session_based_rsa.py.
+    texts = None
+    if "stimulus_texts" in d.files:
+        cand = [str(t).strip() for t in d["stimulus_texts"]]
+        if stimuli is not None and len(cand) == len(stimuli) and all(cand):
+            texts = cand
+    return {"rdm": d["rdm"], "stimuli": stimuli, "texts": texts, "patterns": patterns}
 
 
 def main() -> None:
@@ -215,9 +224,18 @@ def main() -> None:
         # ---- M1: brain-LM alignment (RSA, multi-metric) + T2.1 causal ------
         for task in tasks:
             bt = brain.get(task, {})
-            stim = next((bt[s]["stimuli"] for s in args.sessions
-                         if bt.get(s) and bt[s]["stimuli"]), None)
+            # Prefer reconstructed stimulus text; refuse to fall back to filenames,
+            # because an alignment computed over .wav names is a number without a
+            # meaning and must not be published as a result.
+            stim = next((bt[s]["texts"] for s in args.sessions
+                         if bt.get(s) and bt[s].get("texts")), None)
             if stim is None:
+                have = [s for s in args.sessions if bt.get(s)]
+                if have:
+                    print(f"  ! {task}: brain RDM has no stimulus_texts "
+                          f"(sessions={have}); SKIPPING RSA rather than aligning to "
+                          f"audio filenames. Rebuild the RDM with the current "
+                          f"src/rsa/session_based_rsa.py.")
                 continue
             try:
                 acts = ex.extract(stim, args.rdm_pooling, args.batch_size)

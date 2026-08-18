@@ -85,16 +85,41 @@ def load_semantic_metadata(
     if "stim_file" not in characteristics.columns or "trial_type" not in characteristics.columns:
         return {}
 
+    # Stimulus TEXT, reconstructed from the same row.
+    #
+    # WHY THIS IS HERE. The RDM used to store only `stimuli`, which are the audio file
+    # names ("stereo_1SH01A0.wav", "PC009.wav"), and scripts/run_devai_grid.py feeds that
+    # list straight into ActivationExtractor.extract(), which tokenizes it. The brain-LM
+    # alignment was therefore about to be computed from LM activations over *filenames*
+    # rather than over the linguistic stimuli -- real numbers, no meaning. The text is
+    # recoverable from the characteristics table (word_A/word_B for the word tasks, the
+    # sentence constituents for the sentence tasks), which is exactly what
+    # src/contrast_spec.reconstruct_text already does for the LM localizer contrasts, so
+    # both sides now derive their text from one function.
+    try:
+        from src.contrast_spec import CONTRAST_SPEC, reconstruct_text
+        kind = CONTRAST_SPEC.get(task, {}).get("kind", "word_pair")
+    except Exception:
+        CONTRAST_SPEC, reconstruct_text, kind = None, None, None
+
     stim_to_trial_type = {}
+    stim_to_text = {}
     for _, row in characteristics.iterrows():
         stim_key = normalize_stimulus_name(row.get("stim_file", ""))
         stim_to_trial_type[stim_key] = row.get("trial_type", "")
+        if reconstruct_text is not None:
+            try:
+                stim_to_text[stim_key] = reconstruct_text(row.to_dict(), kind)
+            except Exception:
+                pass
 
     ordered_stimuli = [normalize_stimulus_name(stimulus) for stimulus in stimuli]
     trial_types = [stim_to_trial_type.get(stimulus, "unknown") for stimulus in ordered_stimuli]
     semantic_categories = semantic_categories_from_trial_types(trial_types)
+    stimulus_texts = [stim_to_text.get(stimulus, "") for stimulus in ordered_stimuli]
 
     return {
         "trial_types": np.asarray(trial_types, dtype=object),
         "semantic_categories": np.asarray(semantic_categories, dtype=object),
+        "stimulus_texts": np.asarray(stimulus_texts, dtype=object),
     }

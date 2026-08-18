@@ -41,13 +41,13 @@ fi
 
 case "$TIER" in
   0) exec bash "$ROOT/prepare_brain_rdms.sh" ;;
-  1) exec env ABLATE=0 MAX_CKPT=25 bash slurm/run_devai_grid.sh \
+  1) exec env SKIP_BRAIN=1 ABLATE=0 MAX_CKPT=25 bash slurm/run_devai_grid.sh \
        pico-decoder-tiny pico-decoder-small pico-decoder-medium pico-decoder-large \
        beetle-humanscale-eng beetle-fineweb3-eng \
        babylm-gpt2-3 babylm-gpt2-5 babylm-gpt2-7 babylm-gpt2 ;;
-  2) exec env ABLATE=1 BOOTSTRAP=1000 MAX_CKPT=25 bash slurm/run_devai_grid.sh \
+  2) exec env SKIP_BRAIN=1 ABLATE=1 BOOTSTRAP=1000 MAX_CKPT=25 bash slurm/run_devai_grid.sh \
        pico-decoder-small pico-decoder-large beetle-humanscale-eng beetle-fineweb3-eng ;;
-  3) exec env ABLATE=1 MAX_CKPT=0 bash slurm/run_devai_grid.sh \
+  3) exec env SKIP_BRAIN=1 ABLATE=1 MAX_CKPT=0 bash slurm/run_devai_grid.sh \
        pico-decoder-small beetle-fineweb3-eng ;;
   # Tier 3, second half -- cross-dataset generalisation (Fig 10) -- is NOT defined here.
   # The runbook's `DATASET=ds00XXXX` was a placeholder, never a real accession, and the

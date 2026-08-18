@@ -225,6 +225,70 @@ def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
     )
 
 
+
+def _load_tokenizer(model_name: str, revision, cache_dir: str):
+    """AutoTokenizer, with a fallback for checkpoints AutoTokenizer cannot classify.
+
+    Two real cases in this project's zoo, both of which silently cost whole families:
+
+      * BrainAlign/gpt2-babylm-* declare `"tokenizer_class": "TokenizersBackend"` in
+        tokenizer_config.json. No such class exists in transformers, so AutoTokenizer
+        raises "Tokenizer class TokenizersBackend does not exist". The repos DO ship a
+        perfectly good `tokenizer.json`, so we build a PreTrainedTokenizerFast from it
+        directly and re-apply the special tokens from the config.
+      * pico-lm/Beetle checkpoints are PicoDecoderHF, whose config AutoTokenizer cannot
+        map to a tokenizer at all ("Unrecognized configuration class ... to build an
+        AutoTokenizer"). Those repos carry no tokenizer of their own; pico-lm trains on
+        the OLMo tokenizer, so fall back to that. Controlled by PICO_TOKENIZER_FALLBACK.
+
+    Raising here loses the whole checkpoint, so every fallback is tried before giving up.
+    """
+    try:
+        return AutoTokenizer.from_pretrained(
+            model_name, cache_dir=cache_dir, revision=revision, trust_remote_code=True
+        )
+    except Exception as exc:  # noqa: BLE001 - we deliberately try every recovery
+        first = exc
+
+    # (1) build straight from the repo's tokenizer.json, ignoring tokenizer_class
+    try:
+        from huggingface_hub import hf_hub_download
+        from transformers import PreTrainedTokenizerFast
+
+        tok_file = hf_hub_download(model_name, "tokenizer.json", revision=revision,
+                                   cache_dir=cache_dir)
+        cfg = {}
+        try:
+            import json
+            cfg_file = hf_hub_download(model_name, "tokenizer_config.json",
+                                       revision=revision, cache_dir=cache_dir)
+            cfg = json.load(open(cfg_file))
+        except Exception:
+            pass
+        kw = {k: cfg[k] for k in ("bos_token", "eos_token", "unk_token", "pad_token")
+              if isinstance(cfg.get(k), str)}
+        if isinstance(cfg.get("model_max_length"), int):
+            kw["model_max_length"] = cfg["model_max_length"]
+        tok = PreTrainedTokenizerFast(tokenizer_file=tok_file, **kw)
+        logger.warning(f"  tokenizer: AutoTokenizer failed ({type(first).__name__}); "
+                       f"built PreTrainedTokenizerFast from tokenizer.json")
+        return tok
+    except Exception:
+        pass
+
+    # (2) pico/Beetle carry no tokenizer of their own -- use the one they were trained on
+    fallback = os.environ.get("PICO_TOKENIZER_FALLBACK", "allenai/OLMo-7B-0724-hf")
+    try:
+        tok = AutoTokenizer.from_pretrained(fallback, cache_dir=cache_dir,
+                                            trust_remote_code=True)
+        logger.warning(f"  tokenizer: {model_name} ships none; falling back to {fallback}")
+        return tok
+    except Exception:
+        pass
+
+    raise first
+
+
 class ActivationExtractor:
     """Loads a checkpoint and extracts per-block pooled activations."""
 
@@ -244,9 +308,7 @@ class ActivationExtractor:
         os.environ.setdefault("HF_HOME", cache_dir)
 
         logger.info(f"Loading {model_name} (revision={revision})")
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name, cache_dir=cache_dir, revision=revision, trust_remote_code=True
-        )
+        self.tokenizer = _load_tokenizer(model_name, revision, cache_dir)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model = AutoModelForCausalLM.from_pretrained(

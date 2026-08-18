@@ -142,8 +142,11 @@ for T in "${PHENOMENA[@]}"; do
     log "$T/$S: $NP pattern files, $(free_gb)GB free -- computing session RDM"
     [ "$NP" -eq 0 ] && { log "$T/$S: no patterns produced, skipping RSA"; continue; }
 
+    # --task is REQUIRED. It used to be omitted and session_based_rsa.py defaulted it to
+    # "Sem", so Phon/Gram/Plaus stimuli were matched against Sem's stimulus list, matched
+    # nothing, and no session RDM was ever produced for three of the four tasks.
     "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
-        --sessions "$S" --metric correlation --aggregation hyperalignment \
+        --task "$T" --sessions "$S" --metric correlation --aggregation hyperalignment \
         || { log "$T/$S: RSA failed"; continue; }
 
     if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
