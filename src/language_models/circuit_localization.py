@@ -566,6 +566,22 @@ class AblationValidator:
         n = self._mean_logprob(contrast.negative, batch_size)
         return float((p > n).mean())
 
+    @torch.no_grad()
+    def extract_ablated(
+        self, sentences: Sequence[str], mask: np.ndarray,
+        pooling: str = "mean", batch_size: int = 8, random: bool = False, seed: int = 42,
+    ) -> np.ndarray:
+        """Pooled activations with `mask` (or a random same-size mask) zero-ablated.
+
+        Used for the causal-alignment test: rebuild the LM RDM with the localized
+        circuit knocked out and re-run RSA against the brain."""
+        m = random_mask_like(mask, np.random.default_rng(seed)) if random else mask
+        self._install(m, "zero", 0.0)
+        try:
+            return self.ex.extract(sentences, pooling, batch_size)
+        finally:
+            self._clear()
+
     # --- the validation ------------------------------------------------- #
     def validate(
         self, contrast: PhenomenonContrast, mask: np.ndarray, n_random: int = 4,

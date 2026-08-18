@@ -74,6 +74,9 @@ def main() -> None:
     align = _read("alignment")
     iso = _read("isolation")
     mech = _read("mechanistic")
+    behav = _read("behaviour")
+    abl_b = _read("ablation_behaviour")
+    abl_a = _read("ablation_alignment")
     summary = []
 
     # ---- R1: alignment trajectory (slope of RSA vs log-step) ---------------
@@ -148,6 +151,50 @@ def main() -> None:
             r, p = spearmanr(sub["lm_isolation"], sub[metric])
             summary.append({"claim": "R5_isolation_vs_mechanistic", "stat": f"spearman(iso,{metric})",
                             "value": r, "p": p, "n": len(sub)})
+
+    # ---- R6: CAUSAL ablation (T2.1) — circuit vs random, paired -----------
+    if abl_b is not None and len(abl_b):
+        for col, label in [("drop_localized", "behav_drop_circuit"),
+                           ("drop_random", "behav_drop_random"),
+                           ("causal_selectivity", "behav_causal_selectivity")]:
+            if col in abl_b:
+                summary.append({"claim": "R6_causal_behaviour", "stat": label,
+                                "value": float(abl_b[col].mean()), "p": np.nan, "n": len(abl_b)})
+        # paired test: does the localized circuit hurt more than random?
+        if {"drop_localized", "drop_random"}.issubset(abl_b.columns):
+            from scipy.stats import wilcoxon
+            d = abl_b.dropna(subset=["drop_localized", "drop_random"])
+            if len(d) >= 5 and (d["drop_localized"] - d["drop_random"]).abs().sum() > 0:
+                try:
+                    _, p = wilcoxon(d["drop_localized"], d["drop_random"])
+                    summary.append({"claim": "R6_causal_behaviour", "stat": "wilcoxon(circuit>random)",
+                                    "value": float((d["drop_localized"] > d["drop_random"]).mean()),
+                                    "p": float(p), "n": len(d)})
+                except Exception:
+                    pass
+    if abl_a is not None and len(abl_a):
+        for c in ["rsa_intact", "rsa_circuit_ablated", "rsa_random_ablated"]:
+            if c in abl_a:
+                summary.append({"claim": "R6_causal_alignment", "stat": f"mean_{c}",
+                                "value": float(abl_a[c].mean()), "p": np.nan, "n": len(abl_a)})
+
+    # ---- R2b: behaviour ~ mechanistic and behaviour ~ alignment (T2.2) ----
+    if behav is not None and len(behav):
+        bstep = behav.groupby("step", as_index=False)["mp_accuracy"].mean()
+        if mech is not None and len(mech):
+            bm = bstep.merge(mech, on="step", how="inner")
+            for metric in METRICS:
+                if metric in bm and not bm[metric].isna().all() and len(bm) >= 4:
+                    r, p = spearmanr(bm["mp_accuracy"], bm[metric])
+                    summary.append({"claim": "R2b_behaviour_vs_mechanistic",
+                                    "stat": f"spearman(acc,{metric})", "value": r, "p": p, "n": len(bm)})
+        if align is not None and len(align):
+            astep = align.groupby("step", as_index=False)["rsa"].mean()
+            ba = bstep.merge(astep, on="step", how="inner")
+            if len(ba) >= 4:
+                r, p = spearmanr(ba["mp_accuracy"], ba["rsa"])
+                summary.append({"claim": "R2b_behaviour_vs_alignment", "stat": "spearman(acc,rsa)",
+                                "value": r, "p": p, "n": len(ba)})
 
     # ---- write summary -----------------------------------------------------
     sdf = pd.DataFrame(summary)

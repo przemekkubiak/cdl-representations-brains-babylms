@@ -105,17 +105,26 @@ fi
 BRAIN_SPEC_ARG=()
 [ -f "$BRAIN_SPEC" ] && BRAIN_SPEC_ARG=(--brain-specialization "$BRAIN_SPEC")
 
+# Tier-2 toggles: ABLATE=1 (causal, T2.1), BEHAVIOUR default on (T2.2), BOOTSTRAP>0 (T2.5)
+ABLATE_FLAG=(); [ "${ABLATE:-1}" = "1" ] && ABLATE_FLAG=(--ablate)
+BOOT_FLAG=(); [ "${BOOTSTRAP:-0}" != "0" ] && BOOT_FLAG=(--bootstrap "$BOOTSTRAP")
+
 for FAM in "${FAMILIES[@]}"; do
   echo ""; echo "######## GRID: $FAM ########"
   python scripts/run_devai_grid.py --model "$FAM" \
       --contrast-dir "$CONTRASTS" --phenomena "${PHENOMENA[@]}" \
       --brain-rdm-root "$BRAIN_RDM_ROOT" --max-checkpoints "$MAX_CKPT" \
       --batch-size "$BATCH_SIZE" --normalize --output-dir "$GRID_DIR" \
+      "${ABLATE_FLAG[@]}" "${BOOT_FLAG[@]}" \
       || { echo "  ! grid failed for $FAM"; continue; }
   python scripts/mechanistic_brain_analysis.py --family "$FAM" \
       --grid-dir "$GRID_DIR" --output-dir "$DEVAI_DIR" "${BRAIN_SPEC_ARG[@]}" \
       || echo "  ! join failed for $FAM"
 done
+
+# T2.4: held-out cross-family predictive validation
+python scripts/heldout_predictor.py --families "${FAMILIES[@]}" \
+    --grid-dir "$GRID_DIR" --out "$DEVAI_DIR" || echo "  ! held-out CV skipped"
 
 # ---- E. publication figures + LaTeX tables ------------------------------- #
 echo ""; echo "######## FIGURES ########"

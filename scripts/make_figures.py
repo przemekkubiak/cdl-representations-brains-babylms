@@ -245,6 +245,89 @@ def fig6_generality(grid, families, out):
     _save(fig, out, "fig6_cross_model_generality")
 
 
+def fig7_ablation(grid, families, out):
+    """BAR (horizontal): causal test — brain alignment under intact vs circuit-
+    ablated vs random-ablated (T2.1). Conditions in fixed scientific order."""
+    frames = []
+    for fam in families:
+        f = Path(grid) / f"ablation_alignment_{fam}.csv"
+        if f.exists():
+            d = pd.read_csv(f); d["family"] = fam; frames.append(d)
+    if not frames:
+        print("  (fig7 skipped: no ablation_alignment CSVs)")
+        return
+    d = pd.concat(frames, ignore_index=True)
+    conds = ["rsa_intact", "rsa_circuit_ablated", "rsa_random_ablated"]
+    labels = ["intact", "circuit-ablated", "random-ablated"]  # scientific order
+    means = [d[c].mean() for c in conds if c in d]
+    errs = [d[c].std() / np.sqrt(max(1, d[c].notna().sum())) for c in conds if c in d]
+    y = np.arange(len(means))
+    fig, ax = plt.subplots(figsize=(3.4, 2.2))
+    ax.barh(y, means, xerr=errs, color=["#333333", "#CC79A7", "#999999"][:len(means)],
+            height=0.6)
+    ax.set_yticks(y); ax.set_yticklabels(labels[:len(means)])
+    ax.invert_yaxis()
+    ax.set_xlabel("brain–LM RSA")
+    ax.set_title("Causal ablation of the localized circuit")
+    _save(fig, out, "fig7_causal_ablation")
+
+
+def fig8_behaviour(grid, families, out):
+    """LINE: minimal-pair behavioural accuracy vs tokens, one line per phenomenon,
+    small-multiple per family (pairs with Fig1/Fig2, same x-axis) (T2.2)."""
+    fams = [f for f in families if (Path(grid) / f"behaviour_{f}.csv").exists()]
+    if not fams:
+        print("  (fig8 skipped: no behaviour CSVs)")
+        return
+    fig, axes = plt.subplots(1, len(fams), figsize=(2.4 * len(fams), 2.4),
+                             sharey=True, squeeze=False)
+    for ax, fam in zip(axes[0], fams):
+        b = pd.read_csv(Path(grid) / f"behaviour_{fam}.csv")
+        for ph in PHENOMENA:
+            s = b[b["phenomenon"] == ph].groupby("tokens", as_index=False)["mp_accuracy"].mean()
+            if len(s):
+                ax.plot(s["tokens"].clip(lower=1), s["mp_accuracy"],
+                        color=PHEN_COLORS[ph], label=ph)
+        ax.axhline(0.5, color="k", linewidth=0.6, linestyle=":")
+        ax.set_xscale("log"); ax.set_title(fam); ax.set_xlabel("training tokens (log)")
+        ax.grid(alpha=0.25, linewidth=0.4)
+    axes[0][0].set_ylabel("minimal-pair accuracy")
+    axes[0][-1].legend(frameon=False, title="phenomenon", fontsize=6)
+    fig.suptitle("Linguistic behaviour over training", y=1.02)
+    _save(fig, out, "fig8_behaviour")
+
+
+def fig9_robustness(grid, families, out):
+    """HEATMAP: alignment-metric robustness (T2.3). rows = RSA variant,
+    cols = family, cells = Spearman(alignment, log-tokens) — does the rise survive
+    the choice of alignment metric?"""
+    variants = [("rsa", "Spearman RSA"), ("rsa_pearson", "Pearson RSA"),
+                ("rsa_kendall", "Kendall RSA")]
+    M = np.full((len(variants), len(families)), np.nan)
+    from scipy.stats import spearmanr as _sp
+    for j, fam in enumerate(families):
+        f = Path(grid) / f"alignment_{fam}.csv"
+        if not f.exists():
+            continue
+        a = pd.read_csv(f)
+        for i, (col, _) in enumerate(variants):
+            if col in a:
+                s = a.groupby("tokens", as_index=False)[col].mean().dropna()
+                if len(s) >= 3:
+                    M[i, j] = _sp(np.log1p(s["tokens"]), s[col])[0]
+    if np.all(np.isnan(M)):
+        print("  (fig9 skipped: no multi-metric alignment columns)")
+        return
+    fig, ax = plt.subplots(figsize=(0.7 * len(families) + 1.5, 2.2))
+    im = ax.imshow(M, aspect="auto", cmap=DIVERGING, vmin=-1, vmax=1)
+    ax.set_yticks(range(len(variants))); ax.set_yticklabels([v[1] for v in variants])
+    ax.set_xticks(range(len(families)))
+    ax.set_xticklabels(families, rotation=45, ha="right")
+    ax.set_title("Alignment rise is metric-robust\n(corr with log-tokens)")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    _save(fig, out, "fig9_alignment_robustness")
+
+
 # --------------------------------------------------------------------------- #
 # Tables (LaTeX, booktabs)
 # --------------------------------------------------------------------------- #
@@ -303,10 +386,27 @@ def _synthesize(grid, devai, families):
             for L in range(6):
                 mel.append(dict(family=fam, step=st, layer=L, per=0.2 + 0.6 * prog * (1 - L / 12),
                                 gini=0.3, hoyer=0.3, norm=1.0, condition_number=40))
+        # multi-metric alignment columns (T2.3) + behaviour + ablation (T2.1/2.2)
+        for r in al:
+            r["rsa_pearson"] = r["rsa"] * 0.95
+            r["rsa_kendall"] = r["rsa"] * 0.8
+        beh, aba = [], []
+        for st in steps:
+            prog = np.log1p(st) / np.log1p(125000)
+            for task in PHENOMENA:
+                beh.append(dict(family=fam, model_ref=f"r@{st}", step=st, tokens=st * 2 + 1,
+                                phenomenon=task, mp_accuracy=0.5 + 0.45 * prog * scale))
+            for task in PHENOMENA:
+                aba.append(dict(family=fam, step=st, tokens=st * 2 + 1, task=task, session="ses-7",
+                                rsa_intact=0.1 + 0.4 * prog * scale,
+                                rsa_circuit_ablated=0.1 + 0.15 * prog * scale,
+                                rsa_random_ablated=0.1 + 0.37 * prog * scale))
         pd.DataFrame(al).to_csv(f"{grid}/alignment_{fam}.csv", index=False)
         pd.DataFrame(iso).to_csv(f"{grid}/isolation_{fam}.csv", index=False)
         pd.DataFrame(me).to_csv(f"{grid}/mechanistic_{fam}.csv", index=False)
         pd.DataFrame(mel).to_csv(f"{grid}/mechanistic_layer_{fam}.csv", index=False)
+        pd.DataFrame(beh).to_csv(f"{grid}/behaviour_{fam}.csv", index=False)
+        pd.DataFrame(aba).to_csv(f"{grid}/ablation_alignment_{fam}.csv", index=False)
         # devai summary + isolation comparison
         summ = [dict(claim="R1_alignment_rises", stat="spearman(step,rsa)", value=0.9, p=0.01, n=6)]
         for mtr in METRIC_ORDER:
@@ -349,6 +449,9 @@ def main():
     fig4_predictors(args.devai_dir, fams, out)
     fig5_isolation(args.devai_dir, fams, out)
     fig6_generality(args.grid_dir, fams, out)
+    fig7_ablation(args.grid_dir, fams, out)
+    fig8_behaviour(args.grid_dir, fams, out)
+    fig9_robustness(args.grid_dir, fams, out)
     tables(args.grid_dir, args.devai_dir, fams, out)
     print(f"Done -> {out}/")
 
