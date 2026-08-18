@@ -57,31 +57,60 @@ for T in "${PHENOMENA[@]}"; do
     log "ABORT $T: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
   fi
 
-  # subjects that actually have this task, straight from the checkout's symlinks
-  mapfile -t SUBS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
-      | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
-  [ "$MAX_SUBJECTS" -gt 0 ] && SUBS=("${SUBS[@]:0:$MAX_SUBJECTS}")
-  log "$T: ${#SUBS[@]} subjects, JOBS=$JOBS, $(free_gb)GB free"
+  # ------------------------------------------------------------------ per-SESSION batching
+  # The first version of this loop preprocessed EVERY subject in the task, then computed RDMs,
+  # then reclaimed. That makes peak disk the whole task's patterns. On 2026-08-18 the Sem task
+  # alone reached 636 pattern files / 201 GB and drove free space onto the 350 GB floor, which
+  # aborted brain prep and all three tiers with it (`aborted_disk_floor`), while the neighbouring
+  # 96-hour merge sweep sat 101 GB above its own abort threshold. Nothing was lost -- no session
+  # RDMs had been produced, so the 201 GB were pure orphaned intermediate -- but the run died.
+  #
+  # A session RDM aggregates across subjects WITHIN one session, so one session's patterns is the
+  # smallest working set that can produce any output; there is no way to go finer without changing
+  # the science. So batch by session: prep it, reduce it, reclaim it, move on. Peak disk becomes
+  # one session instead of one task, and `session_based_rsa.py --sessions` already supports it.
+  mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
+      | sed -E 's|.*_(ses-[0-9]+)_.*|\1|' | sort -u)
+  [ "${#SESSIONS[@]}" -eq 0 ] && { log "$T: no sessions found, skipping"; continue; }
+  log "$T: ${#SESSIONS[@]} session(s): ${SESSIONS[*]}"
 
-  printf '%s\n' "${SUBS[@]}" | xargs -P "$JOBS" -I{} \
-      bash "$ROOT/scripts/brainprep_subject.sh" {} "$T" 2>&1 | grep -vE "^\[.*\] ok$"
-
-  NP=$(ls "$OUT"/*_patterns.npz 2>/dev/null | wc -l)
-  log "$T: $NP pattern files, $(free_gb)GB free -- computing session RDMs"
-  [ "$NP" -eq 0 ] && { log "$T: no patterns produced, skipping RSA"; continue; }
-
-  "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
-      --metric correlation --aggregation hyperalignment || { log "$T: RSA failed"; continue; }
-
-  if ls "$OUT"/session_rdm_ses-*.npz >/dev/null 2>&1; then
-    if [ "$KEEP_PATTERNS" != "1" ]; then
-      log "$T: RDMs built -- reclaiming $NP pattern files"
-      find "$OUT" -name "*_patterns.npz" -type f -delete
+  for S in "${SESSIONS[@]}"; do
+    if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
+      log "$T/$S: RDM already present -- skip"; continue
     fi
-    log "$T: done, $(free_gb)GB free"
-  else
-    log "$T: NO session RDMs produced -- keeping patterns for diagnosis"
-  fi
+    # Re-check the floor per session, not just per task: a session batch is the unit that can now
+    # actually move the needle, so it is the unit that must be gated.
+    if [ "$(free_gb)" -lt "$((DISK_FLOOR_GB + 40))" ]; then
+      log "ABORT $T/$S: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
+    fi
+
+    mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
+        | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    [ "$MAX_SUBJECTS" -gt 0 ] && SUBS=("${SUBS[@]:0:$MAX_SUBJECTS}")
+    [ "${#SUBS[@]}" -eq 0 ] && { log "$T/$S: no subjects, skipping"; continue; }
+    log "$T/$S: ${#SUBS[@]} subjects, JOBS=$JOBS, $(free_gb)GB free"
+
+    printf '%s\n' "${SUBS[@]}" | xargs -P "$JOBS" -I{} \
+        bash "$ROOT/scripts/brainprep_subject.sh" {} "$T" 2>&1 | grep -vE "^\[.*\] ok$"
+
+    NP=$(ls "$OUT"/*${S}*_patterns.npz 2>/dev/null | wc -l)
+    log "$T/$S: $NP pattern files, $(free_gb)GB free -- computing session RDM"
+    [ "$NP" -eq 0 ] && { log "$T/$S: no patterns produced, skipping RSA"; continue; }
+
+    "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
+        --sessions "$S" --metric correlation --aggregation hyperalignment \
+        || { log "$T/$S: RSA failed"; continue; }
+
+    if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
+      if [ "$KEEP_PATTERNS" != "1" ]; then
+        log "$T/$S: RDM built -- reclaiming $NP pattern files"
+        find "$OUT" -name "*${S}*_patterns.npz" -type f -delete
+      fi
+      log "$T/$S: done, $(free_gb)GB free"
+    else
+      log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"
+    fi
+  done
 done
 
 SPEC="$RDM_ROOT/localization/brain_specialization.csv"
