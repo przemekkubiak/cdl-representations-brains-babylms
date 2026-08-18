@@ -93,6 +93,19 @@ for T in "${PHENOMENA[@]}"; do
     printf '%s\n' "${SUBS[@]}" | xargs -P "$JOBS" -I{} \
         bash "$ROOT/scripts/brainprep_subject.sh" {} "$T" 2>&1 | grep -vE "^\[.*\] ok$"
 
+    # Put the git-annex SYMLINKS back. brainprep_subject.sh drops each subject's raw BOLD once it
+    # is preprocessed, which is what bounds disk -- but the downloaded blob REPLACES the symlink,
+    # so deleting it removes the path entirely rather than reverting it to a pointer. The run then
+    # silently loses the ability to re-derive that subject: after the 2026-08-18 abort, Sem had
+    # dropped from 255 findable subjects to 34, and with the orphaned patterns reclaimed those
+    # runs were simply gone from the experiment. `git checkout` restores every dropped pointer
+    # from the metadata checkout for ~0 bytes. Done once per batch, not per subject, because 16
+    # parallel workers would contend on .git/index.lock.
+    if git -C "$DATA_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      git -C "$DATA_DIR" checkout -- . 2>/dev/null \
+        && log "$T/$S: restored dropped BOLD symlinks ($(find "$DATA_DIR" -name '*bold.nii.gz' | wc -l) runs referencable)"
+    fi
+
     NP=$(ls "$OUT"/*${S}*_patterns.npz 2>/dev/null | wc -l)
     log "$T/$S: $NP pattern files, $(free_gb)GB free -- computing session RDM"
     [ "$NP" -eq 0 ] && { log "$T/$S: no patterns produced, skipping RSA"; continue; }
