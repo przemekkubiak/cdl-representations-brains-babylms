@@ -63,17 +63,26 @@ families:
   # If you instead have local training checkpoints, set checkpoint_glob and delete
   # hf_repo/revisions.
   babylm-gpt2:
-    hf_repo: BrainAlign/gpt2-babylm-9   # <-- CONFIRM repo id / that revisions exist
+    # Verified against the Hub 2026-08-18: branches are checkpoint-01..09 + main.
+    # step = trainer_state.json global_step at each checkpoint (9 epoch saves over
+    # 3 epochs). `main` has no trainer_state (final export == checkpoint-09), so it
+    # is omitted to keep the trajectory monotonic.
+    hf_repo: BrainAlign/gpt2-babylm-9
     arch: gpt2
     revisions:
-      - {name: checkpoint-1000,   step: 1000}
-      - {name: checkpoint-5000,   step: 5000}
-      - {name: checkpoint-10000,  step: 10000}
-      - {name: checkpoint-25000,  step: 25000}
-      - {name: checkpoint-50000,  step: 50000}
-      - {name: main,              step: -1}   # -1 => remapped to max+1 (final)
-    developmental_map: {5000: ses-5, 25000: ses-7, 50000: ses-9}
-    notes: "CONFIRM revision names on the Hub. child-scale data => dev-honest."
+      - {name: checkpoint-01,  step: 598}
+      - {name: checkpoint-02,  step: 897}
+      - {name: checkpoint-03,  step: 1196}
+      - {name: checkpoint-04,  step: 1495}
+      - {name: checkpoint-05,  step: 1794}
+      - {name: checkpoint-06,  step: 2093}
+      - {name: checkpoint-07,  step: 2392}
+      - {name: checkpoint-08,  step: 2691}
+      - {name: checkpoint-09,  step: 2990}
+    # Anchoring to brain sessions is a research choice — spread first/mid/last
+    # epoch to ages 5/7/9. Confirm/adjust before relying on C3 ordering claims.
+    developmental_map: {598: ses-5, 1794: ses-7, 2990: ses-9}
+    notes: "Verified on Hub. child-scale data => dev-honest. 9 epoch checkpoints."
 
   babylm-gpt2-local:
     checkpoint_glob: "checkpoints/gpt2-babylm-*/checkpoint-*"
