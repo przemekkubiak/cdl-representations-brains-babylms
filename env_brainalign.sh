@@ -16,3 +16,10 @@ export BACKUP_HF_REPO=BrainAlign/cdl-devai-results
 
 export TOKENIZERS_PARALLELISM=false
 export OMP_NUM_THREADS=8
+
+# Run only the sessions that fit alongside the merge sweep on the shared filesystem.
+# ses-7 is the large one (217 subjects, ~250 GB of transient patterns) and has aborted two runs;
+# ses-5 and ses-9 complete inside ~90 GB. Clear ONLY_SESSIONS once the sweep has finished and the
+# disk is ours, then rerun -- sessions with an RDM already present are skipped, so it resumes.
+export ONLY_SESSIONS="${ONLY_SESSIONS:-ses-5,ses-9}"
+export DISK_FLOOR_GB="${DISK_FLOOR_GB:-400}"

@@ -72,7 +72,30 @@ for T in "${PHENOMENA[@]}"; do
   mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
       | sed -E 's|.*_(ses-[0-9]+)_.*|\1|' | sort -u)
   [ "${#SESSIONS[@]}" -eq 0 ] && { log "$T: no sessions found, skipping"; continue; }
-  log "$T: ${#SESSIONS[@]} session(s): ${SESSIONS[*]}"
+
+  # ONLY_SESSIONS / SKIP_SESSIONS -- run a subset of sessions.
+  # A session RDM aggregates across every subject in that session, so one session's patterns is an
+  # atom: it cannot be split without changing the science. That makes the LARGE sessions the whole
+  # disk problem. Measured on 2026-08-18: ses-5 (91 subjects) peaked around 60 GB and completed
+  # cleanly, while ses-7 (217 subjects) had already reached 529 pattern files / 166 GB when it hit
+  # the floor, and needs roughly 250 GB to finish. On a box sharing one filesystem with a 20-hour
+  # merge sweep that aborts below 250 GB free, ses-7 is not affordable and ses-5/ses-9 are. This
+  # lets the affordable sessions run now and ses-7 be picked up later with the disk to itself,
+  # rather than the all-or-nothing choice that has now cost two aborted runs.
+  if [ -n "${ONLY_SESSIONS:-}" ]; then
+    KEEP=(); for S in "${SESSIONS[@]}"; do
+      case " ${ONLY_SESSIONS//,/ } " in *" $S "*) KEEP+=("$S");; esac
+    done
+    SESSIONS=("${KEEP[@]}")
+    [ "${#SESSIONS[@]}" -eq 0 ] && { log "$T: no sessions match ONLY_SESSIONS=$ONLY_SESSIONS, skipping"; continue; }
+  fi
+  if [ -n "${SKIP_SESSIONS:-}" ]; then
+    KEEP=(); for S in "${SESSIONS[@]}"; do
+      case " ${SKIP_SESSIONS//,/ } " in *" $S "*) ;; *) KEEP+=("$S");; esac
+    done
+    SESSIONS=("${KEEP[@]}")
+  fi
+  log "$T: ${#SESSIONS[@]} session(s) to run: ${SESSIONS[*]}"
 
   for S in "${SESSIONS[@]}"; do
     if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
