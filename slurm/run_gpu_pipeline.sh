@@ -41,8 +41,11 @@ BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri}"   # per-task brain RDMs 
 LOC_DIR="data/processed/language_models/circuit_localization"
 ALIGN_DIR="data/processed/language_models/checkpoint_trajectory"
 FAMILIES=("$@")
-# Full-resolution Pythia (all 154 ckpts) + all 9 babylm epochs by default.
-[ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m-full babylm-gpt2)
+# FULL-PAPER default: dense Pythia + scale covariate + babylm data-efficiency series.
+[ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(
+  pythia-160m-full pythia-410m-full
+  babylm-gpt2-3 babylm-gpt2-5 babylm-gpt2-7 babylm-gpt2
+)
 
 # --- environment ----------------------------------------------------------- #
 export HF_HOME="${HF_HOME:-$ROOT/.cache/huggingface}"

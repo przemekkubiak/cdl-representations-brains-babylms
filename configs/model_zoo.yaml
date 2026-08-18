@@ -77,11 +77,67 @@ families:
     tokens_per_step: 2097152
     notes: "ALL 154 Pythia checkpoints (410m size covariate). Full-resolution."
 
-  # ---- BabyLM GPT-2 runs: in-domain, child-scale (headline developmental claim) ----
-  # NOTE: confirm the exact HF revision/branch names for these repos before running.
-  # The existing checkpoint_alignment_trajectory.py references BrainAlign/gpt2-babylm-*.
-  # If you instead have local training checkpoints, set checkpoint_glob and delete
-  # hf_repo/revisions.
+  # Optional Pythia scale ladder (same 154-checkpoint schedule, all_revisions).
+  # Add any of these to a run for a size-axis figure. Heavier the larger you go.
+  pythia-70m-full:
+    hf_repo: EleutherAI/pythia-70m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: "Smallest Pythia; cheap lower anchor of the scale ladder."
+
+  pythia-1b-full:
+    hf_repo: EleutherAI/pythia-1b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: "1B scale rung."
+
+  pythia-1.4b-full:
+    hf_repo: EleutherAI/pythia-1.4b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: "1.4B scale rung (upper anchor for size covariate)."
+
+  # ---- BabyLM GPT-2 data-scale series: gpt2-babylm-{3,5,7,9} --------------------
+  # In-domain, child-scale (headline developmental claim) AND a *data-efficiency*
+  # axis: the four repos are trained on increasing amounts of child data. Each has
+  # 9 epoch checkpoints (checkpoint-01..09). Steps verified on the Hub 2026-08-18
+  # (trainer_state.json global_step). 3/5/7 share one schedule; 9 differs.
+  # developmental_map spreads first/mid/last epoch to ages 5/7/9 (research choice —
+  # confirm before relying on C3 ordering claims).
+  babylm-gpt2-3:
+    hf_repo: BrainAlign/gpt2-babylm-3
+    arch: gpt2
+    revisions: &babylm_357_revisions
+      - {name: checkpoint-01,  step: 191}
+      - {name: checkpoint-02,  step: 382}
+      - {name: checkpoint-03,  step: 573}
+      - {name: checkpoint-04,  step: 764}
+      - {name: checkpoint-05,  step: 1146}
+      - {name: checkpoint-06,  step: 1337}
+      - {name: checkpoint-07,  step: 1528}
+      - {name: checkpoint-08,  step: 1719}
+      - {name: checkpoint-09,  step: 1908}
+    developmental_map: {191: ses-5, 1146: ses-7, 1908: ses-9}
+    notes: "Verified on Hub. smallest data budget. 9 epoch checkpoints."
+
+  babylm-gpt2-5:
+    hf_repo: BrainAlign/gpt2-babylm-5
+    arch: gpt2
+    revisions: *babylm_357_revisions
+    developmental_map: {191: ses-5, 1146: ses-7, 1908: ses-9}
+    notes: "Verified on Hub. mid data budget. 9 epoch checkpoints."
+
+  babylm-gpt2-7:
+    hf_repo: BrainAlign/gpt2-babylm-7
+    arch: gpt2
+    revisions: *babylm_357_revisions
+    developmental_map: {191: ses-5, 1146: ses-7, 1908: ses-9}
+    notes: "Verified on Hub. larger data budget. 9 epoch checkpoints."
+
+  # gpt2-babylm-9 (largest data budget) has its own step schedule.
   babylm-gpt2:
     # Verified against the Hub 2026-08-18: branches are checkpoint-01..09 + main.
     # step = trainer_state.json global_step at each checkpoint (9 epoch saves over

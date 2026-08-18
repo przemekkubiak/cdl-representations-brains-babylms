@@ -33,9 +33,15 @@ cd "$ROOT"
 
 # --- config (override via env) -------------------------------------------- #
 PHENOMENA=(${PHENOMENA:-Sem Phon Gram Plaus})
-# Default to full-resolution Pythia (all 154 checkpoints) + all 9 babylm epochs.
-# Pass e.g. `pythia-160m` explicitly for the sampled 19-checkpoint quick run.
-FAMILIES=("$@"); [ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m-full babylm-gpt2)
+# FULL-PAPER default experiment set:
+#   - pythia-160m-full, pythia-410m-full : dense trajectory + scale covariate (154 ckpts each)
+#   - babylm-gpt2-3/5/7 + babylm-gpt2(=9): in-domain child-scale DATA-EFFICIENCY axis
+# Pass families explicitly to subset (e.g. `pythia-160m` for a quick sampled run,
+# or add pythia-70m-full/1b-full/1.4b-full for a full scale ladder).
+FAMILIES=("$@"); [ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(
+  pythia-160m-full pythia-410m-full
+  babylm-gpt2-3 babylm-gpt2-5 babylm-gpt2-7 babylm-gpt2
+)
 DATA_DIR="${DATA_DIR:-data/brain/ds003604}"
 BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri}"
 SKIP_BRAIN="${SKIP_BRAIN:-0}"          # 1 => brain RDMs already exist, jump to GPU
