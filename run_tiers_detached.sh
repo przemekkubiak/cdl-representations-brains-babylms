@@ -118,6 +118,15 @@ verify_tier_outputs() { # verify_tier_outputs <tier_id> <peak_mib> ; echo reason
   n=$(find "$GRID_DIR" -name "mechanistic_*.csv" -size +1c 2>/dev/null | wc -l)
   if [ "$n" -eq 0 ]; then echo "no_grid_outputs"; return; fi
   if [ "${peak:-0}" -le 0 ]; then echo "never_used_gpu"; return; fi
+  # Brain-LM alignment is the POINT of these tiers, and it is the one output that fails
+  # independently of the rest: mechanistic/isolation/behaviour rows need only the model,
+  # while alignment additionally needs a usable brain RDM. Every run before 2026-08-18
+  # emitted "(no rows for alignment)" and would still have passed a mechanistic-only
+  # check. Require at least one alignment row (a header-only file is not a row).
+  local a
+  a=$(find "$GRID_DIR" -name "alignment_*.csv" 2>/dev/null \
+        -exec sh -c '[ "$(wc -l < "$1")" -gt 1 ]' _ {} \; -print | wc -l)
+  if [ "$a" -eq 0 ]; then echo "no_alignment_rows"; return; fi
   echo ok
 }
 
