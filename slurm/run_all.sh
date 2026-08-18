@@ -2,7 +2,7 @@
 #SBATCH --job-name=codla_all
 #SBATCH --output=logs/codla_all_%j.out
 #SBATCH --error=logs/codla_all_%j.err
-#SBATCH --time=10:00:00
+#SBATCH --time=24:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
@@ -33,7 +33,9 @@ cd "$ROOT"
 
 # --- config (override via env) -------------------------------------------- #
 PHENOMENA=(${PHENOMENA:-Sem Phon Gram Plaus})
-FAMILIES=("$@"); [ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m babylm-gpt2)
+# Default to full-resolution Pythia (all 154 checkpoints) + all 9 babylm epochs.
+# Pass e.g. `pythia-160m` explicitly for the sampled 19-checkpoint quick run.
+FAMILIES=("$@"); [ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m-full babylm-gpt2)
 DATA_DIR="${DATA_DIR:-data/brain/ds003604}"
 BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri}"
 SKIP_BRAIN="${SKIP_BRAIN:-0}"          # 1 => brain RDMs already exist, jump to GPU

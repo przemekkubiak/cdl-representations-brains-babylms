@@ -60,7 +60,20 @@ class ModelZoo:
 
         out: List[dict] = []
         hf_repo = fam.get("hf_repo")
-        if hf_repo and fam.get("revisions"):
+        if hf_repo and fam.get("all_revisions"):
+            # Enumerate *every* step* checkpoint on the Hub (full trajectory).
+            steps = self._all_hub_steps(hf_repo)
+            tokens_per_step = fam.get("tokens_per_step")
+            for s in steps:
+                out.append(
+                    {
+                        "ref": f"{hf_repo}@step{s}",
+                        "name": f"step{s}",
+                        "step": s,
+                        "tokens": (s * tokens_per_step) if tokens_per_step else None,
+                    }
+                )
+        elif hf_repo and fam.get("revisions"):
             for rev in fam["revisions"]:
                 ref = f"{hf_repo}@{rev['name']}"
                 out.append(
@@ -80,6 +93,33 @@ class ModelZoo:
                 f"Family '{name}' has neither hf_repo+revisions nor checkpoint_glob."
             )
         return out
+
+    # Pythia's canonical checkpoint schedule (log-spaced early + every 1000 to
+    # 143000): used as an offline fallback if the Hub can't be queried.
+    _PYTHIA_STEPS = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512] + list(range(1000, 143001, 1000))
+
+    @staticmethod
+    def _all_hub_steps(hf_repo: str) -> List[int]:
+        """All ``step<N>`` branches for a repo, sorted ascending by N.
+
+        Queries the Hub; falls back to the Pythia schedule if that fails so the
+        pipeline still runs offline against a warm HF cache.
+        """
+        import re
+
+        try:
+            from huggingface_hub import HfApi
+
+            branches = [b.name for b in HfApi().list_repo_refs(hf_repo).branches]
+            steps = sorted(
+                {int(m.group(1)) for b in branches if (m := re.fullmatch(r"step(\d+)", b))}
+            )
+            if steps:
+                return steps
+            logger.warning(f"No step* branches found on {hf_repo}; using Pythia schedule.")
+        except Exception as e:  # network/auth/repo issues -> offline fallback
+            logger.warning(f"Could not list Hub refs for {hf_repo} ({e}); using Pythia schedule.")
+        return list(ModelZoo._PYTHIA_STEPS)
 
     def developmental_map(self, name: str) -> dict:
         """step -> brain session anchoring, if provided."""

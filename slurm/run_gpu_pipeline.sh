@@ -2,7 +2,7 @@
 #SBATCH --job-name=codla_gpu
 #SBATCH --output=logs/codla_gpu_%j.out
 #SBATCH --error=logs/codla_gpu_%j.err
-#SBATCH --time=06:00:00
+#SBATCH --time=18:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
@@ -41,7 +41,8 @@ BRAIN_RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri}"   # per-task brain RDMs 
 LOC_DIR="data/processed/language_models/circuit_localization"
 ALIGN_DIR="data/processed/language_models/checkpoint_trajectory"
 FAMILIES=("$@")
-[ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m babylm-gpt2)
+# Full-resolution Pythia (all 154 ckpts) + all 9 babylm epochs by default.
+[ ${#FAMILIES[@]} -eq 0 ] && FAMILIES=(pythia-160m-full babylm-gpt2)
 
 # --- environment ----------------------------------------------------------- #
 export HF_HOME="${HF_HOME:-$ROOT/.cache/huggingface}"

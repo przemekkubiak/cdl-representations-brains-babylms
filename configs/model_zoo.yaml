@@ -57,6 +57,26 @@ families:
       - {name: step143000, step: 143000}
     notes: "Larger Pythia for model-size covariate in the compute-confound analysis."
 
+  # ---- Full-resolution Pythia: ALL 154 checkpoints (every step* branch) --------
+  # Same repos as above, but resolve_checkpoints enumerates every step* branch on
+  # the Hub (log-spaced {0,1,2,4,...,512} + every 1000 up to 143000). Use when you
+  # want correlations at *every* checkpoint, not the sampled trajectory. Heavy:
+  # ~154 checkpoint downloads/loads per family. tokens_per_step = batch(1024) x
+  # seq(2048) = 2^21, so tokens = step * 2097152.
+  pythia-160m-full:
+    hf_repo: EleutherAI/pythia-160m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: "ALL 154 Pythia checkpoints. Full-resolution alignment/localization."
+
+  pythia-410m-full:
+    hf_repo: EleutherAI/pythia-410m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: "ALL 154 Pythia checkpoints (410m size covariate). Full-resolution."
+
   # ---- BabyLM GPT-2 runs: in-domain, child-scale (headline developmental claim) ----
   # NOTE: confirm the exact HF revision/branch names for these repos before running.
   # The existing checkpoint_alignment_trajectory.py references BrainAlign/gpt2-babylm-*.
