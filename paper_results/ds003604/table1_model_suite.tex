@@ -1,8 +1,20 @@
-\begin{tabular}{lrrrl}
+\begin{table}
+\caption{Model suite: all 10 families, 262 checkpoints, 3144 brain-alignment rows (ds003604). \#ckpt counts distinct training steps present in the grid. The \texttt{tokens} column emitted by the grid writer is empty for every family (checkpoint metadata carried no token count), so every training axis in the figures is optimiser \emph{steps}, not tokens. Causal ablation (Fig.~7) ran on the Tier-2 subset of four families only.}
+\label{tab:model_suite}
+\begin{tabular}{llrrrrrl}
 \toprule
-family & n_checkpoints & min_step & max_step & axis \\
+family & axis & \#ckpt & min step & max step & \#layers & \#align rows & ablation \\
 \midrule
-pico-decoder-small & 126 & 0 & 125000 & scale \\
-beetle-fineweb3-eng & 19 & 0 & 65536 & data \\
+\texttt{pico-decoder-tiny} & scale & 21 & 0 & 126000 & 12 & 252 & no \\
+\texttt{pico-decoder-small} & scale & 126 & 0 & 125000 & 12 & 1512 & yes \\
+\texttt{pico-decoder-medium} & scale & 21 & 0 & 125000 & 12 & 252 & no \\
+\texttt{pico-decoder-large} & scale & 21 & 0 & 125000 & 12 & 252 & yes \\
+\texttt{beetle-fineweb3-eng} & data & 19 & 0 & 65536 & 14 & 228 & yes \\
+\texttt{beetle-humanscale-eng} & data & 18 & 0 & 9500 & 14 & 216 & yes \\
+\texttt{babylm-gpt2} & data & 9 & 598 & 2990 & 12 & 108 & no \\
+\texttt{babylm-gpt2-3} & data & 9 & 191 & 1908 & 12 & 108 & no \\
+\texttt{babylm-gpt2-5} & data & 9 & 191 & 1908 & 12 & 108 & no \\
+\texttt{babylm-gpt2-7} & data & 9 & 191 & 1908 & 12 & 108 & no \\
 \bottomrule
 \end{tabular}
+\end{table}
