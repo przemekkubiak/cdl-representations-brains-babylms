@@ -1,11 +1,5 @@
 held_out_family,r2_heldout,n_test
-pico-decoder-tiny,-0.06167649661677643,20
-pico-decoder-small,-1.797179702208838,20
-pico-decoder-medium,-1.075367055944148,20
-pico-decoder-large,-0.8383120970951583,20
-beetle-humanscale-eng,-3.7261588064719966,17
-beetle-fineweb3-eng,-0.03500457743296037,18
-babylm-gpt2-3,-0.3339074819465222,8
-babylm-gpt2-5,-0.35571519988949407,8
-babylm-gpt2-7,-0.29924835573663944,8
-babylm-gpt2,-18.855438271175718,8
+pico-decoder-small,0.11159423329585383,20
+pico-decoder-large,-38.34619695739588,20
+beetle-humanscale-eng,-2.0887406724910362,17
+beetle-fineweb3-eng,0.12278199084149333,18

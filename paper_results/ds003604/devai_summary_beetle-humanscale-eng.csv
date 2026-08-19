@@ -18,6 +18,13 @@ R5_isolation_vs_mechanistic,"spearman(iso,hoyer)",0.9379014989293364,9.141064665
 R5_isolation_vs_mechanistic,"spearman(iso,per)",-0.8929336188436832,6.174976433831253e-07,18
 R5_isolation_vs_mechanistic,"spearman(iso,condition_number)",0.9271948608137046,3.153312102063089e-08,18
 R5_isolation_vs_mechanistic,"spearman(iso,cka_to_prev)",-0.6733668341708543,0.0030464404913553983,17
+R6_causal_behaviour,behav_drop_circuit,-0.0024305555555555825,,72
+R6_causal_behaviour,behav_drop_random,-0.010156250000000009,,72
+R6_causal_behaviour,behav_causal_selectivity,0.007725694444444449,,72
+R6_causal_behaviour,wilcoxon(circuit>random),0.4583333333333333,0.4977057398939174,72
+R6_causal_alignment,mean_rsa_intact,-0.015776182732798974,,216
+R6_causal_alignment,mean_rsa_circuit_ablated,-0.014016353783829245,,216
+R6_causal_alignment,mean_rsa_random_ablated,-0.01359563732510373,,216
 R2b_behaviour_vs_mechanistic,"spearman(acc,norm)",0.8546256935262813,6.291295755248787e-06,18
 R2b_behaviour_vs_mechanistic,"spearman(acc,gini)",0.777632387803193,0.00014553529116284947,18
 R2b_behaviour_vs_mechanistic,"spearman(acc,hoyer)",0.7578341091886845,0.00026901115953942154,18

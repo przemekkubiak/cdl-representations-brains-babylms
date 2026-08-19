@@ -33,8 +33,16 @@
     "status": "ok"
   },
   "tier2": {
-    "failure": "disk_floor",
-    "status": "aborted_disk"
+    "attempt": 1,
+    "duration_s": 1410,
+    "ended": "2026-08-19T00:44:03Z",
+    "exit_code": 0,
+    "failure": "none",
+    "log": "logs/tier2.log",
+    "outputs_check": "ok",
+    "peak_gpu_mem_mib_gpu012": 5049,
+    "started": "2026-08-19T00:20:33Z",
+    "status": "ok"
   },
   "tier3": {
     "failure": "disk_floor",
