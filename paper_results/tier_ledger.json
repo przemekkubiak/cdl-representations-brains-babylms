@@ -1,12 +1,12 @@
 {
   "driver": {
     "disk_floor_gb": 350,
-    "ended": "2026-08-18T21:01:25Z",
+    "ended": "2026-08-19T01:04:38Z",
     "gpus": "0,1,2",
     "pid": 3010883,
     "started": "2026-08-18T21:54:31Z",
-    "status": "running",
-    "summary": "ALL 4 STAGES FAILED -- tier0=failed(aborted_disk_floor) tier1=aborted_disk(disk_floor) tier2=aborted_disk(disk_floor) tier3=aborted_disk(disk_floor)"
+    "status": "finished_ok",
+    "summary": "ALL 4 STAGES OK"
   },
   "tier0": {
     "attempt": 1,
