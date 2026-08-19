@@ -1,0 +1,63 @@
+{
+  "driver": {
+    "disk_floor_gb": 350,
+    "ended": "2026-08-19T01:04:38Z",
+    "gpus": "0,1,2",
+    "pid": 3010883,
+    "started": "2026-08-18T21:54:31Z",
+    "status": "finished_ok",
+    "summary": "ALL 4 STAGES OK"
+  },
+  "tier0": {
+    "attempt": 1,
+    "duration_s": 7423,
+    "ended": "2026-08-18T23:58:18Z",
+    "exit_code": 0,
+    "failure": "none",
+    "log": "logs/tier0.log",
+    "outputs_check": "ok",
+    "peak_gpu_mem_mib_gpu012": 2183,
+    "started": "2026-08-18T21:54:35Z",
+    "status": "ok"
+  },
+  "tier1": {
+    "attempt": 1,
+    "duration_s": 1325,
+    "ended": "2026-08-19T00:20:28Z",
+    "exit_code": 0,
+    "failure": "none",
+    "log": "logs/tier1.log",
+    "outputs_check": "ok",
+    "peak_gpu_mem_mib_gpu012": 5049,
+    "started": "2026-08-18T23:58:23Z",
+    "status": "ok"
+  },
+  "tier2": {
+    "attempt": 1,
+    "duration_s": 1410,
+    "ended": "2026-08-19T00:44:03Z",
+    "exit_code": 0,
+    "failure": "none",
+    "log": "logs/tier2.log",
+    "outputs_check": "ok",
+    "peak_gpu_mem_mib_gpu012": 5049,
+    "started": "2026-08-19T00:20:33Z",
+    "status": "ok"
+  },
+  "tier3": {
+    "attempt": 1,
+    "duration_s": 1225,
+    "ended": "2026-08-19T01:04:33Z",
+    "exit_code": 0,
+    "failure": "none",
+    "log": "logs/tier3.log",
+    "outputs_check": "ok",
+    "peak_gpu_mem_mib_gpu012": 2185,
+    "started": "2026-08-19T00:44:08Z",
+    "status": "ok"
+  },
+  "tier3b": {
+    "reason": "Runbook DATASET=ds00XXXX is a placeholder, not a real accession. scripts/batch_download_bold.py hardcodes every download URL to OpenNeuroDatasets/ds003604 and contrasts are built from ds003604 stimuli, so any other DATASET tag would re-download ds003604 and mislabel it as a second study. Not guessed, not fabricated -- needs a real accession plus a dataset-aware download path.",
+    "status": "skipped"
+  }
+}

@@ -1,0 +1,5 @@
+family,model_ref,phenomenon,lm_isolation,lm_onset_step
+babylm-gpt2-7,,Gram,0.4159190001470227,191.0
+babylm-gpt2-7,,Phon,0.4128610130838643,191.0
+babylm-gpt2-7,,Plaus,0.4159173801915795,191.0
+babylm-gpt2-7,,Sem,0.4196344052922261,191.0

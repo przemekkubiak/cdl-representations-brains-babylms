@@ -1,0 +1,5 @@
+family,model_ref,phenomenon,lm_isolation,lm_onset_step
+pico-decoder-medium,,Gram,0.420065607417004,0.0
+pico-decoder-medium,,Phon,0.4171381663860691,0.0
+pico-decoder-medium,,Plaus,0.4156199706417238,0.0
+pico-decoder-medium,,Sem,0.4170076340790503,0.0
