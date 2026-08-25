@@ -32,6 +32,14 @@ export DISK_FLOOR_GB="${DISK_FLOOR_GB:-350}"
 JOBS="${JOBS:-16}"
 MAX_SUBJECTS="${MAX_SUBJECTS:-0}"      # 0 = all subjects
 KEEP_PATTERNS="${KEEP_PATTERNS:-0}"    # 1 = keep per-run patterns (needs ~660 GiB; do not)
+# WITHIN_RUN_NORM=1 z-scores each voxel within run before aggregating across runs.
+# REQUIRED for every dataset whose run/stimulus structure is nested -- which,
+# measured, is ds003604 (100% of stimuli in one run), ds001894 (98-99%), and
+# ds006239's Read* tasks (96-97%). Without it the session RDM encodes scanner run:
+# "different run" predicts dissimilarity at rho +0.49..+0.87, versus ~0 for every
+# stimulus property. See configs/neuro_datasets.yaml and hf_results_staging/README.md.
+WITHIN_RUN_NORM="${WITHIN_RUN_NORM:-0}"
+WRN_FLAG=(); [ "$WITHIN_RUN_NORM" = "1" ] && WRN_FLAG=(--within-run-normalize)
 PY="$ROOT/venv/bin/python"
 
 free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
@@ -104,6 +112,11 @@ for T in "${PHENOMENA[@]}"; do
     # Try the Hub cache before doing hours of CPU. Session RDMs are deterministic given the
     # dataset, so a run that has already produced one anywhere never needs to produce it again;
     # `rdm_cache_hf.py pull` exits 0 only if it actually placed the file.
+    # The Hub cache holds the ORIGINAL, confounded RDMs. Pulling one into a
+    # within-run-normalised run would silently mix corrected and uncorrected
+    # cells in the same results tree, so the cache is disabled whenever the
+    # correction is on -- regardless of what RDM_CACHE says.
+    [ "$WITHIN_RUN_NORM" = "1" ] && RDM_CACHE=0
     if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
          pull --task "$T" --session "$S" --dir "$OUT" 2>&1 | sed "s/^/  /"; then
       if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
@@ -147,6 +160,8 @@ for T in "${PHENOMENA[@]}"; do
     # nothing, and no session RDM was ever produced for three of the four tasks.
     "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
         --task "$T" --sessions "$S" --metric correlation --aggregation hyperalignment \
+        "${WRN_FLAG[@]}" \
+        --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
         || { log "$T/$S: RSA failed"; continue; }
 
     if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then

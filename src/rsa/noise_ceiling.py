@@ -13,6 +13,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+from scipy.stats import spearmanr
 
 import sys
 
@@ -21,6 +22,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.rsa import compare_rdms
 from src.rsa.session_based_rsa import SessionBasedRSA
+
+
+from src.rsa.ceiling_core import (  # re-exported for the CLI entry point
+    noise_ceiling_from_subject_rdms,
+    ceiling_from_rdm_file,
+)
 
 
 def _common_stimuli_for_session(rsa: SessionBasedRSA, session: str) -> Tuple[List[str], List[str]]:

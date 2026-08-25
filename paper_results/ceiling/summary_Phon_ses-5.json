@@ -1,0 +1,26 @@
+{
+  "ceiling_raw": {
+    "lower": 0.7736930677008351,
+    "upper": 0.792225389298374,
+    "lower_sem": 0.01234578101216079,
+    "upper_sem": 0.012192729432334883,
+    "n_subjects": 43,
+    "n_stim": 72,
+    "method": "spearman"
+  },
+  "ceiling_normalised": {
+    "lower": 0.848992996375139,
+    "upper": 0.8594068052925701,
+    "lower_sem": 0.010170144288932493,
+    "upper_sem": 0.010083047944371058,
+    "n_subjects": 43,
+    "n_stim": 72,
+    "method": "spearman"
+  },
+  "run_confound_raw": 0.5565258950301103,
+  "run_confound_normalised": -0.040960528171067684,
+  "task": "Phon",
+  "session": "ses-5",
+  "n_stim": 72,
+  "n_subjects": 43
+}

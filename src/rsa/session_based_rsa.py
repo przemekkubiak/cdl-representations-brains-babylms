@@ -20,6 +20,7 @@ import pandas as pd
 import sys
 import json
 import warnings
+from collections import defaultdict
 
 HYPERALIGNMENT_IMPORT_ERROR = None
 try:
@@ -39,6 +40,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.rsa import compute_rdm, compare_rdms
 from src.rsa.semantic_metadata import load_semantic_metadata
+from src.rsa.ceiling_core import noise_ceiling_from_subject_rdms
 
 
 class SessionBasedRSA:
@@ -50,6 +52,7 @@ class SessionBasedRSA:
         self,
         pattern_dir: str = "data/processed/fmri",
         characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
+        within_run_normalize: bool = False,
     ):
         """
         Initialize session-based RSA analyzer.
@@ -58,11 +61,24 @@ class SessionBasedRSA:
         ----------
         pattern_dir : str
             Directory containing pattern .npz files from all subjects
+        characteristics_dir : str
+            Stimulus characteristics directory (for control-trial exclusion)
+        within_run_normalize : bool
+            Z-score each voxel WITHIN each scanner run, across that run's stimuli,
+            before any cross-run aggregation. Required for any dataset whose
+            run/stimulus structure is nested -- i.e. where each stimulus appears
+            in exactly one run, so a run's mean and scale would otherwise enter
+            every cross-run stimulus distance. In ds003604 this is the difference
+            between an RDM that encodes scanner drift (run predicts dissimilarity
+            at rho +0.49..+0.87) and one that does not (rho -0.041). See
+            configs/neuro_datasets.yaml for which datasets need it.
         """
         self.pattern_dir = Path(pattern_dir)
         self.characteristics_dir = Path(characteristics_dir)
+        self.within_run_normalize = within_run_normalize
         self.patterns_by_subject = {}
         self.session_rdms = {}
+        self.normalization_report = {}
     
     def _get_non_control_stimuli(self, task: str = "Sem") -> Optional[set]:
         """
@@ -242,9 +258,60 @@ class SessionBasedRSA:
         print("=" * 70)
         
         self.patterns_by_subject = patterns_by_subject
-        
+
+        if self.within_run_normalize:
+            self.apply_within_run_normalization()
+
         return patterns_by_subject
-    
+
+    def apply_within_run_normalization(self) -> Dict[str, int]:
+        """Z-score every voxel within each run, across that run's stimuli.
+
+        Applied in place to self.patterns_by_subject, BEFORE any aggregation, so
+        that every downstream path (hyperalignment / mean / median /
+        stimulus_mean) sees corrected patterns and none of them can reintroduce
+        the run effect.
+
+        A run contributing fewer than 3 stimuli is left untouched and counted as
+        skipped: a z-score over one or two points is not meaningful, and zeroing
+        such a run would destroy its stimuli rather than correct them.
+        """
+        normalized = skipped = 0
+
+        for subject_id, sessions in self.patterns_by_subject.items():
+            for session, runs in sessions.items():
+                for run, patterns in runs.items():
+                    stims = list(patterns.keys())
+                    if len(stims) < 3:
+                        skipped += 1
+                        continue
+
+                    # Truncate to a common voxel count: masks differ slightly
+                    # between runs, and stacking requires a shared length.
+                    n_vox = min(len(patterns[s]) for s in stims)
+                    M = np.vstack([np.asarray(patterns[s])[:n_vox] for s in stims])
+
+                    if not np.isfinite(M).all():
+                        finite_cols = np.isfinite(M).all(axis=0)
+                        if not finite_cols.any():
+                            skipped += 1
+                            continue
+                    mu = np.nanmean(M, axis=0, keepdims=True)
+                    sd = np.nanstd(M, axis=0, keepdims=True)
+                    sd[sd == 0] = 1.0
+                    Z = (M - mu) / sd
+
+                    for i, stim in enumerate(stims):
+                        patterns[stim] = Z[i]
+                    normalized += 1
+
+        self.normalization_report = {"runs_normalized": normalized, "runs_skipped": skipped}
+        print(
+            f"  within-run normalisation: {normalized} runs z-scored, "
+            f"{skipped} skipped (<3 stimuli)"
+        )
+        return self.normalization_report
+
     def get_common_stimuli(
         self,
         subject_patterns: Dict[str, Dict[str, Dict[str, np.ndarray]]]
@@ -652,6 +719,21 @@ class SessionBasedRSA:
                 print(f"  RDM shape: {session_rdm.shape}")
                 print(f"  Mean dissimilarity: {session_rdm.mean():.4f}")
         
+        # Per-subject RDMs on the session's stimulus order, plus the noise ceiling.
+        # Computed HERE because this is the only point at which per-subject patterns
+        # exist: prepare_brain_rdms.sh reclaims the pattern files immediately after
+        # this returns, and the previous release stored only the group RDM. That is
+        # why no noise ceiling could be reported for the published results without
+        # re-downloading and re-preprocessing the entire dataset. Storing the subject
+        # RDMs means the ceiling is recomputable forever after, for free.
+        subj_rdms, subj_rdm_ids = self.compute_subject_rdms(session, session_stimuli, metric)
+        ceiling = noise_ceiling_from_subject_rdms(subj_rdms)
+        if ceiling:
+            print(
+                f"  noise ceiling: lower={ceiling['lower']:.4f} "
+                f"upper={ceiling['upper']:.4f} (n={ceiling['n_subjects']})"
+            )
+
         # Store
         stimulus_metadata = load_semantic_metadata(
             session_stimuli,
@@ -667,6 +749,12 @@ class SessionBasedRSA:
             "subject_ids": subject_ids,
             "metric": metric,
             "aggregation": aggregation,
+            "within_run_normalized": bool(self.within_run_normalize),
+            "subject_rdms": subj_rdms,
+            "subject_rdm_ids": subj_rdm_ids,
+            "noise_ceiling_lower": (ceiling or {}).get("lower", np.nan),
+            "noise_ceiling_upper": (ceiling or {}).get("upper", np.nan),
+            "noise_ceiling_n": (ceiling or {}).get("n_subjects", 0),
             "trial_types": stimulus_metadata.get(
                 "trial_types",
                 np.asarray(["unknown"] * len(session_stimuli), dtype=object),
@@ -686,6 +774,51 @@ class SessionBasedRSA:
         
         return session_rdm, common_stimuli, len(subject_ids)
     
+    def compute_subject_rdms(
+        self,
+        session: str,
+        stimuli: List[str],
+        metric: str = "correlation",
+    ) -> Tuple[np.ndarray, List[str]]:
+        """One RDM per subject, on a FIXED stimulus order.
+
+        A subject is included only if it has every stimulus in `stimuli`, so that
+        all returned RDMs are directly comparable cell by cell -- which is what
+        the noise ceiling requires.
+
+        Returns (array [n_subjects, n_stim, n_stim], subject_ids).
+        """
+        rdms, ids = [], []
+        for subject_id in sorted(self.patterns_by_subject.keys()):
+            subject_data = self.patterns_by_subject[subject_id]
+            if session not in subject_data:
+                continue
+
+            per_stim = defaultdict(list)
+            for _, patterns in subject_data[session].items():
+                for stim, vec in patterns.items():
+                    per_stim[stim].append(vec)
+
+            if not all(st in per_stim for st in stimuli):
+                continue
+
+            vecs = []
+            for st in stimuli:
+                mat = self._stack_with_min_features(per_stim[st])
+                vecs.append(np.mean(mat, axis=0))
+            M = self._stack_with_min_features(vecs)
+            if not np.isfinite(M).all():
+                continue
+            try:
+                rdms.append(compute_rdm(M, metric=metric))
+                ids.append(subject_id)
+            except Exception:
+                continue
+
+        if not rdms:
+            return np.zeros((0, len(stimuli), len(stimuli))), []
+        return np.stack(rdms), ids
+
     def compute_all_sessions(
         self,
         sessions: Optional[List[str]] = None,
@@ -914,6 +1047,20 @@ class SessionBasedRSA:
             # consumers must read this, because "stimuli" holds .wav filenames.
             "stimulus_texts": np.array(data.get("stimulus_texts", []), dtype=object),
         }
+        # Provenance: whether these patterns were within-run normalised. Without
+        # this flag a corrected RDM and a confounded one are indistinguishable on
+        # disk, and the two have been mixed up in this project before.
+        save_dict["within_run_normalized"] = np.array(bool(data.get("within_run_normalized", False)))
+
+        # Per-subject RDMs + noise ceiling, so the ceiling is recomputable later
+        # without re-downloading and re-preprocessing the dataset.
+        if data.get("subject_rdms") is not None and len(data["subject_rdms"]):
+            save_dict["subject_rdms"] = np.asarray(data["subject_rdms"], dtype=np.float32)
+            save_dict["subject_rdm_ids"] = np.array(data.get("subject_rdm_ids", []))
+        for k in ("noise_ceiling_lower", "noise_ceiling_upper", "noise_ceiling_n"):
+            if k in data:
+                save_dict[k] = np.array(data[k])
+
         # stimulus x voxel matrix for voxelwise encoding models (T2.3), if available
         if data.get("patterns") is not None:
             save_dict["patterns"] = np.asarray(data["patterns"])
@@ -975,14 +1122,12 @@ def main():
     parser.add_argument(
         "--sessions",
         nargs="+",
-        choices=["ses-5", "ses-7", "ses-9"],
-        help="Sessions to analyze (default: all)"
+        help="Sessions to analyze (default: all). Dataset-specific values."
     )
     parser.add_argument(
         "--task",
         type=str,
         default=None,
-        choices=["Sem", "Phon", "Gram", "Plaus"],
         help="Task to analyze (default: infer from the --pattern-dir name)"
     )
     parser.add_argument(
@@ -1016,12 +1161,23 @@ def main():
         default="data/brain/ds003604/stimuli/Stimulus_Characteristics",
         help="Directory containing task-*_Stimulus_Characteristics.tsv files",
     )
+    parser.add_argument(
+        "--within-run-normalize",
+        action="store_true",
+        help=(
+            "Z-score each voxel WITHIN run before aggregating across runs. Required "
+            "for nested designs (each stimulus in exactly one run) -- ds003604, "
+            "ds001894, and ds006239's Read* tasks. Without it the RDM encodes "
+            "scanner run rather than stimulus."
+        ),
+    )
     
     args = parser.parse_args()
     
     # Initialize
     rsa = SessionBasedRSA(
         pattern_dir=args.pattern_dir,
+        within_run_normalize=args.within_run_normalize,
         characteristics_dir=args.characteristics_dir,
     )
     
