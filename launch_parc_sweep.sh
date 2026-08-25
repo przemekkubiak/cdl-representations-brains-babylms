@@ -74,6 +74,14 @@ FAMILIES=()
 for a in pythia mamba rwkv; do
   for s in 0 1 2 3 4 5; do FAMILIES+=("parc-$a-seed$s"); done
 done
+# Cache every corrected RDM before spending GPU time. launch_full_sweep.sh pins
+# RDM_CACHE=0 for stage 1, so a full run otherwise finishes with twelve corrected
+# RDMs on disk and none on the Hub -- and the next dataset pays for preprocessing
+# all over again. Idempotent: skips what is already cached, deletes nothing.
+log "syncing corrected RDMs to the Hub cache"
+"$PY" scripts/rdm_cache_hf.py sync --root "$WRN_ROOT" --dataset ds003604 2>&1 \
+  | grep -E "PUSH|sync done|failed" | sed "s/^/  /" | tee -a logs/parc_sweep.log
+
 log "families: ${#FAMILIES[@]} | GPUs: $GPUS | max-ckpt: $MAX_CKPT"
 
 pids=()

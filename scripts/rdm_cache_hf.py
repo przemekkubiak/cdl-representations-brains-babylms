@@ -163,6 +163,52 @@ def cmd_list(a) -> int:
     return 0
 
 
+def cmd_sync(a) -> int:
+    """Upload every local session RDM that is not already cached.
+
+    Exists because the cache push is easy to miss: launch_full_sweep.sh pins
+    RDM_CACHE=0 for stage 1, so a full run can finish with twelve corrected RDMs
+    on disk and none on the Hub. This is idempotent and safe to re-run at any
+    point -- it skips what is already there and never deletes.
+    """
+    api, tok = _api()
+    if api is None:
+        return 1
+    root = Path(a.root)
+    local = sorted(root.rglob("session_rdm_ses-*.npz"))
+    if not local:
+        print(f"[rdm-cache] no session RDMs under {root}")
+        return 0
+
+    try:
+        api.create_repo(REPO, repo_type="dataset", exist_ok=True)
+        remote = set(api.list_repo_files(REPO, repo_type="dataset"))
+    except Exception as e:
+        print(f"[rdm-cache] cannot reach {REPO}: {e}")
+        return 1
+
+    pushed = skipped = 0
+    for f in local:
+        task = f.parent.name
+        session = f.name.replace("session_rdm_", "").replace(".npz", "")
+        variant = variant_name(rdm_is_normalized(f))
+        rp = remote_path(task, session, a.dataset, variant)
+        if rp in remote:
+            print(f"[rdm-cache] have  {rp}")
+            skipped += 1
+            continue
+        try:
+            api.upload_file(path_or_fileobj=str(f), path_in_repo=rp,
+                            repo_id=REPO, repo_type="dataset",
+                            commit_message=f"session RDM: {a.dataset}/{variant}/{task}/{session}")
+            print(f"[rdm-cache] PUSH  {rp} ({f.stat().st_size/2**20:.1f} MB)")
+            pushed += 1
+        except Exception as e:
+            print(f"[rdm-cache] push failed {rp}: {e}")
+    print(f"[rdm-cache] sync done: {pushed} uploaded, {skipped} already cached")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -176,9 +222,12 @@ def main() -> int:
         s.add_argument("--variant", default=None,
                        choices=[VARIANT_RAW, VARIANT_WRN],
                        help="pull only: which variant to fetch (push reads it off the file)")
+    sy = sub.add_parser("sync", help="upload every local RDM not already cached")
+    sy.add_argument("--root", required=True, help="tree to scan, e.g. data/processed/fmri_wrn/ds003604")
+    sy.add_argument("--dataset", default="ds003604")
     sub.add_parser("list")
     a = ap.parse_args()
-    return {"pull": cmd_pull, "push": cmd_push, "list": cmd_list}[a.cmd](a)
+    return {"pull": cmd_pull, "push": cmd_push, "sync": cmd_sync, "list": cmd_list}[a.cmd](a)
 
 
 if __name__ == "__main__":
