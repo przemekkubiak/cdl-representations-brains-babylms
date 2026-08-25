@@ -188,7 +188,12 @@ def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
     """Return (ordered block module paths, num_blocks) for common architectures.
 
     Handles GPT-2 (``transformer.h.<i>``) and GPT-NeoX / Pythia
-    (``gpt_neox.layers.<i>``), plus LLaMA-style (``model.layers.<i>``).
+    (``gpt_neox.layers.<i>``), LLaMA-style (``model.layers.<i>``), and the two
+    non-transformer PARC architectures: Mamba (``backbone.layers.<i>``) and RWKV
+    (``rwkv.blocks.<i>``). The last two are listed explicitly rather than left to
+    the generic fallback so that block ordering is guaranteed and the log names
+    the architecture -- these are the models that carry the architecture axis, so
+    a silent mis-discovery there would be expensive.
     """
     candidates = [
         ("transformer.h", "transformer"),          # GPT-2, BabyLM
@@ -196,6 +201,8 @@ def discover_block_layer_names(model: torch.nn.Module) -> Tuple[List[str], int]:
         ("model.layers", "model"),                 # LLaMA / Mistral / OLMo
         ("model.decoder.layers", "model.decoder"), # OPT
         ("pico_decoder.layers", "pico_decoder"),   # pico-lm / Beetle (PicoDecoderHF)
+        ("backbone.layers", "backbone"),           # Mamba (MambaForCausalLM) -- PARC
+        ("rwkv.blocks", "rwkv"),                   # RWKV (RwkvForCausalLM) -- PARC
     ]
     for block_path, _root in candidates:
         try:
