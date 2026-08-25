@@ -36,6 +36,10 @@ configs:
     data_files: "diagnostics/layerwise_alignment.csv"
   - config_name: diagnostics_run_confound
     data_files: "diagnostics/run_confound_check.csv"
+  - config_name: ceiling_analysis
+    data_files: "ceiling-analysis/ceiling_*.csv"
+  - config_name: alignment_vs_ceiling
+    data_files: "ceiling-analysis/alignment_vs_ceiling_*.csv"
 ---
 
 # CDL DevAI results — brain × interpretability × localisation, per model per checkpoint
@@ -102,6 +106,34 @@ they do not show that they fail to. The measurement cannot answer it. The correc
 analysis, on one cell and one model, finds no detectable alignment. Do not cite the raw
 numbers in either direction.
 
+> ### UPDATE 2026-08-25 — there is now a noise ceiling, and the null is real
+>
+> Everything above still stands for the tables it describes. What has changed is
+> that the missing measurement now exists: see **[`ceiling-analysis/`](./ceiling-analysis)**.
+>
+> On ds003604 Phon/ses-5 (43 subjects, 72 stimuli), rebuilt from fresh patterns:
+>
+> | | raw | within-run normalised |
+> |---|---|---|
+> | noise ceiling (LOO lower / upper) | 0.774 / 0.792 | **0.849 / 0.859** |
+> | "different run" predicts dissimilarity | **+0.557** | **−0.041** |
+>
+> Best layer: beetle-humanscale-eng **+0.022 (2.6% of ceiling)**, babylm-gpt2-3
+> **+0.013 (1.5%)**, pico-decoder-large **−0.001 (−0.1%)**.
+>
+> Inter-subject reliability is **0.85** — far above the 0.2–0.4 typical in this
+> literature — so there is a large, replicable target to predict, and three models
+> across three architectures capture 0–3% of it. That is a **clean, well-powered
+> null**, not an uninterpretable one.
+>
+> Note the ceiling **rises** after correction (0.774 → 0.849): had the raw
+> reliability been mostly the run artefact, removing it would have lowered the
+> ceiling. It rose, so the correction removes noise rather than signal.
+>
+> Scope: one task × session cell. The full twelve-cell corrected sweep is running
+> and will be added as a separate, clearly-labelled set. The tables above are
+> **not** modified by this update.
+
 ### Which columns are safe
 
 | axis | affected by the run confound? |
@@ -138,6 +170,10 @@ by-model/<family>/
   localisation_isolation.csv  localisation_onset.csv
   behaviour.csv            ablation_alignment.csv  ablation_behaviour.csv
   figures/<family>_overview.png
+ceiling-analysis/          <- ADDED 2026-08-25. Noise ceiling + within-run correction,
+                              and alignment as a fraction of the ceiling. Additive:
+                              replaces nothing above. Start here for whether the
+                              null is real.
 diagnostics/
   layerwise_alignment.csv  <- alignment at every layer (rules out the layer explanation)
   run_confound_check.csv   <- raw vs run-partialled alignment, per layer

@@ -57,9 +57,13 @@ fi
 
 for T in "${PHENOMENA[@]}"; do
   export OUT="$RDM_ROOT/$T"
-  if ls "$OUT"/session_rdm_ses-*.npz >/dev/null 2>&1; then
-    log "$T: session RDMs already present -- skip"; continue
-  fi
+  # NO task-level skip here. This used to be
+  #     if ls "$OUT"/session_rdm_ses-*.npz; then continue; fi
+  # which globs across sessions, so ONE finished session skipped the WHOLE task.
+  # Observed 2026-08-25: Sem/ses-5 existed, and Sem/ses-7 and Sem/ses-9 were
+  # silently dropped from the run -- two of twelve cells missing with a log line
+  # that read like success. The per-SESSION skip further down is the correct one
+  # and already handles resumption.
   mkdir -p "$OUT"
   if [ "$(free_gb)" -lt "$((DISK_FLOOR_GB + 40))" ]; then
     log "ABORT $T: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
@@ -112,13 +116,18 @@ for T in "${PHENOMENA[@]}"; do
     # Try the Hub cache before doing hours of CPU. Session RDMs are deterministic given the
     # dataset, so a run that has already produced one anywhere never needs to produce it again;
     # `rdm_cache_hf.py pull` exits 0 only if it actually placed the file.
-    # The Hub cache holds the ORIGINAL, confounded RDMs. Pulling one into a
-    # within-run-normalised run would silently mix corrected and uncorrected
-    # cells in the same results tree, so the cache is disabled whenever the
-    # correction is on -- regardless of what RDM_CACHE says.
-    [ "$WITHIN_RUN_NORM" = "1" ] && RDM_CACHE=0
+    # Cache paths are namespaced by dataset AND correction variant, so a pull can
+    # only ever return an RDM built the same way this run is building them. Before
+    # that namespacing existed the cache was a hazard here -- it held the original
+    # confounded RDMs under bare "{task}/session_rdm_{session}.npz" and would have
+    # served one into a corrected run. It is now safe, and worth using: a session
+    # RDM is deterministic given the dataset, so preprocessing is paid for once
+    # ever rather than once per run.
+    CACHE_VARIANT=raw
+    [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
     if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
-         pull --task "$T" --session "$S" --dir "$OUT" 2>&1 | sed "s/^/  /"; then
+         pull --task "$T" --session "$S" --dir "$OUT" \
+         --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
       if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
         log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
       fi
@@ -169,8 +178,12 @@ for T in "${PHENOMENA[@]}"; do
         log "$T/$S: RDM built -- reclaiming $NP pattern files"
         find "$OUT" -name "*${S}*_patterns.npz" -type f -delete
       fi
+      # Push regardless of the variant: the pushed path is derived from the
+      # file's own within_run_normalized flag, so it is self-labelling and cannot
+      # be filed under the wrong variant.
       [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
-          push --task "$T" --session "$S" --dir "$OUT" 2>&1 | sed "s/^/  /"
+          push --task "$T" --session "$S" --dir "$OUT" \
+          --dataset "$DATASET" 2>&1 | sed "s/^/  /"
       log "$T/$S: done, $(free_gb)GB free"
     else
       log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"

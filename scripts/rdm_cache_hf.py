@@ -38,8 +38,50 @@ def _api():
     return HfApi(token=tok), tok
 
 
-def remote_path(task: str, session: str) -> str:
+# Cache layout. The original scheme was "{task}/session_rdm_{session}.npz" -- no
+# dataset and no correction state -- which is unsafe in two ways now that both
+# vary:
+#
+#   * A within-run-normalised RDM would overwrite the confounded one at the same
+#     path, silently replacing published data with something different.
+#   * A second dataset's tasks would collide with ds003604's wherever task names
+#     coincide.
+#
+# Paths are therefore namespaced by dataset and variant. Legacy flat paths are
+# still READ (so nothing already cached is orphaned) but never WRITTEN, which
+# keeps the existing entries intact rather than overwriting them.
+VARIANT_RAW = "raw"
+VARIANT_WRN = "within-run-normalised"
+
+
+def variant_name(within_run_normalized: bool) -> str:
+    return VARIANT_WRN if within_run_normalized else VARIANT_RAW
+
+
+def remote_path(task: str, session: str, dataset: str = "ds003604",
+                variant: str = VARIANT_RAW) -> str:
+    return f"{dataset}/{variant}/{task}/session_rdm_{session}.npz"
+
+
+def legacy_remote_path(task: str, session: str) -> str:
+    """The pre-2026-08-25 flat layout: ds003604, uncorrected, by task only."""
     return f"{task}/session_rdm_{session}.npz"
+
+
+def rdm_is_normalized(path) -> bool:
+    """Read the correction flag off an RDM so pushes are self-labelling.
+
+    Reading the file rather than trusting a CLI flag means a corrected RDM cannot
+    be filed under 'raw' (or vice versa) by a caller that forgot to pass it.
+    """
+    import numpy as np
+    try:
+        d = np.load(str(path), allow_pickle=True)
+        if "within_run_normalized" in d.files:
+            return bool(d["within_run_normalized"])
+    except Exception:
+        pass
+    return False
 
 
 def cmd_pull(a) -> int:
@@ -51,11 +93,24 @@ def cmd_pull(a) -> int:
         print(f"[rdm-cache] already local: {dest}")
         return 0
     from huggingface_hub import hf_hub_download
-    try:
-        got = hf_hub_download(REPO, remote_path(a.task, a.session), repo_type="dataset",
-                              token=tok, local_dir=a.dir)
-    except Exception as e:
-        print(f"[rdm-cache] miss {a.task}/{a.session} ({type(e).__name__})")
+    variant = getattr(a, "variant", None) or VARIANT_RAW
+    dataset = getattr(a, "dataset", None) or "ds003604"
+
+    candidates = [remote_path(a.task, a.session, dataset, variant)]
+    # Only the raw ds003604 variant has a legacy flat equivalent; never serve a
+    # legacy (uncorrected) file into a request for the corrected variant.
+    if dataset == "ds003604" and variant == VARIANT_RAW:
+        candidates.append(legacy_remote_path(a.task, a.session))
+
+    got = None
+    for rp in candidates:
+        try:
+            got = hf_hub_download(REPO, rp, repo_type="dataset", token=tok, local_dir=a.dir)
+            break
+        except Exception:
+            continue
+    if got is None:
+        print(f"[rdm-cache] miss {dataset}/{variant}/{a.task}/{a.session}")
         return 1
     got = Path(got)
     # hf_hub_download preserves the remote subdirectory; the pipeline wants the file flat.
@@ -78,15 +133,18 @@ def cmd_push(a) -> int:
     if not src.exists() or src.stat().st_size == 0:
         print(f"[rdm-cache] nothing to push for {a.task}/{a.session}")
         return 0
+    dataset = getattr(a, "dataset", None) or "ds003604"
+    variant = variant_name(rdm_is_normalized(src))     # read off the file, not the CLI
+    rp = remote_path(a.task, a.session, dataset, variant)
     try:
         api.create_repo(REPO, repo_type="dataset", exist_ok=True)
-        api.upload_file(path_or_fileobj=str(src), path_in_repo=remote_path(a.task, a.session),
+        api.upload_file(path_or_fileobj=str(src), path_in_repo=rp,
                         repo_id=REPO, repo_type="dataset",
-                        commit_message=f"session RDM: {a.task}/{a.session}")
+                        commit_message=f"session RDM: {dataset}/{variant}/{a.task}/{a.session}")
     except Exception as e:
-        print(f"[rdm-cache] push failed for {a.task}/{a.session}: {e}")
+        print(f"[rdm-cache] push failed for {rp}: {e}")
         return 0
-    print(f"[rdm-cache] pushed {a.task}/{a.session} ({src.stat().st_size/2**20:.1f} MB)")
+    print(f"[rdm-cache] pushed {rp} ({src.stat().st_size/2**20:.1f} MB)")
     return 0
 
 
@@ -113,6 +171,11 @@ def main() -> int:
         s.add_argument("--task", required=True)
         s.add_argument("--session", required=True)
         s.add_argument("--dir", required=True)
+        s.add_argument("--dataset", default="ds003604",
+                       help="neuro dataset accession (see configs/neuro_datasets.yaml)")
+        s.add_argument("--variant", default=None,
+                       choices=[VARIANT_RAW, VARIANT_WRN],
+                       help="pull only: which variant to fetch (push reads it off the file)")
     sub.add_parser("list")
     a = ap.parse_args()
     return {"pull": cmd_pull, "push": cmd_push, "list": cmd_list}[a.cmd](a)
