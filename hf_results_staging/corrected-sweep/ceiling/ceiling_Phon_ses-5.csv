@@ -1,0 +1,3 @@
+variant,ceiling_lower,ceiling_upper,ceiling_n,run_confound_rho,task,session,n_stim
+raw,0.7736930677008351,0.792225389298374,43,0.5565258950301103,Phon,ses-5,72
+within_run_normalised,0.848992996375139,0.8594068052925701,43,-0.040960528171067684,Phon,ses-5,72
