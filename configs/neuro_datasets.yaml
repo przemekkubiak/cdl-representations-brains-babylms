@@ -1,0 +1,219 @@
+# Neuroimaging dataset registry.
+#
+# Single source of truth for every neuro dataset the pipeline can run against.
+# Consumed by src/datasets/registry.py, which is used by:
+#   scripts/batch_download_bold.py   (URL construction -- was hardcoded to ds003604)
+#   prepare_brain_rdms.sh            (via DATASET=, already parameterised)
+#   scripts/build_contrasts.py       (stimulus source per dataset)
+#   src/contrast_spec.py             (per-dataset condition>control mapping)
+#
+# Fields per dataset:
+#   accession        OpenNeuro accession (also the directory name under data/brain/)
+#   snapshot         OpenNeuro snapshot version, used for the snapshot URL fallback
+#   name             human-readable label for figures/tables
+#   citation         paper reference
+#   paper_url        the paper
+#   tasks            BIDS task labels present in the dataset
+#   phenomena        our phenomenon labels -> BIDS task label(s) that carry them
+#   sessions         BIDS session labels, ordered developmentally (empty if single-session)
+#   ages             what age information is available and where
+#   design           run/stimulus structure -- READ THIS before trusting any RDM
+#   stimuli          where the stimulus characteristics live
+#   contrast_spec    key into src/contrast_spec.py CONTRAST_SPECS
+#   status           ready | needs_inspection | unresolved
+#
+# `design.run_stimulus` is the field that matters most for us. ds003604 is
+# `nested` -- each stimulus appears in exactly one run -- which is what produced
+# the confound documented in hf_results_staging/README.md. Any dataset marked
+# `nested` inherits the same problem and needs within-run normalisation before
+# its RDMs mean anything. `crossed` datasets do not.
+
+defaults:
+  annex_base: "https://github.com/OpenNeuroDatasets/{accession}/raw/{branch}"
+  s3_base: "https://s3.amazonaws.com/openneuro.org/{accession}"
+  snapshot_base: "https://openneuro.org/crn/datasets/{accession}/snapshots/{snapshot}/files"
+  git_url: "https://github.com/OpenNeuroDatasets/{accession}.git"
+  branches: [main, master]
+
+datasets:
+
+  # ---------------------------------------------------------------- ds003604 --
+  ds003604:
+    accession: ds003604
+    snapshot: "1.0.0"
+    name: "Wang et al. 2022 (children 5/7/9, auditory language)"
+    citation: "Wang et al. 2022"
+    paper_url: "https://openneuro.org/datasets/ds003604"
+    tasks: [Sem, Phon, Gram, Plaus]
+    phenomena:
+      Sem: [Sem]
+      Phon: [Phon]
+      Gram: [Gram]
+      Plaus: [Plaus]
+    sessions: [ses-5, ses-7, ses-9]
+    ages:
+      kind: cross_sectional
+      per_subject: true
+      source: "participants.tsv, birthdate minus ses-<n>_date_ST"
+      note: >
+        Age is nominally the session label (5/7/9), but exact per-subject age at
+        scan IS derivable: participants.tsv carries birthdate and a per-session
+        scan date. Dates are shifted for anonymity (years read as 18xx) but
+        differences are preserved, so the subtraction is valid.
+    design:
+      modality: auditory
+      run_stimulus: nested       # <-- each stimulus in exactly ONE run
+      note: >
+        For Phon, run-01 carries 48 of 96 stimuli and run-02 the other 48. Run
+        membership is therefore perfectly confounded with stimulus identity and
+        predicts brain dissimilarity at rho +0.49..+0.87 across all 12 cells.
+        Requires within-run voxel normalisation before aggregating across runs.
+    stimuli:
+      kind: github_tsv
+      url: "https://raw.githubusercontent.com/suchirsalhan/neurodataset_babylm/main/stimuli/Stimulus_Characteristics/task-{task}_Stimulus_Characteristics.tsv"
+      local: "stimuli/Stimulus_Characteristics"
+    contrast_spec: ds003604
+    status: ready
+
+  # ---------------------------------------------------------------- ds001894 --
+  # VERIFIED 2026-08-25 by scripts/inspect_dataset.py against the checkout.
+  ds001894:
+    accession: ds001894
+    snapshot: "1.4.2"
+    name: "Lytle et al. 2019 (longitudinal, children ~10 and ~12, rhyme judgement)"
+    citation: "Lytle et al. 2019, Sci Data"
+    paper_url: "https://www.nature.com/articles/s41597-019-0338-5"
+    n_subjects: 188
+    tasks: [AAWord, AANonWord, AVWord, AVNonWord, VVWord, VVNonWord]
+    phenomena:
+      Phon: [AAWord, AANonWord, AVWord, AVNonWord, VVWord, VVNonWord]
+      Orth: [AAWord, AANonWord, AVWord, AVNonWord, VVWord, VVNonWord]
+    sessions: [ses-T1, ses-T2]
+    modality_split:
+      AA: "auditory prime, auditory target"
+      AV: "auditory prime, visual target"
+      VV: "visual prime, visual target"
+      note: >
+        The AA/AV/VV split is a built-in low-level modality control, directly
+        useful for the reviewer question about whether alignment is larger in
+        auditory cortex than in higher-level semantic regions.
+    ages:
+      kind: longitudinal
+      per_subject: true
+      source: "participants.tsv, age_<session>_<task>_<run> -- age at each scan"
+      note: >
+        The best age metadata of the three datasets: explicit age at scan, per
+        subject, per run. ses-T2 has only the VV tasks. Same children at ~10 and
+        ~12, so within-subject change over age is available -- the closest thing
+        we have to a real analogue of an LM checkpoint trajectory.
+    design:
+      modality: mixed
+      run_stimulus: nested       # VERIFIED: 98-99% of stimuli occur in one run
+      note: >
+        Measured 120-121 of ~121 stimuli per task appear in exactly ONE run, in
+        all six tasks. This dataset carries the SAME confound as ds003604, so it
+        is not a fix for it -- within-run voxel normalisation is mandatory here
+        too. The confound is a property of this class of blocked word-pair
+        design, not a ds003604 quirk.
+      trials_per_run: 84
+      runs: [run-01, run-02]
+    quirks:
+      - >
+        task-AVWord events write trial_type as a float in a minority of files
+        ("5.0" alongside "5"), which splits conditions in two. Handled by
+        src.contrast_spec.normalise_trial_type; do not parse trial_type raw.
+    stimuli:
+      kind: stim_pair_filename
+      columns: [A_stim, B_stim]
+      local: "stimuli"
+      note: "Filenames carry the word itself (slour.bmp -> 'slour')."
+    contrast_spec: ds001894
+    status: ready
+
+  # ---------------------------------------------------------------- ds006239 --
+  # VERIFIED 2026-08-25 by scripts/inspect_dataset.py against the checkout.
+  ds006239:
+    accession: ds006239
+    snapshot: "1.0.5"
+    name: "Wang et al. 2025 (children 10-17, reading: phonology, meaning, semantics)"
+    citation: "Wang et al. 2025, Data in Brief"
+    paper_url: "https://www.sciencedirect.com/science/article/pii/S2352340925009692"
+    n_subjects: 89
+    tasks: [ReadPhon, ReadMean, LocalSem, LocalEng, LocalASL, LocalSR0]
+    phenomena:
+      Phon: [ReadPhon]
+      Orth: [ReadPhon]
+      Sem: [ReadMean]
+      SemLocal: [LocalSem]
+    sessions: [ses-1]
+    ages:
+      kind: cross_sectional
+      per_subject: false          # VERIFIED: NOT recoverable from the release
+      note: >
+        participants.tsv carries birthdate but NO scan-date column, and the
+        release contains ZERO *_scans.tsv files, so age at scan is not derivable
+        from the data as published. The cohort range 10-17 is documented in the
+        paper. Treat this dataset as COHORT-LEVEL ONLY: it cannot carry the
+        developmental axis, though it is still usable for alignment magnitude.
+        Request per-subject age from the authors if the axis is needed.
+    design:
+      modality: visual
+      run_stimulus: mixed          # VERIFIED per task -- see below
+      per_task_run_stimulus:
+        LocalASL: crossed          # 0% of 64 stimuli in a single run
+        LocalSR0: crossed          # 0% of 64 stimuli in a single run
+        LocalSem: crossed          # 47% of 76 stimuli in a single run
+        LocalEng: partial          # 95% of 76
+        ReadMean: nested           # 96% of 100
+        ReadPhon: nested           # 97% of 124
+      note: >
+        IMPORTANT. LocalSem is the only genuinely CROSSED language cell found
+        across all three datasets: its stimuli recur across runs, so run identity
+        and stimulus identity are separable and the ds003604 confound cannot
+        arise. That makes LocalSem the single best target for a clean alignment
+        measurement and for the positive control. ReadPhon/ReadMean are nested
+        like everything else and need within-run normalisation.
+      runs: [run-1, run-2]
+    quirks:
+      - "run entity is `run-1`/`run-2`, NOT zero-padded as in ds003604/ds001894."
+    stimuli:
+      kind: stim_pair_filename
+      columns: [prime_stim, targ_stim]
+      local: "stimuli"
+      note: "Filenames carry the word after a list prefix (T3_post.bmp -> 'post')."
+    contrast_spec: ds006239
+    status: ready
+
+  # ------------------------------------------------------------ lytle-2020 ----
+  lytle-2020:
+    accession: null              # <-- NOT RESOLVED. Do not guess one.
+    snapshot: null
+    name: "Lytle et al. 2020 (children 8.7-15.5; phonological, semantic, orthographic)"
+    citation: "Lytle et al. 2020"
+    paper_url: "https://pubmed.ncbi.nlm.nih.gov/31956678/"
+    data_article: "https://www.sciencedirect.com/science/article/pii/S2352340919314477"
+    tasks: []
+    phenomena:
+      Phon: []
+      Sem: []
+      Orth: []                   # NEW phenomenon -- not covered by ds003604
+    sessions: []
+    ages:
+      kind: cross_sectional
+      per_subject: true
+      note: "Per-participant age is documented as available."
+    design:
+      modality: unknown
+      run_stimulus: unknown
+    stimuli:
+      kind: unknown
+    contrast_spec: null
+    status: unresolved
+    blocker: >
+      The linked database is a Data in Brief data article, not an OpenNeuro
+      accession. The actual accession must be resolved from the data article
+      before this can be implemented. Do NOT substitute a guessed accession --
+      downloading a different study into a directory named for this one and
+      labelling those rows as a distinct dataset would fabricate results, which
+      is exactly the failure PICKUP.md documents for the old fig10 cross-dataset
+      arm.

@@ -1,4 +1,4 @@
-"""Shared ds003604 condition->control contrast specification.
+"""Per-dataset condition->control contrast specifications.
 
 Single source of truth for how each phenomenon's positive (condition) and
 negative (control) trials are defined, used by BOTH:
@@ -11,6 +11,9 @@ task JSON sidecars in the neurodataset (github.com/suchirsalhan/neurodataset_bab
 """
 
 from __future__ import annotations
+
+import re
+from pathlib import Path
 
 # positive (condition) and negative (control) trial_type codes per phenomenon.
 # *_C codes are *perceptual* controls (backward/scrambled speech) with no text;
@@ -29,6 +32,82 @@ SENTENCE_ORDER = ["carrier_phrase", "subject", "verb1", "verb2", "verb3", "numbe
 
 PHENOMENA = list(CONTRAST_SPEC.keys())
 
+# ---------------------------------------------------------------------------
+# Per-dataset registry.
+#
+# Each neuro dataset codes its trial types differently, so the contrast spec
+# cannot stay a single global dict once more than one dataset is in play. Keys
+# here match `contrast_spec:` in configs/neuro_datasets.yaml.
+#
+# A dataset MUST NOT be added here from the paper text alone. Trial-type codes
+# are read off the dataset's own events.tsv files -- run
+#   scripts/inspect_dataset.py --dataset <key>
+# which reports the observed codes per task, and transcribe them. Guessing codes
+# silently mislabels conditions and produces a contrast that looks fine and
+# means nothing.
+
+# --- ds001894 (Lytle et al. 2019) ------------------------------------------
+# Verified against data/brain/ds001894/task-*_events.json "trial_type.Levels":
+#   1=O+P+  2=O+P-  3=O-P+  4=O-P-  5=control(fixation)  6=perceptual(symbol)
+# A 2x2 crossing of ORTHOGRAPHIC and PHONOLOGICAL similarity, which yields two
+# contrasts that are decorrelated by design -- Orth is not confounded with Phon
+# here, unlike in ds003604 where no orthographic manipulation exists.
+# Task suffixes encode presentation modality: AA=audio/audio, VV=visual/visual,
+# AV=audio/visual. That is a built-in low-level modality control.
+CONTRAST_SPEC_DS001894 = {
+    "Phon": {"positive": ["1", "3"], "negative": ["2", "4"], "perceptual": ["6"], "kind": "stim_pair_filename"},
+    "Orth": {"positive": ["1", "2"], "negative": ["3", "4"], "perceptual": ["6"], "kind": "stim_pair_filename"},
+}
+
+# --- ds006239 (Wang et al. 2025) -------------------------------------------
+# Verified against data/brain/ds006239/task-*_events.json "trial_type.Levels".
+#   ReadPhon: 1=OyPy 2=OnPy 3=OyPn 4=OnPn  5=PercY 6=PercN 7=FixY 8=FixN
+#   ReadMean: 1=HighY 2=LowY 3=UnrN       5/6=Perc 7/8=Fix
+#   LocalSem: 1=PicY  3=PicN              5/6=Perc 7/8=Fix
+# ReadMean mirrors ds003604's Sem (high / low / unrelated association), so we
+# take the same positive=high, negative=unrelated contrast and leave the low
+# condition out, for comparability with ds003604 rather than for any deeper
+# reason. LocalSem is the ONLY confound-free cell found across all three
+# datasets (stimuli recur across runs) -- see configs/neuro_datasets.yaml.
+CONTRAST_SPEC_DS006239 = {
+    "Phon":     {"positive": ["1", "2"], "negative": ["3", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadPhon"},
+    "Orth":     {"positive": ["1", "3"], "negative": ["2", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadPhon"},
+    "Sem":      {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadMean"},
+    "SemLocal": {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "LocalSem"},
+}
+
+CONTRAST_SPECS: dict[str, dict] = {
+    "ds003604": CONTRAST_SPEC,
+    "ds001894": CONTRAST_SPEC_DS001894,
+    "ds006239": CONTRAST_SPEC_DS006239,
+}
+
+
+class ContrastSpecUnavailable(RuntimeError):
+    """Raised when a dataset has no verified contrast spec yet."""
+
+
+def get_contrast_spec(dataset: str = "ds003604") -> dict:
+    """Return the condition>control spec for a dataset.
+
+    Raises rather than falling back to ds003604: applying ds003604's trial-type
+    codes to another dataset would match nothing (or, worse, match the wrong
+    trials) while still producing an output file.
+    """
+    if dataset not in CONTRAST_SPECS:
+        raise ContrastSpecUnavailable(
+            f"no verified contrast spec for dataset '{dataset}'. "
+            f"Known: {', '.join(sorted(CONTRAST_SPECS))}. "
+            f"Run `python scripts/inspect_dataset.py --dataset {dataset}` to read the "
+            "observed trial_type codes off its events.tsv, then add them to "
+            "CONTRAST_SPECS in src/contrast_spec.py."
+        )
+    return CONTRAST_SPECS[dataset]
+
+
+def phenomena_of(dataset: str = "ds003604") -> list[str]:
+    return list(get_contrast_spec(dataset).keys())
+
 
 def reconstruct_text(row: dict, kind: str) -> str:
     """Rebuild the stimulus text from a Stimulus_Characteristics row."""
@@ -44,10 +123,55 @@ def reconstruct_text(row: dict, kind: str) -> str:
     return " ".join(" ".join(parts).split())
 
 
-def condition_of(trial_type: str, task: str, use_perceptual_control: bool = False) -> str | None:
+# Stimulus filenames carry the word itself: ds001894 writes `slour.bmp`,
+# ds006239 writes `T3_post.bmp` (a `T<n>_` list prefix then the word). Strip the
+# extension and any list prefix to recover the text for the LM-side contrast.
+_STIM_PREFIX = re.compile(r"^(?:T\d+|_?F\d+)_")
+
+
+def text_from_stim_filename(name: str) -> str:
+    """Recover the presented word from a stimulus filename."""
+    if not name or name.strip().lower() == "n/a":
+        return ""
+    stem = Path(name).stem
+    stem = _STIM_PREFIX.sub("", stem)
+    return stem.strip().lower()
+
+
+def reconstruct_pair_text(row: dict, cols: tuple[str, str]) -> str:
+    """Rebuild the two-word stimulus text from a pair of filename columns."""
+    a = text_from_stim_filename(row.get(cols[0]) or "")
+    b = text_from_stim_filename(row.get(cols[1]) or "")
+    return f"{a} {b}".strip()
+
+
+def normalise_trial_type(value: object) -> str:
+    """Normalise a trial_type cell to its canonical string code.
+
+    ds001894 writes trial_type as a float in a minority of files ("5.0" beside
+    "5"), which silently splits a condition in two and drops those trials from
+    the contrast. Fold them back together.
+    """
+    v = str(value).strip()
+    if not v or v.lower() == "n/a":
+        return ""
+    try:
+        f = float(v)
+    except ValueError:
+        return v
+    return str(int(f)) if f.is_integer() else v
+
+
+def condition_of(
+    trial_type: str,
+    task: str,
+    use_perceptual_control: bool = False,
+    dataset: str = "ds003604",
+) -> str | None:
     """Return 'positive' / 'negative' for a trial_type under a task's contrast,
     or None if the trial is not part of the contrast."""
-    spec = CONTRAST_SPEC[task]
+    spec = get_contrast_spec(dataset)[task]
+    trial_type = normalise_trial_type(trial_type)
     if trial_type in spec["positive"]:
         return "positive"
     neg = spec["perceptual"] if use_perceptual_control else spec["negative"]

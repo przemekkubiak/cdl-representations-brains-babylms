@@ -49,13 +49,18 @@ case "$TIER" in
        pico-decoder-small pico-decoder-large beetle-humanscale-eng beetle-fineweb3-eng ;;
   3) exec env SKIP_BRAIN=1 ABLATE=1 MAX_CKPT=0 bash slurm/run_devai_grid.sh \
        pico-decoder-small beetle-fineweb3-eng ;;
-  # Tier 3, second half -- cross-dataset generalisation (Fig 10) -- is NOT defined here.
-  # The runbook's `DATASET=ds00XXXX` was a placeholder, never a real accession, and the
-  # download path is hardcoded to ds003604 (scripts/batch_download_bold.py builds every
-  # URL from OpenNeuroDatasets/ds003604, and contrasts are built from ds003604 stimuli).
-  # Pointing DATASET= at another tag would re-download ds003604 into a directory named
-  # after a different study and label it as a second dataset. That is fabricated data, so
-  # this stage stays unimplemented until someone supplies the real accession AND a
-  # download path that honours it. See PICKUP.md.
+  # Tier 3, second half -- cross-dataset generalisation (Fig 10) -- is still NOT defined
+  # here, but the reason has changed as of 2026-08-25 and the old one no longer applies.
+  #
+  # FIXED: the download path is no longer hardcoded. configs/neuro_datasets.yaml plus
+  # src/datasets/registry.py make every URL dataset-aware, and ds001894 (Lytle 2019) and
+  # ds006239 (Wang 2025) are both registered, bootstrapped, and carry verified contrast
+  # specs. `scripts/batch_download_bold.py --dataset <key>` fetches the right study.
+  #
+  # STILL BLOCKING: the RSA path assumes ds003604's stimulus metadata. Both new datasets
+  # identify stimuli by event-file columns (A_stim/B_stim; prime_stim/targ_stim) rather
+  # than a Stimulus_Characteristics directory, so src/rsa/semantic_metadata.py needs an
+  # adapter before their patterns can become session RDMs. Until then a cross-dataset
+  # tier would produce no alignment rows rather than wrong ones.
   *) echo "usage: $0 --tier {0,1,2,3} | --smoke" >&2; exit 2 ;;
 esac

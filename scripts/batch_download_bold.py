@@ -14,57 +14,22 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.datasets import get_dataset, DatasetSpec, UnresolvedDatasetError
 
-def get_annex_url(symlink_target: str, base_url: str = "https://github.com/OpenNeuroDatasets/ds003604/raw/main") -> str:
+
+def get_candidate_urls(bold_file: Path, data_dir: Path, spec: DatasetSpec) -> list:
+    """Build candidate download URLs for a BOLD file.
+
+    URL construction lives in the dataset registry (configs/neuro_datasets.yaml)
+    so that pointing this script at another accession actually downloads that
+    accession. It used to be hardcoded to ds003604 in three places, which made
+    the cross-dataset arm impossible to run without fabricating data -- see
+    PICKUP.md, "What was deliberately NOT run".
     """
-    Convert git-annex symlink to download URL.
-    
-    Parameters
-    ----------
-    symlink_target : str
-        The target of the symlink (e.g., '../../../.git/annex/objects/...')
-    base_url : str
-        Base URL for the dataset
-    
-    Returns
-    -------
-    str
-        Direct download URL
-    """
-    if "annex/objects" in symlink_target:
-        annex_path = symlink_target.split("annex/objects/")[1]
-        return f"{base_url}/.git/annex/objects/{annex_path}"
-    return None
-
-
-def get_candidate_urls(bold_file: Path, data_dir: Path) -> list:
-    """Build candidate download URLs for a BOLD file."""
     rel_path = bold_file.relative_to(data_dir).as_posix()
-    urls = []
-
-    # Candidate 1-2: git-annex object on GitHub (main/master)
-    if bold_file.is_symlink():
-        target = os.readlink(str(bold_file))
-        main_url = get_annex_url(target, base_url="https://github.com/OpenNeuroDatasets/ds003604/raw/main")
-        master_url = get_annex_url(target, base_url="https://github.com/OpenNeuroDatasets/ds003604/raw/master")
-        if main_url:
-            urls.append(main_url)
-        if master_url:
-            urls.append(master_url)
-
-    # Candidate 3-4: direct file path on OpenNeuro public storage
-    urls.append(f"https://s3.amazonaws.com/openneuro.org/ds003604/{rel_path}")
-    urls.append(f"https://openneuro.org/crn/datasets/ds003604/snapshots/1.0.0/files/{rel_path}")
-
-    # Remove duplicates while preserving order
-    seen = set()
-    deduped = []
-    for u in urls:
-        if u not in seen:
-            deduped.append(u)
-            seen.add(u)
-
-    return deduped
+    annex_target = os.readlink(str(bold_file)) if bold_file.is_symlink() else None
+    return spec.candidate_urls(rel_path, annex_target=annex_target)
 
 
 def download_file(url: str, output_path: Path, chunk_size: int = 8192, max_retries: int = 3):
@@ -193,7 +158,7 @@ def find_bold_files(
     return sorted(bold_files)
 
 
-def download_bold_file(bold_file: Path, data_dir: Path) -> dict:
+def download_bold_file(bold_file: Path, data_dir: Path, spec: DatasetSpec) -> dict:
     """
     Download a single BOLD file.
     
@@ -214,7 +179,7 @@ def download_bold_file(bold_file: Path, data_dir: Path) -> dict:
         result["message"] = "Already downloaded"
         return result
     
-    candidate_urls = get_candidate_urls(bold_file, data_dir)
+    candidate_urls = get_candidate_urls(bold_file, data_dir, spec)
     last_error = None
 
     for url in candidate_urls:
@@ -243,7 +208,8 @@ def download_bold_file(bold_file: Path, data_dir: Path) -> dict:
 
 
 def batch_download(
-    data_dir: str = "data/brain/ds003604",
+    dataset: str = "ds003604",
+    data_dir: str = None,
     subjects: list = None,
     task: str = None,
     tasks: list = None,
@@ -256,8 +222,10 @@ def batch_download(
     
     Parameters
     ----------
-    data_dir : str
-        Path to the dataset directory
+    dataset : str
+        Registry key or OpenNeuro accession (configs/neuro_datasets.yaml)
+    data_dir : str, optional
+        Path to the dataset directory (default: data/brain/<accession>)
     subjects : list, optional
         Subject IDs to include (default: all)
     task : str, optional
@@ -271,8 +239,18 @@ def batch_download(
     dry_run : bool
         If True, only list files without downloading
     """
-    data_path = Path(data_dir)
+    spec = get_dataset(dataset)
+    spec.require_downloadable()
+    data_path = Path(data_dir) if data_dir else spec.data_dir()
     task_names = _normalize_tasks(task=task, tasks=tasks)
+
+    print(f"Dataset: {spec.accession} -- {spec.name}")
+    if spec.needs_within_run_norm:
+        print(
+            f"  NOTE: run/stimulus structure is '{spec.run_stimulus}'. Voxel patterns "
+            "must be normalised WITHIN RUN before aggregating across runs, or the "
+            "resulting RDMs measure acquisition structure rather than language."
+        )
     
     if not data_path.exists():
         print(f"Error: Dataset directory not found: {data_path}")
@@ -315,7 +293,7 @@ def batch_download(
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit download tasks
         future_to_file = {
-            executor.submit(download_bold_file, f, data_path): f
+            executor.submit(download_bold_file, f, data_path, spec): f
             for f in files_to_download
         }
         
@@ -355,10 +333,16 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Download BOLD fMRI files from OpenNeuro")
     parser.add_argument(
+        "--dataset",
+        type=str,
+        default="ds003604",
+        help="Registry key or OpenNeuro accession (see configs/neuro_datasets.yaml)"
+    )
+    parser.add_argument(
         "--data-dir",
         type=str,
-        default="data/brain/ds003604",
-        help="Path to dataset directory"
+        default=None,
+        help="Path to dataset directory (default: data/brain/<accession>)"
     )
     parser.add_argument(
         "--subjects",
@@ -378,8 +362,7 @@ def main():
     parser.add_argument(
         "--sessions",
         nargs="+",
-        choices=["ses-5", "ses-7", "ses-9"],
-        help="Sessions to download (default: all)"
+        help="Sessions to download (default: all). Valid values are dataset-specific."
     )
     parser.add_argument(
         "--workers",
@@ -395,9 +378,36 @@ def main():
     
     args = parser.parse_args()
     
-    task_names = args.tasks if args.tasks else ([args.task] if args.task else ["Sem"])
+    spec = get_dataset(args.dataset)
+    # Surface an unresolved accession before anything else: there is no safe
+    # fallback, because falling back would download a different study into a
+    # directory named for this one.
+    try:
+        spec.require_downloadable()
+    except UnresolvedDatasetError as e:
+        parser.error(str(e))
+
+    if args.tasks:
+        task_names = args.tasks
+    elif args.task:
+        task_names = [args.task]
+    elif spec.tasks:
+        task_names = spec.tasks
+    else:
+        parser.error(
+            f"dataset '{spec.key}' declares no tasks in configs/neuro_datasets.yaml; "
+            "pass --tasks explicitly (and record them in the registry)"
+        )
+
+    if spec.sessions and args.sessions:
+        unknown = [s_ for s_ in args.sessions if s_ not in spec.sessions]
+        if unknown:
+            parser.error(
+                f"sessions {unknown} are not in {spec.key}; known: {spec.sessions}"
+            )
 
     batch_download(
+        dataset=args.dataset,
         data_dir=args.data_dir,
         subjects=args.subjects,
         task=task_names[0] if len(task_names) == 1 else None,
