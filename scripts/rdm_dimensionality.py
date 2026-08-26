@@ -20,9 +20,15 @@ it directly, at three levels:
      signal of the volume rather than any spatial pattern.
 
 If the leading component is global amplitude, every alignment result computed on
-these RDMs -- ours and the null -- is a measurement of scanner brightness, and
-the pipeline needs a brain mask and per-pattern denoising before any alignment
-claim can be made.
+these RDMs -- ours and the null -- largely reflects whole-brain signal level, and
+the pipeline needs an anatomically restricted mask and per-pattern denoising
+before any alignment claim can be made.
+
+NOTE ON A STATISTIC THAT LOOKS INFORMATIVE AND IS NOT. The fraction of non-zero
+voxels in a pattern vector is ~1.0 by construction: the vector already IS the
+masked voxels, so "100% non-zero" says nothing about whether a mask was applied.
+The real test for non-brain voxels is a population of near-ZERO-VARIANCE entries,
+which is what `frac_voxels_near_constant` measures below.
 """
 
 from __future__ import annotations
@@ -87,7 +93,11 @@ def pattern_report(rdm_root: Path, n_files: int, stride: int) -> pd.DataFrame:
         except Exception:
             continue
         n_vox = x.shape[1]
-        nonzero = float((np.abs(x).sum(axis=0) > 0).mean())
+        sd = x.std(axis=0)
+        med = float(np.median(sd)) or 1.0
+        # Air and skull would show up as a near-constant population. Its ABSENCE
+        # is evidence the vector is already restricted to in-brain voxels.
+        near_constant = float((sd < 0.01 * med).mean())
         sub = x[:, ::stride]
         xc = sub - sub.mean(axis=0)
         s = np.linalg.svd(xc, compute_uv=False)
@@ -106,7 +116,7 @@ def pattern_report(rdm_root: Path, n_files: int, stride: int) -> pd.DataFrame:
         iu = np.triu_indices_from(d, k=1)
         rows.append({
             "file": f.name, "n_stimuli": len(keys), "n_voxels": n_vox,
-            "frac_voxels_nonzero": nonzero,
+            "frac_voxels_near_constant": near_constant,
             "pattern_effective_rank": rank,
             "pc1_vs_global_signal": float(pc1_vs_amp),
             "pc1_vs_mean_map": float(pc1_vs_meanmap),
@@ -142,9 +152,10 @@ def main() -> None:
         p.to_csv(out / "pattern_dimensionality.csv", index=False)
         print()
         print(f"  --- RAW PATTERNS ({len(p)} files) ---")
+        nc = p["frac_voxels_near_constant"].median()
         print(f"  voxels per pattern      : {int(p['n_voxels'].median()):,} "
-              f"({p['frac_voxels_nonzero'].median() * 100:.0f}% non-zero -- "
-              f"{'NO BRAIN MASK' if p['frac_voxels_nonzero'].median() > 0.95 else 'masked'})")
+              f"({nc * 100:.1f}% near-constant -- "
+              f"{'includes non-brain voxels' if nc > 0.05 else 'in-brain, but whole-brain scale: no anatomical restriction'})")
         print(f"  effective rank          : median {int(p['pattern_effective_rank'].median())} "
               f"of {int(p['n_stimuli'].median())} stimuli")
         print(f"  top-2 variance share    : {p['top2_variance_share'].median():.3f}")
@@ -154,15 +165,14 @@ def main() -> None:
 
     verdict = None
     if len(p):
-        unmasked = p["frac_voxels_nonzero"].median() > 0.95
         global_led = (p["pc1_vs_global_signal"].median() > 0.7
                       or p["rdm_vs_amplitude_rsa"].median() > 0.3)
         degenerate = len(r) and (r["group_rdm_effective_rank"].median()
                                  <= 0.15 * r["n_stim"].median())
-        if unmasked and global_led:
-            verdict = ("patterns are unmasked whole-volume and their leading component "
-                       "tracks the global signal; these RDMs largely measure volume "
-                       "brightness, not representational geometry")
+        if global_led:
+            verdict = ("the leading component of these whole-brain patterns tracks the "
+                       "global signal, and the RDMs are near-degenerate; they largely "
+                       "encode whole-brain signal level, not representational geometry")
         elif degenerate:
             verdict = ("RDMs are near-degenerate relative to their stimulus count; they "
                        "cannot express stimulus-level structure")
@@ -175,7 +185,7 @@ def main() -> None:
         "n_stim_median": None if not len(r) else int(r["n_stim"].median()),
         "pattern_effective_rank_median": None if not len(p) else int(p["pattern_effective_rank"].median()),
         "pattern_n_voxels_median": None if not len(p) else int(p["n_voxels"].median()),
-        "frac_voxels_nonzero_median": None if not len(p) else float(p["frac_voxels_nonzero"].median()),
+        "frac_voxels_near_constant_median": None if not len(p) else float(p["frac_voxels_near_constant"].median()),
         "pc1_vs_global_signal_median": None if not len(p) else float(p["pc1_vs_global_signal"].median()),
         "rdm_vs_amplitude_rsa_median": None if not len(p) else float(p["rdm_vs_amplitude_rsa"].median()),
         "verdict": verdict,

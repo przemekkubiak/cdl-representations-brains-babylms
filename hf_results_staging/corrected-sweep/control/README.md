@@ -50,33 +50,43 @@ ds003604 is an auditory design — subjects heard 352 `.wav` files — so the
 acoustic spectrum of the audio they actually heard is the textbook control. It
 does not correlate. Neither does the study's own experimental contrast.
 
-## Why: the RDMs are near-degenerate and track volume brightness
+## Why: the RDMs are near-degenerate and track whole-brain signal level
 
 | | |
 |---|---|
 | 72-stimulus RDMs | live in **4 dimensions** (90% of the spectrum) |
 | 60-stimulus RDMs | live in **7 dimensions** |
 | per-subject RDMs | same rank, 4–5 and 7 |
-| voxels per pattern | 917,504, **100% non-zero — no brain mask** |
+| voxels per pattern | **917,504** — whole-brain, no anatomical restriction |
+| voxels near-constant across stimuli | 0.0% (so these are in-brain voxels) |
 | pattern effective rank | 6 of ~40 stimuli; top 2 components = 61% |
-| PC1 vs the volume's global signal | \|ρ\| = **0.85** |
+| PC1 vs the pattern's global mean signal | \|ρ\| = **0.85** |
 | RDM vs a pure global-amplitude RDM | ρ = **+0.43** |
 
-The patterns are unmasked whole-volume — air included — and their leading
-component tracks how bright the volume was, not where activity was. A 72-item
-RDM with four dimensions cannot express stimulus-level structure regardless of
-what it is compared against.
+The patterns are whole-brain GLM betas with no anatomical restriction — no grey
+matter, ROI or language-network mask — and their leading component tracks the
+pattern's overall signal level rather than where activity was. A 72-item RDM
+with four dimensions cannot express stimulus-level structure regardless of what
+it is compared against.
 
-That resolves the paradox of a reliable but empty RDM. Global brightness is
-extremely consistent across subjects — everyone is in the same scanner running
-the same sequence — so the ceiling is high. It is also stimulus-independent, so
-no stimulus property correlates and no language model can align with it.
+That resolves the paradox of a reliable but empty RDM. Whole-brain signal level
+is extremely consistent across subjects — same scanner, same sequence, same
+paradigm timing — so the ceiling is high. It is also stimulus-independent, so no
+stimulus property correlates and no language model can align with it.
+
+**A correction to an earlier version of this file.** It reported "100% non-zero
+— no brain mask", concluding the patterns were unmasked whole-volume with air
+included. That inference was wrong and the statistic was vacuous: a pattern
+vector *is* the masked voxels, so its non-zero fraction is ~1 by construction.
+The real test is a near-constant (air/skull) population, and there is none —
+0.0%. So a mask was applied; it is simply whole-brain rather than anatomically
+targeted. Everything else here is unchanged.
 
 ## What this means for the results
 
 **The ds003604 language-model null is vacuous.** It is not evidence that models
-fail to align with the developing brain; it is a measurement of scanner
-brightness that no model could have matched. Everything downstream inherits
+fail to align with the developing brain; it is a measurement of whole-brain
+signal level that no model could have matched. Everything downstream inherits
 this — the 15-family grid, the Pythia scale ladder, the PARC seed-null, the
 training trends. Those analyses are correct as analyses; their input is not
 a representational geometry.
@@ -87,12 +97,16 @@ trained ones. Against an amplitude-dominated RDM that is what you would expect.
 
 ## What has to happen before any alignment claim
 
-1. **Brain mask the patterns.** 917k unmasked voxels, air included, is the root
-   cause. Nothing else is worth doing first.
+1. **Restrict the voxels anatomically.** 917k whole-brain voxels per pattern is
+   the root cause: a stimulus-specific response in language cortex is a rounding
+   error against whole-brain signal level. `run_analysis.py --aal-rois` and
+   `scripts/run_roi_pipeline.py` already support this and the grid has never
+   used them (TODO §3).
 2. **Remove global signal per pattern**, or model it explicitly. Correlation
    distance does not remove it — it still leaves ρ = 0.43 with amplitude.
-3. **Re-derive patterns with a GLM** (per-stimulus betas against a proper
-   baseline) rather than averaged raw volumes.
+3. **Keep the GLM** — per-stimulus betas are already what is extracted
+   (`use_glm=True`, SPM HRF, cosine drift), so that part is sound. The problem is
+   the voxel set and the global component, not the estimator.
 4. **Re-run this control.** It is cheap, it is the gate, and it must come back
    positive — the acoustic spectrum should correlate with auditory cortex —
    before any alignment number is reported again.
@@ -101,6 +115,10 @@ trained ones. Against an amplitude-dominated RDM that is what you would expect.
 The raw BOLD is gone (the streaming design deletes it, by necessity — see
 `PICKUP.md`), so steps 1–3 mean re-downloading and re-preprocessing ds003604.
 That is a tier-0 job, ~2 h on this box at the observed rate.
+
+Cheaper first probe, no download needed: 249 pattern files survive under
+`data/processed/fmri_wrn/ds003604/`. Removing the global component from those and
+re-running this control would test the diagnosis before committing to the re-run.
 
 ## Files
 

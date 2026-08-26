@@ -3,8 +3,8 @@
   "n_stim_median": 66,
   "pattern_effective_rank_median": 6,
   "pattern_n_voxels_median": 917504,
-  "frac_voxels_nonzero_median": 1.0,
+  "frac_voxels_near_constant_median": 0.0,
   "pc1_vs_global_signal_median": 0.8466228893058163,
   "rdm_vs_amplitude_rsa_median": 0.4329836176588062,
-  "verdict": "patterns are unmasked whole-volume and their leading component tracks the global signal; these RDMs largely measure volume brightness, not representational geometry"
+  "verdict": "the leading component of these whole-brain patterns tracks the global signal, and the RDMs are near-degenerate; they largely encode whole-brain signal level, not representational geometry"
 }

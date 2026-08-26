@@ -8,18 +8,18 @@ codebase, and what currently blocks it. Status: `[ ]` todo, `[~]` partial,
 the reason is known.** The positive control failed: nothing stimulus-driven
 correlates with these brain RDMs (0/108 tests) — not the acoustic spectrum of
 the audio subjects actually heard, not the study's own condition contrast. The
-cause is measured, not guessed: the voxel patterns are **unmasked whole-volume**
-(917,504 voxels, 100% non-zero), their leading component tracks the volume's
-**global signal** (|ρ| = 0.85), and the 72-item RDMs live in **4 dimensions**.
-The RDMs largely encode scanner brightness, which is why the 0.85 noise ceiling
-is so high — brightness is very consistent across subjects — and why no model
-can align with them.
+cause is measured, not guessed: the voxel patterns are **whole-brain, with no
+anatomical restriction** (917,504 voxels per pattern), their leading component
+tracks the pattern's **global signal level** (|ρ| = 0.85), and the 72-item RDMs
+live in **4 dimensions**. The RDMs largely encode whole-brain signal level, which
+is why the 0.85 noise ceiling is so high — that level is very consistent across
+subjects — and why no model can align with them.
 
 So the null is a measurement artefact, not a finding about language models.
 Everything downstream of these RDMs is on hold: the 15-family grid, the Pythia
 ladder, the PARC seed-null, the training trends. See
 `paper_results/control/README.md`. Fix order: brain mask → global-signal
-handling → GLM betas → re-run the control → only then re-run the grid.
+handling → re-run the control → only then re-run the grid.
 
 The scanner-run confound described below WAS real and IS fixed (run correlation
 0.56 → −0.04); it was simply not the only thing wrong.
@@ -69,12 +69,16 @@ datasets on top of the current pipeline just multiplies an untrustworthy null.
     from this test is a real null.
   - **0/108 stimulus × cell tests significant** on the corrected RDMs, after
     Holm correction, with 5000 permutations each.
-  - Cause: unmasked whole-volume patterns dominated by global signal; RDM
-    effective rank 4 (72 stimuli) / 7 (60 stimuli); RDM vs a pure amplitude RDM
-    ρ = +0.43.
+  - Cause: whole-brain patterns (917k voxels, no ROI restriction) dominated by
+    global signal; RDM effective rank 4 (72 stimuli) / 7 (60 stimuli); RDM vs a
+    pure amplitude RDM ρ = +0.43. NB an earlier version of this entry said
+    "unmasked, air included" — wrong: the near-constant voxel fraction is 0.0%,
+    so the patterns are in-brain, just anatomically unrestricted.
   - **Therefore the ds003604 LM null is vacuous.** Do not publish it.
-  - Fix order: brain mask → remove/model global signal → GLM betas → re-run this
-    control → only then re-run the grid. Needs a tier-0 re-download, ~2 h.
+  - Fix order: anatomical (ROI/grey-matter) restriction → remove/model the global
+    component → re-run this control → only then re-run the grid. The GLM beta
+    estimator is fine and stays. Needs a tier-0 re-download (~2 h), but the
+    249 surviving pattern files allow a cheaper first probe.
   - Original plan, for the re-run:
   - Low-level acoustic / word-length RDM vs auditory cortex. If a spectrogram
     RDM does not correlate, the RDMs carry no usable stimulus signal and the LM
