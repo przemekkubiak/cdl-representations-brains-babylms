@@ -26,6 +26,9 @@ Outputs (--out, default paper_results/corrected):
   alignment_by_cell.csv         family x task x session
   scale_ladder.csv              Pythia 70M -> 1.4B, the "undertrained" answer
   seed_null_comparison.csv      each family against the matched pure-noise null
+  training_trend.csv            per family: does alignment grow with training?
+  training_trend_null.csv       the same test on pure-noise runs, for comparison
+  cell_vs_noise.csv             per-cell means, our families vs noise runs
   model_params.csv              exact parameter counts (cached from the Hub)
   summary.json                  the headline numbers
   fig_corrected_scale_ladder.*  alignment vs parameters, with ceiling
@@ -227,6 +230,90 @@ def tost(vals: np.ndarray, bound: float) -> float:
     return float(max(p_lo, p_hi))
 
 
+def training_trends(df: pd.DataFrame) -> pd.DataFrame:
+    """Per family: does alignment grow with training step?
+
+    Computed per CELL and then combined across the 12 cells, not pooled over all
+    rows -- pooling would count one trajectory twelve times and shrink the
+    p-value by a factor it has not earned.
+    """
+    rows = []
+    for fam, g in df.groupby("family"):
+        rhos = []
+        for _, c in g.groupby(["task", "session"]):
+            c = c.sort_values("step")
+            if c["step"].nunique() >= 5:
+                rhos.append(stats.spearmanr(c["step"], c["rsa"]).statistic)
+        if not rhos:
+            continue
+        rhos = np.array(rhos, dtype=float)
+        tt = stats.ttest_1samp(rhos, 0.0) if len(rhos) > 1 else None
+        rows.append({
+            "family": fam,
+            "n_cells": len(rhos),
+            "trend_rho_mean": float(rhos.mean()),
+            "trend_rho_sd": float(rhos.std(ddof=1)) if len(rhos) > 1 else np.nan,
+            "t": float(tt.statistic) if tt is not None else np.nan,
+            "p": float(tt.pvalue) if tt is not None else np.nan,
+        })
+    return pd.DataFrame(rows).sort_values("trend_rho_mean", ascending=False)
+
+
+def cell_vs_noise(df: pd.DataFrame, parc: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+    """Is the per-cell pattern a property of the models, or of the cells?
+
+    THE TEST THAT MATTERS. Some cells return a consistently positive alignment
+    for every checkpoint of every family, which reads like a real effect. If the
+    PARC runs -- which have no relationship to these models beyond being neural
+    networks with a tokenizer -- reproduce the same per-cell pattern, then that
+    structure belongs to the stimulus set and the RDM, not to anything a model
+    learned.
+    """
+    a = df.groupby(["task", "session"])["rsa"].mean().rename("families")
+    b = parc.groupby(["task", "session"])["rsa"].mean().rename("parc_noise")
+    j = pd.concat([a, b], axis=1).dropna().reset_index()
+    if len(j) < 3:
+        return j, {}
+    r = stats.pearsonr(j["families"], j["parc_noise"])
+    j["difference"] = j["families"] - j["parc_noise"]
+    return j, {"cell_vs_noise_r": float(r.statistic),
+               "cell_vs_noise_p": float(r.pvalue),
+               "cell_vs_noise_n": int(len(j))}
+
+
+def variance_decomposition(df: pd.DataFrame) -> dict:
+    """How much of the alignment variance is cell, how much is model?
+
+    Sequential (type-I) shares: cell identity first, then family on the residual.
+    Deliberately in that order -- the question is whether ANY variance is left
+    for the model once the cell is accounted for.
+    """
+    tot = float(df["rsa"].var())
+    if not tot:
+        return {}
+    cell_fit = df.groupby(["task", "session"])["rsa"].transform("mean")
+    resid = df["rsa"] - cell_fit
+    fam_fit = resid.groupby(df["family"]).transform("mean")
+    return {
+        "var_pct_cell": float(np.var(cell_fit) / tot * 100),
+        "var_pct_family": float(np.var(fam_fit) / tot * 100),
+        "var_pct_residual": float(np.var(resid - fam_fit) / tot * 100),
+    }
+
+
+def untrained_vs_trained(df: pd.DataFrame) -> dict:
+    """Step 0 is a randomly initialised network. If it aligns BETTER than the
+    trained one, whatever correlation exists is not something training built."""
+    z, nz = df[df["step"] == 0], df[df["step"] > 0]
+    if len(z) < 3 or len(nz) < 3:
+        return {}
+    t = stats.ttest_ind(z["rsa"], nz["rsa"], equal_var=False)
+    return {"untrained_mean": float(z["rsa"].mean()), "untrained_n": int(len(z)),
+            "trained_mean": float(nz["rsa"].mean()), "trained_n": int(len(nz)),
+            "untrained_vs_trained_t": float(t.statistic),
+            "untrained_vs_trained_p": float(t.pvalue)}
+
+
 # --------------------------------------------------------------- figures ----
 def fig_scale_ladder(fam: pd.DataFrame, ceil_lo: float, out: Path) -> None:
     """Alignment vs parameters. Answers 'your models are just too small'.
@@ -312,6 +399,59 @@ def fig_family(fam: pd.DataFrame, ceil_lo: float, out: Path) -> None:
     ax.set_xlabel("alignment (Spearman $\\rho$), mean $\\pm$ sd across 12 cells")
     ax.set_title(f"All 15 families sit inside the seed null; the ceiling is {ceil_lo:.2f}",
                  loc="left")
+    fig.tight_layout()
+    for ext in ("pdf", "png"):
+        fig.savefig(out.with_suffix(f".{ext}"), bbox_inches="tight")
+    plt.close(fig)
+
+
+def fig_null_checks(trend: pd.DataFrame, null_trend: pd.DataFrame,
+                    cells: pd.DataFrame, stats_d: dict, out: Path) -> None:
+    """The two checks that decide whether anything here is a model effect.
+
+    LEFT: the training trend of each family against the range that pure
+    initialisation noise produces on the same test. RIGHT: per-cell alignment of
+    our families against the same cells measured on noise runs -- points on the
+    diagonal mean the cell, not the model, is doing the work.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(9.2, 3.9))
+
+    ax = axes[0]
+    _despine(ax)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", color=MUTED, alpha=0.18, linewidth=0.6)
+    if len(null_trend):
+        lo, hi = null_trend["trend_rho_mean"].min(), null_trend["trend_rho_mean"].max()
+        ax.axvspan(lo, hi, color=NRM, alpha=0.14, lw=0, zorder=0)
+        ax.annotate(f"range over {len(null_trend)} pure-noise runs",
+                    xy=(hi, len(trend) - 0.5), xytext=(4, 0),
+                    textcoords="offset points", fontsize=7.5, color=INK2)
+    ax.axvline(0, color=MUTED, lw=0.8, ls=(0, (4, 3)), zorder=1)
+    d = trend.sort_values("trend_rho_mean")
+    y = np.arange(len(d))
+    ax.errorbar(d["trend_rho_mean"], y,
+                xerr=d["trend_rho_sd"] / np.sqrt(d["n_cells"].clip(lower=1)),
+                fmt="o", color=RAW, ms=4, lw=1.2, capsize=2.5, zorder=3)
+    ax.set_yticks(y); ax.set_yticklabels(d["family"], fontsize=7.5)
+    ax.set_xlabel("Spearman $\\rho$(step, alignment), mean over 12 cells")
+    ax.set_title("Training does not build alignment", loc="left")
+
+    ax = axes[1]
+    _despine(ax)
+    if len(cells):
+        lim = float(np.abs(cells[["families", "parc_noise"]].to_numpy()).max()) * 1.25
+        ax.plot([-lim, lim], [-lim, lim], color=MUTED, lw=0.9, ls=(0, (4, 3)), zorder=1)
+        ax.scatter(cells["parc_noise"], cells["families"], s=34, color=RAW,
+                   zorder=3, edgecolor=SURFACE, linewidth=0.6)
+        ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim)
+        r = stats_d.get("cell_vs_noise_r")
+        if r is not None:
+            ax.annotate(f"r = {r:+.3f}  (n={stats_d.get('cell_vs_noise_n')} cells)",
+                        xy=(0.04, 0.92), xycoords="axes fraction", fontsize=9, color=INK)
+    ax.set_xlabel("same cell, measured on pure-noise runs")
+    ax.set_ylabel("mean alignment, our 15 families")
+    ax.set_title("Per-cell structure belongs to the cell", loc="left")
+
     fig.tight_layout()
     for ext in ("pdf", "png"):
         fig.savefig(out.with_suffix(f".{ext}"), bbox_inches="tight")
@@ -507,6 +647,30 @@ def main() -> None:
                "p_equivalence_tost", "equivalent_to_zero"]].copy()
     snc.to_csv(out / "seed_null_comparison.csv", index=False)
 
+    # ------------------------------------------------- training trend check --
+    trend = training_trends(df)
+    null_trend = training_trends(parc) if not parc.empty else pd.DataFrame()
+    if len(null_trend):
+        lo, hi = (float(null_trend["trend_rho_mean"].min()),
+                  float(null_trend["trend_rho_mean"].max()))
+        trend["null_trend_lo"] = lo
+        trend["null_trend_hi"] = hi
+        trend["outside_null_range"] = (trend["trend_rho_mean"] < lo) | (trend["trend_rho_mean"] > hi)
+        trend["direction_if_outside"] = np.where(
+            ~trend["outside_null_range"], "",
+            np.where(trend["trend_rho_mean"] > 0, "increasing", "DECREASING"))
+    trend.to_csv(out / "training_trend.csv", index=False)
+    if len(null_trend):
+        null_trend.to_csv(out / "training_trend_null.csv", index=False)
+
+    uvt = untrained_vs_trained(df)
+
+    # ------------------------------------------------- cell-vs-noise check --
+    cells, cvn = (cell_vs_noise(df, parc) if not parc.empty else (pd.DataFrame(), {}))
+    if len(cells):
+        cells.to_csv(out / "cell_vs_noise.csv", index=False)
+    vdec = variance_decomposition(df)
+
     # ---------------------------------------------------------------- print --
     med_sd = float(fam["seed_null_sd"].median()) if fam["seed_null_sd"].notna().any() else None
     n_eq = int(fam["equivalent_to_zero"].sum())
@@ -539,6 +703,34 @@ def main() -> None:
               f"(p={ladder['scale_trend_p'].iloc[0]:.3f}, "
               f"n={int(ladder['scale_trend_n'].iloc[0])} cells)")
 
+    if len(trend):
+        print()
+        print("  --- DOES ALIGNMENT DEVELOP OVER TRAINING? ---")
+        cols = [c for c in ["family", "n_cells", "trend_rho_mean", "trend_rho_sd",
+                            "p", "direction_if_outside"] if c in trend.columns]
+        print(trend[cols].to_string(index=False, float_format=lambda v: f"{v:+.3f}"))
+        if len(null_trend):
+            n_out = int(trend["outside_null_range"].sum())
+            n_dec = int((trend["direction_if_outside"] == "DECREASING").sum())
+            print(f"  pure-noise runs give trends of {lo:+.3f}..{hi:+.3f} on the same test")
+            print(f"  {n_out}/{len(trend)} families fall outside that range -- "
+                  f"{n_dec} of them DECREASING")
+    if uvt:
+        print(f"  untrained (step 0) {uvt['untrained_mean']:+.4f} vs trained "
+              f"{uvt['trained_mean']:+.4f}  (p={uvt['untrained_vs_trained_p']:.4f}) "
+              "-- whatever correlation exists, training removes it")
+    if cvn:
+        print()
+        print("  --- IS THE PER-CELL PATTERN A MODEL EFFECT? ---")
+        print(f"  per-cell means, our families vs pure-noise runs: "
+              f"r = {cvn['cell_vs_noise_r']:+.3f} "
+              f"(p={cvn['cell_vs_noise_p']:.2g}, n={cvn['cell_vs_noise_n']} cells)")
+        print("  -> the per-cell pattern is a property of the CELL, not the model")
+    if vdec:
+        print(f"  variance explained: cell {vdec['var_pct_cell']:.1f}% | "
+              f"model family {vdec['var_pct_family']:.1f}% | "
+              f"checkpoint-level residual {vdec['var_pct_residual']:.1f}%")
+
     summary = {
         "dataset": "ds003604",
         "rdms": "within-run normalised",
@@ -557,6 +749,14 @@ def main() -> None:
     if len(ladder) and "scale_trend_rho" in ladder.columns:
         summary["scale_trend_rho"] = float(ladder["scale_trend_rho"].iloc[0])
         summary["scale_trend_p"] = float(ladder["scale_trend_p"].iloc[0])
+    summary.update(cvn)
+    summary.update(vdec)
+    summary.update(uvt)
+    if len(null_trend):
+        summary["null_trend_range"] = [lo, hi]
+        summary["families_outside_null_trend_range"] = int(trend["outside_null_range"].sum())
+        summary["families_trending_down"] = int(
+            (trend["direction_if_outside"] == "DECREASING").sum())
     (out / "summary.json").write_text(json.dumps(summary, indent=2))
 
     # -------------------------------------------------------------- figures --
@@ -565,6 +765,9 @@ def main() -> None:
         fig_scale_ladder(fam_fig, ceil_lo, out / "fig_corrected_scale_ladder")
         fig_family(fam_fig, ceil_lo, out / "fig_corrected_family")
         fig_trajectory(df, ceil_lo, med_sd, out / "fig_corrected_trajectory")
+        if len(trend):
+            fig_null_checks(trend, null_trend, cells, cvn,
+                            out / "fig_corrected_null_checks")
 
     print(f"\n  wrote -> {out}")
 

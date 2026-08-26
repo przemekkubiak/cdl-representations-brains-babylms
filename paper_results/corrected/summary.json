@@ -13,5 +13,23 @@
   "families_equivalent_to_zero": 15,
   "sesoi": 0.05,
   "scale_trend_rho": 0.011568641763872423,
-  "scale_trend_p": 0.9300927317765558
+  "scale_trend_p": 0.9300927317765558,
+  "cell_vs_noise_r": 0.9865717055146644,
+  "cell_vs_noise_p": 3.362096607576119e-09,
+  "cell_vs_noise_n": 12,
+  "var_pct_cell": 47.6201026609808,
+  "var_pct_family": 2.873216998149225,
+  "var_pct_residual": 49.472942149237056,
+  "untrained_mean": 0.005581617277771072,
+  "untrained_n": 132,
+  "trained_mean": 0.0009896105969588286,
+  "trained_n": 2832,
+  "untrained_vs_trained_t": 2.8754814003613434,
+  "untrained_vs_trained_p": 0.004660409094207199,
+  "null_trend_range": [
+    -0.16339869281045752,
+    0.23631535947712423
+  ],
+  "families_outside_null_trend_range": 6,
+  "families_trending_down": 5
 }
