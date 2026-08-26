@@ -1,0 +1,16 @@
+repo,params
+Beetle-FineWeb3-24B/beetle-monolingual-fineweb3-eng,193804032
+Beetle-HumanScale/beetle-monolingual-humanscale-eng,193811712
+BrainAlign/gpt2-babylm-3,134601216
+BrainAlign/gpt2-babylm-5,134601216
+BrainAlign/gpt2-babylm-7,134601216
+BrainAlign/gpt2-babylm-9,134601216
+EleutherAI/pythia-1.4b,1515311488
+EleutherAI/pythia-160m,212654688
+EleutherAI/pythia-1b,1078891008
+EleutherAI/pythia-410m,505997504
+EleutherAI/pythia-70m,95592496
+pico-lm/pico-decoder-large,569808384
+pico-lm/pico-decoder-medium,181095168
+pico-lm/pico-decoder-small,64595328
+pico-lm/pico-decoder-tiny,11282784

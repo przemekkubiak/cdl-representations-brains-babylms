@@ -1,0 +1,17 @@
+{
+  "dataset": "ds003604",
+  "rdms": "within-run normalised",
+  "n_families": 15,
+  "n_rows": 2964,
+  "n_cells": 12,
+  "ceiling_lower_mean": 0.8545585586961981,
+  "best_rsa_abs": 0.0563117827617582,
+  "best_frac_of_ceiling": 0.06656034374413933,
+  "seed_null_sd_median": 0.007889540085218,
+  "null_max_p95_median": 0.0654010891444828,
+  "families_beating_null_max": 0,
+  "families_equivalent_to_zero": 15,
+  "sesoi": 0.05,
+  "scale_trend_rho": 0.011568641763872423,
+  "scale_trend_p": 0.9300927317765558
+}

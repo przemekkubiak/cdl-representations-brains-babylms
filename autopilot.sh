@@ -77,6 +77,17 @@ step "ceiling table across every corrected cell"
     --out paper_results/ceiling/ceilings_ds003604.csv 2>&1 \
   | grep -viE "warn|libmpi" | sed 's/^/  /' | tee -a logs/autopilot.log
 
+step "corrected grid summary (15 families vs the corrected RDMs)"
+if [ -d data/processed/language_models/devai_grid_wrn/ds003604 ]; then
+  "$PY" scripts/corrected_sweep_summary.py \
+      --grid-dir data/processed/language_models/devai_grid_wrn/ds003604 \
+      --ceilings paper_results/ceiling/ceilings_ds003604.csv \
+      --out paper_results/corrected 2>&1 | grep -viE "warn|libmpi" | sed 's/^/  /' \
+    | tee -a logs/autopilot.log
+else
+  log "  no corrected grid output -- skipped"
+fi
+
 step "PARC seed-null analysis (if the grid produced rows)"
 if [ -d data/processed/language_models/devai_grid_parc/ds003604 ]; then
   "$PY" scripts/parc_seed_null.py \
@@ -101,7 +112,8 @@ stage.mkdir(parents=True, exist_ok=True)
 
 copied = 0
 for src, sub in [(Path("paper_results/ceiling"), "ceiling"),
-                 (Path("paper_results/parc"), "parc")]:
+                 (Path("paper_results/parc"), "parc"),
+                 (Path("paper_results/corrected"), "grid")]:
     if not src.exists():
         continue
     dst = stage / sub
@@ -117,7 +129,7 @@ api = HfApi()
 before = set(api.list_repo_files(REPO, repo_type="dataset"))
 api.upload_folder(repo_id=REPO, repo_type="dataset", folder_path=str(stage),
                   path_in_repo="corrected-sweep",
-                  commit_message="Corrected sweep: ceilings, alignment vs ceiling, PARC seed-null")
+                  commit_message="Corrected sweep: ceilings, the 15-family grid, PARC seed-null")
 after = set(api.list_repo_files(REPO, repo_type="dataset"))
 removed = before - after
 print(f"files {len(before)} -> {len(after)}")
@@ -132,12 +144,14 @@ fi
 step "commit and push summaries"
 if [ "$PROV" = "ok" ]; then
   cat > /tmp/autopilot_commit_msg <<EOM
-Corrected sweep results: ceilings across all cells, and the PARC seed-null
+Corrected sweep results: ceilings, the 15-family grid, and the PARC seed-null
 
 Published by autopilot.sh at the end of the unattended run. Contains the ceiling
-table for every within-run-normalised cell built, alignment expressed as a
-fraction of that ceiling, and -- where the PARC grid produced rows -- the
-seed-spread, equivalence (TOST) and architecture-contrast tables.
+table for every within-run-normalised cell built, the corrected model grid (all
+families x checkpoints x cells, with alignment expressed as a fraction of that
+ceiling and judged against a matched pure-noise maximum), and -- where the PARC
+grid produced rows -- the seed-spread, equivalence (TOST) and
+architecture-contrast tables.
 
 Corrected cells built: ${NCELL}/12. Provenance verified: every RDM carries
 within_run_normalized=True and its per-subject RDMs, so the ceilings are
