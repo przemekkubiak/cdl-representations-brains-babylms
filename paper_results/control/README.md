@@ -95,18 +95,52 @@ Note this also explains the training trends in
 `paper_results/corrected/README.md`: untrained models scored *higher* than
 trained ones. Against an amplitude-dominated RDM that is what you would expect.
 
+## The probe: it is not the voxel set, and not the global component
+
+`scripts/probe_global_signal.py` tested the obvious fix on the 249 surviving
+pattern files, so the answer cost minutes rather than a re-download:
+
+| variant | effective rank | RDM vs amplitude | best \|ρ\| vs duration | p < .05 |
+|---|---|---|---|---|
+| raw | 3 | +0.418 | 0.077 | 0/40 |
+| per-pattern mean removed | 3 | +0.418 | 0.077 | 0/40 |
+| leading component removed | 3 | +0.191 | 0.059 | 0/40 |
+
+Removing the global component halves its footprint in the RDM and recovers
+**nothing**. (Mean-removal is identical to raw, as it must be — correlation
+distance already subtracts each pattern's mean. That the numbers match exactly
+is a check that the probe is measuring what it claims.)
+
+So the diagnosis moves upstream. The voxel set and the global signal are real
+features of these patterns but they are not what is destroying the stimulus
+information: **the per-stimulus response estimates are near-degenerate on their
+own terms** — effective rank ~3 of 40–48 stimuli per run.
+
+The likely cause is the beta estimation itself. `extract_stimulus_activity_glm`
+puts every stimulus in as its own regressor in one design matrix (LSA). In a
+fast auditory design with one presentation per stimulus, those regressors are
+strongly collinear, and LSA single-trial betas collapse toward a few shared
+components — exactly the rank-3 structure measured here. The standard fix is
+**LSS** (least-squares-separate: one model per stimulus, that stimulus against
+everything else), which is far more stable under collinearity.
+
+That is a methods change, not a parameter change, and it needs the raw BOLD —
+which the streaming design has deleted. So it implies the tier-0 re-download
+either way.
+
 ## What has to happen before any alignment claim
 
-1. **Restrict the voxels anatomically.** 917k whole-brain voxels per pattern is
-   the root cause: a stimulus-specific response in language cortex is a rounding
-   error against whole-brain signal level. `run_analysis.py --aal-rois` and
-   `scripts/run_roi_pipeline.py` already support this and the grid has never
-   used them (TODO §3).
-2. **Remove global signal per pattern**, or model it explicitly. Correlation
-   distance does not remove it — it still leaves ρ = 0.43 with amplitude.
-3. **Keep the GLM** — per-stimulus betas are already what is extracted
-   (`use_glm=True`, SPM HRF, cosine drift), so that part is sound. The problem is
-   the voxel set and the global component, not the estimator.
+1. **Re-estimate the per-stimulus responses with LSS**, not LSA. This is the
+   root cause as far as the evidence reaches: rank ~3 of 40–48 stimuli, and it
+   survives every post-hoc correction tried.
+2. **Restrict the voxels anatomically** while re-estimating — grey matter, or
+   the AAL/language ROIs. `run_analysis.py --aal-rois` and
+   `scripts/run_roi_pipeline.py` already support it and the grid has never used
+   them (TODO §3). Not the root cause, but 917k whole-brain voxels dilutes any
+   real effect and costs nothing to fix at the same time.
+3. **Check the events**: confirm stimulus onsets, durations and ISI are what the
+   GLM is being told they are. A design whose regressors are collinear enough to
+   produce rank 3 deserves that check before the model is blamed.
 4. **Re-run this control.** It is cheap, it is the gate, and it must come back
    positive — the acoustic spectrum should correlate with auditory cortex —
    before any alignment number is reported again.
@@ -116,9 +150,8 @@ The raw BOLD is gone (the streaming design deletes it, by necessity — see
 `PICKUP.md`), so steps 1–3 mean re-downloading and re-preprocessing ds003604.
 That is a tier-0 job, ~2 h on this box at the observed rate.
 
-Cheaper first probe, no download needed: 249 pattern files survive under
-`data/processed/fmri_wrn/ds003604/`. Removing the global component from those and
-re-running this control would test the diagnosis before committing to the re-run.
+That probe has now been run (above) and rules out the cheap fixes, so the
+re-download is the only remaining path.
 
 ## Files
 
@@ -130,4 +163,5 @@ re-running this control would test the diagnosis before committing to the re-run
 | `rdm_dimensionality.csv` | RDM rank per cell |
 | `pattern_dimensionality.csv` | raw pattern rank, mask status, global-signal share |
 | `summary.json`, `dimensionality_summary.json` | headline numbers |
+| `global_signal_probe.csv`, `.json` | the cheap-fix probe: rank and RSA before/after removal |
 | `fig_positive_control.*` | what the pipeline can and cannot detect |

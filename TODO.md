@@ -75,10 +75,17 @@ datasets on top of the current pipeline just multiplies an untrustworthy null.
     "unmasked, air included" — wrong: the near-constant voxel fraction is 0.0%,
     so the patterns are in-brain, just anatomically unrestricted.
   - **Therefore the ds003604 LM null is vacuous.** Do not publish it.
-  - Fix order: anatomical (ROI/grey-matter) restriction → remove/model the global
-    component → re-run this control → only then re-run the grid. The GLM beta
-    estimator is fine and stays. Needs a tier-0 re-download (~2 h), but the
-    249 surviving pattern files allow a cheaper first probe.
+  - Cheap fixes RULED OUT by `scripts/probe_global_signal.py`: removing the
+    per-pattern mean or the leading component leaves effective rank at 3 and
+    recovers nothing. It is not the voxel set and not the global signal.
+  - Root cause as far as the evidence reaches: **the per-stimulus betas are
+    near-degenerate** (rank ~3 of 40–48 stimuli/run). `extract_stimulus_activity_glm`
+    uses LSA — every stimulus its own regressor in one design — which collapses
+    under the collinearity of a fast single-presentation design. Fix is **LSS**.
+  - Fix order: LSS re-estimation → anatomical ROI restriction at the same time →
+    verify the events/ISI the GLM is given → re-run this control (it must come
+    back positive) → only then re-run the grid. Needs the tier-0 re-download
+    (~2 h) because LSS needs the raw BOLD.
   - Original plan, for the re-run:
   - Low-level acoustic / word-length RDM vs auditory cortex. If a spectrogram
     RDM does not correlate, the RDMs carry no usable stimulus signal and the LM

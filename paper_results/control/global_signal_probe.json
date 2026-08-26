@@ -1,0 +1,38 @@
+{
+  "verdict": "removing the global component changes nothing -- the patterns carry no stimulus information at all, so the problem is upstream in preprocessing, not in the voxel set or the global component",
+  "improved": false,
+  "summary": [
+    {
+      "variant": "mean_removed",
+      "n_runs": 40,
+      "effective_rank": 3.0,
+      "rsa_vs_amplitude": 0.41841759462761474,
+      "mean_abs_rsa_duration": 0.051577839641645494,
+      "max_abs_rsa_duration": 0.07688007578181096,
+      "n_p_below_05": 0,
+      "n_tests": 40
+    },
+    {
+      "variant": "pc1_removed",
+      "n_runs": 40,
+      "effective_rank": 3.0,
+      "rsa_vs_amplitude": 0.19059062581274155,
+      "mean_abs_rsa_duration": 0.029287159382085603,
+      "max_abs_rsa_duration": 0.05925963126010249,
+      "n_p_below_05": 0,
+      "n_tests": 40
+    },
+    {
+      "variant": "raw",
+      "n_runs": 40,
+      "effective_rank": 3.0,
+      "rsa_vs_amplitude": 0.41841759462761474,
+      "mean_abs_rsa_duration": 0.051577839641645494,
+      "max_abs_rsa_duration": 0.07688007578181096,
+      "n_p_below_05": 0,
+      "n_tests": 40
+    }
+  ],
+  "n_permutations": 2000,
+  "voxel_stride": 7
+}
