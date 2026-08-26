@@ -153,7 +153,14 @@ def find_bold_files(
                     bold_files.extend(subject_path.glob(pattern))
             else:
                 pattern = f"ses-*/func/*task-{task_name}*_bold.nii.gz"
-                bold_files.extend(subject_path.glob(pattern))
+                found = list(subject_path.glob(pattern))
+                if not found:
+                    # Datasets with no session entity (ds002236: sub-XX/func/).
+                    # Without this the downloader silently finds nothing and the
+                    # caller reports "no BOLD for this task" for every subject.
+                    found = list(subject_path.glob(
+                        f"func/*task-{task_name}*_bold.nii.gz"))
+                bold_files.extend(found)
     
     return sorted(bold_files)
 
@@ -377,7 +384,32 @@ def main():
     )
     
     args = parser.parse_args()
-    
+
+    # SAFETY. --dataset defaults to ds003604, so `--data-dir data/brain/ds002236`
+    # alone used to build every URL from ds003604 and write the result into the
+    # ds002236 tree. It 404s when the paths do not collide, but a path present in
+    # both studies would be fetched from the WRONG one and silently labelled as
+    # this dataset -- precisely the fabrication PICKUP.md documents. So when the
+    # data dir names a different dataset than --dataset, believe the data dir.
+    if args.data_dir:
+        from pathlib import Path as _P
+        inferred = _P(args.data_dir).name
+        if inferred and inferred != args.dataset:
+            try:
+                get_dataset(inferred)
+            except Exception:
+                print(f"ERROR: --data-dir names '{inferred}', which is not in the "
+                      f"registry, while --dataset says '{args.dataset}'. Refusing to "
+                      f"download one study into another study's directory.")
+                sys.exit(2)
+            if args.dataset != parser.get_default("dataset"):
+                print(f"ERROR: --dataset '{args.dataset}' contradicts --data-dir "
+                      f"'{args.data_dir}'. Refusing to guess which one you meant.")
+                sys.exit(2)
+            print(f"note: inferring dataset '{inferred}' from --data-dir "
+                  f"(--dataset was left at its default)")
+            args.dataset = inferred
+
     spec = get_dataset(args.dataset)
     # Surface an unresolved accession before anything else: there is no safe
     # fallback, because falling back would download a different study into a

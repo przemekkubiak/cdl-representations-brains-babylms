@@ -120,32 +120,27 @@ for T in "${PHENOMENA[@]}"; do
   # smallest working set that can produce any output; there is no way to go finer without changing
   # the science. So batch by session: prep it, reduce it, reclaim it, move on. Peak disk becomes
   # one session instead of one task, and `session_based_rsa.py --sessions` already supports it.
-  # [A-Za-z0-9]+, not [0-9]+: ds001894 uses ses-T1/ses-T2, which the old
-  # digits-only pattern didn't match at all -- sed leaves a non-matching line
-  # unchanged, so every "session" silently became a full, un-simplified file
-  # path instead of a clean label. Caught while generalizing this script
-  # beyond ds003604 (2026-08-26).
+  # Session labels are NOT always ses-<digits>. ds001894 uses ses-T1/ses-T2, and
+  # ds002236 has no session entity at all (sub-XX/func/...). The old pattern was
+  # `ses-[0-9]+` with a non-printing sed, so for those two datasets every path
+  # passed through unchanged and SESSIONS filled up with full file paths --
+  # silently producing garbage globs rather than an error. Match any session
+  # token (letters/digits/+, for the age-group "11+" bin further down), print
+  # only real matches (sed -n ... p, not a blanket substitution), and fall back
+  # to a single pseudo-session labeled to match fmri_preprocessing.py's own
+  # SESSIONLESS_LABEL ("ses-all") -- both sides of the pipeline must agree on
+  # this name, since it ends up in the actual pattern filenames FMRIPreprocessor
+  # writes, not just here.
   mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
-      | sed -E 's|.*_(ses-[A-Za-z0-9]+)_.*|\1|' | sort -u)
-  # Datasets with NO ses-* entity at all (ds002236: files sit directly under
-  # sub-X/func/) leave every line unmatched -- same failure mode, just with
-  # nothing to fall back to. Detect it (anything not matching ^ses-<label>$)
-  # and use fmri_preprocessing.py's SESSIONLESS_LABEL so both sides of the
-  # pipeline agree on what a session-less dataset's single implicit session
-  # is called.
-  BAD_SESSION_MATCH=0
-  for _s in "${SESSIONS[@]:-}"; do
-    [[ "$_s" =~ ^ses-[A-Za-z0-9]+$ ]] || BAD_SESSION_MATCH=1
-  done
-  if [ "$BAD_SESSION_MATCH" = "1" ] || [ "${#SESSIONS[@]}" -eq 0 ]; then
-    if find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" | grep -q .; then
+      | sed -nE 's|.*_(ses-[A-Za-z0-9+]+)_.*|\1|p' | sort -u)
+  if [ "${#SESSIONS[@]}" -eq 0 ]; then
+    if [ -n "$(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" -print -quit)" ]; then
+      SESSIONS=(ses-all)
       log "$T: no ses-* entity found in filenames -- treating as one session (ses-all)"
-      SESSIONS=("ses-all")
     else
-      SESSIONS=()
+      log "$T: no runs found, skipping"; continue
     fi
   fi
-  [ "${#SESSIONS[@]}" -eq 0 ] && { log "$T: no sessions found, skipping"; continue; }
 
   # ONLY_SESSIONS / SKIP_SESSIONS -- run a subset of sessions.
   # A session RDM aggregates across every subject in that session, so one session's patterns is an
@@ -214,8 +209,13 @@ for T in "${PHENOMENA[@]}"; do
       log "ABORT $T/$S: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
     fi
 
-    mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
-        | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    if [ "$S" = "ses-none" ]; then
+      mapfile -t SUBS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
+          | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    else
+      mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
+          | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    fi
     [ "$MAX_SUBJECTS" -gt 0 ] && SUBS=("${SUBS[@]:0:$MAX_SUBJECTS}")
     [ "${#SUBS[@]}" -eq 0 ] && { log "$T/$S: no subjects, skipping"; continue; }
     log "$T/$S: ${#SUBS[@]} subjects, JOBS=$JOBS, $(free_gb)GB free"

@@ -27,6 +27,8 @@ import logging
 import os
 import sys
 from pathlib import Path
+import re
+
 import numpy as np
 import pandas as pd
 import nibabel as nib
@@ -333,13 +335,12 @@ class FMRIPreprocessor:
         runs = []
         real_tasks = self._resolve_real_tasks()
 
+        # Session directories (ds003604: ses-5/7/9; ds001894: ses-T1/ses-T2), and
+        # -- for datasets with no session entity at all, like ds002236, whose
+        # layout is sub-XX/func/ -- the subject's own func/ under SESSIONLESS_LABEL.
+        # Without this branch such a dataset yields ZERO runs here and the whole
+        # pipeline reports "no subjects" while exiting 0.
         session_dirs = sorted(self.subject_dir.glob("ses-*"))
-        # Some datasets have no ses-* entity at all (single cross-sectional
-        # visit -- e.g. ds002236, files sit directly under sub-X/func/).
-        # SESSIONLESS_LABEL stands in so every downstream consumer of
-        # run_info['session'] still gets a well-formed, non-empty label; it
-        # is NOT a developmental/age-group label -- see the module-level
-        # comment on SESSIONLESS_LABEL for why that's a deliberate split.
         session_targets = (
             [(d.name, d / "func") for d in session_dirs]
             if session_dirs else [(SESSIONLESS_LABEL, self.subject_dir / "func")]
@@ -348,6 +349,11 @@ class FMRIPreprocessor:
         for session_label, func_dir in session_targets:
             if not func_dir.exists():
                 continue
+            # self.task is a PHENOMENON key, not necessarily a literal BIDS task
+            # label (e.g. ds001894's Phon spans six real tasks, ds002236's Sem is
+            # really "AudSem") -- iterate every real task this phenomenon resolves
+            # to, or a single dataset with no run for this phenomenon at all would
+            # silently look identical to "phenomenon isn't in this BOLD file".
             for real_task in real_tasks:
                 for bold_file in sorted(func_dir.glob(f"*task-{real_task}*_bold.nii.gz")):
                     events_file = bold_file.parent / bold_file.name.replace("_bold.nii.gz", "_events.tsv")
@@ -389,11 +395,22 @@ class FMRIPreprocessor:
         # Clean up stimulus file names -- only when this column exists.
         # ds003604 (github_tsv) has it; the stim_pair_filename datasets
         # (ds001894/ds006239/ds002236) use different column names entirely
-        # (see src/datasets/stim_identity.py), so unconditionally requiring
-        # 'stim_file' here used to KeyError on all three of them.
+        # and are NOT unified into a synthesized 'stim_file' here -- see
+        # src/datasets/stim_identity.py's classify_trials, the sole consumer
+        # of this DataFrame for the GLM path (extract_stimulus_activity_glm
+        # below). It reads each dataset's own pair columns directly from
+        # configs/neuro_datasets.yaml's `stimuli.columns`, and already
+        # excludes null/perceptual/off-contrast trials via
+        # src.contrast_spec.condition_of(trial_type) -- a registry-driven
+        # check tied to each dataset's verified contrast spec, not a
+        # filename-regex heuristic, and one that (deliberately) does NOT
+        # apply to ds003604's github_tsv path, preserving that dataset's
+        # exact pre-2026-08-26 behaviour so its published numbers don't shift.
+        # Unconditionally requiring/deriving 'stim_file' here used to KeyError
+        # on all three pair datasets before this dataset-aware split existed.
         if 'stim_file' in df.columns:
             df['stim_file'] = df['stim_file'].str.strip()
-        
+
         return df
     
     def load_bold(self, bold_file: Path) -> nib.Nifti1Image:

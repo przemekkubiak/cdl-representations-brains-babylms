@@ -201,7 +201,14 @@ class SessionBasedRSA:
             for key in data.keys():
                 # Normalize to filename so the same stimulus can match across runs,
                 # e.g., Sem/Sem_run-01/foo.wav and Sem/Sem_run-02/foo.wav -> foo.wav
-                norm_key = Path(str(key)).name
+                # Pair designs join two stimulus paths with "|", and those paths
+                # can carry a directory (ds002236: "Semantic/handle.WAV").
+                # Path(...).name on the joined string keeps only the text after
+                # the LAST slash, i.e. the second word alone -- so two different
+                # pairs sharing a second word collapse onto the same key and one
+                # silently overwrites the other. Normalise each side separately.
+                norm_key = "|".join(Path(part).name
+                                    for part in str(key).split("|"))
                 if norm_key in patterns:
                     warnings.warn(
                         f"Duplicate normalized stimulus key '{norm_key}' in {pf.name}; "

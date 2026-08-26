@@ -130,6 +130,11 @@ class BatchPreprocessor:
         # phenomenon == BIDS task name.
         real_tasks = get_dataset(self.dataset).phenomena.get(self.task) or [self.task]
 
+        # Session dirs, or the subject's own func/ for datasets with no session
+        # entity (ds002236) under SESSIONLESS_LABEL. Without the fallback the
+        # subject is reported as having no data for the task and the run is
+        # scored as a failure while everything upstream says the download
+        # succeeded.
         session_dirs = sorted(subject_dir.glob("ses-*"))
         session_targets = (
             [(d.name, d / "func") for d in session_dirs]
@@ -335,6 +340,12 @@ def main():
         nargs="+",
         help="Subject IDs to process (default: all)"
     )
+    # No `choices=` on either of these. They used to enumerate ds003604's four
+    # tasks and three sessions, which made every other dataset in the registry
+    # un-runnable: ds001894 (ses-T1/ses-T2, AVWord...), ds006239 (LocalSem...)
+    # and ds002236 (AudSem..., no sessions at all) all die in argparse before a
+    # single volume is read. The dataset registry is the authority on what tasks
+    # and sessions exist; this CLI should not hold a second, staler copy.
     parser.add_argument(
         "--sessions",
         nargs="+",
