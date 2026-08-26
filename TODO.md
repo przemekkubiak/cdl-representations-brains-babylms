@@ -30,22 +30,36 @@ datasets on top of the current pipeline just multiplies an untrustworthy null.
   - Cross-check against Schrimpf et al. 2024 cross-subject prediction accuracy
     as the comparison point for what a healthy ceiling looks like.
 
-- [~] **Re-run the full grid with within-run normalisation.** LAUNCHED 2026-08-25.
-  The corrected analysis currently covers **one family** (beetle-humanscale-eng),
-  **two steps** (0 and 9500), 4 tasks — 336 rows in
-  `hf_results_staging/diagnostics/run_confound_check.csv`. Everything else in
-  the results tables is the confounded version.
-  - Rebuild all 12 task × session cells with per-run voxel z-scoring
-    (`scripts/test_within_run_norm.py` has the working implementation).
-  - Re-run tiers 1–3 against the corrected RDMs.
-  - Republish; mark the confounded tables superseded.
+- [x] **Re-run the full grid with within-run normalisation.** DONE 2026-08-26.
+  All 12 task × session cells rebuilt with per-run voxel z-scoring; **15
+  families × 2964 rows** run against them (`devai_grid_wrn/`), summarised by
+  `scripts/corrected_sweep_summary.py` into `paper_results/corrected/` and
+  published to `corrected-sweep/grid/` on the Hub.
+  - The correction works: run-identity correlation **0.56 → −0.04**, and the
+    noise ceiling *rises* 0.77 → **0.85**, so it removed the confound without
+    costing reliability.
+  - The null survives it. Best alignment anywhere in the grid **0.056 = 6.7% of
+    the ceiling**; **0/15** families beat a matched pure-noise maximum;
+    **15/15** equivalent to zero (TOST, ±0.05).
+  - Judge a best cell against the **matched max statistic** (PARC per-run
+    maxima, 0.033–0.070), never against the fixed-cell across-seed sd — the
+    latter turns every family into a fake 5–7σ detection. See
+    `paper_results/corrected/README.md`.
+  - Confounded tables (`hf_results_staging/by-model/`, `overall/`) are
+    superseded by `corrected-sweep/grid/`.
 
-- [ ] **Positive controls — show the pipeline can detect alignment that exists.**
-  A null is worthless without demonstrated power. Cheapest first:
+- [~] **Positive controls — show the pipeline can detect alignment that exists.**
+  **THE ONE REMAINING BLOCKER IN §0.** Brain-to-brain split-half is done (it is
+  the ceiling, 0.85 — so the RDMs are demonstrably reliable). What is still
+  missing is a *stimulus-driven* control: reliability is not sensitivity, and
+  until one exists the honest claim is "no LM alignment detectable in RDMs of
+  demonstrated inter-subject reliability", not "LMs do not align".
+  Cheapest first:
   - Low-level acoustic / word-length RDM vs auditory cortex. If a spectrogram
     RDM does not correlate, the RDMs carry no usable stimulus signal and the LM
     null is vacuous.
-  - Brain-to-brain split-half (doubles as the ceiling, item 1).
+  - [x] Brain-to-brain split-half (doubles as the ceiling, item 1) — 0.84–0.89
+    across all 12 cells.
   - Replicate a published alignment effect on a dataset where one is
     established, and confirm we recover it.
 
@@ -240,11 +254,14 @@ brain alignment."
   - Launched via `launch_parc_sweep.sh` (GPUs 4–7), armed by
     `scripts/parc_watcher.sh` to start when stage 1's 12 corrected cells land.
 
-- [ ] **Run the Pythia ladder.** `configs/neuro_datasets.yaml` aside,
-  `configs/model_zoo.yaml` already defines `pythia-70m-full`, `pythia-160m-full`,
-  `pythia-410m-full`, `pythia-1b-full`, `pythia-1.4b-full` — **none of them
-  appear in the results**. All 10 families that ran are pico/beetle/babylm.
-  Cheapest possible scale test; already configured.
+- [x] **Run the Pythia ladder.** DONE 2026-08-26. All five rungs ran against the
+  corrected RDMs (stage 3 of `launch_full_sweep.sh`). Real parameter counts, not
+  nominal: 96M → 213M → 506M → 1.08B → 1.52B. **No trend** — Spearman ρ = +0.012
+  vs parameters (p = 0.93, n = 60 cells). 16× scale buys nothing, which is the
+  answer to "your models are just undertrained". `paper_results/corrected/scale_ladder.csv`.
+  - Caveat to state in the paper: `MAX_CKPT=20`, so 18 of Pythia's 154
+    checkpoints — log-uniform over step 0–143 000, fine for a trend test but not
+    the dense trajectory.
 - [ ] Include at least one ~7B model outside the developmental framing, since
   published alignment effects typically grow with scale.
 
