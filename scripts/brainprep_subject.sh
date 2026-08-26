@@ -20,9 +20,15 @@ if ls "$OUT/${SUB}_"*_patterns.npz >/dev/null 2>&1; then drop_bold; exit 0; fi
 if [ "$(free_gb)" -lt "$FLOOR" ]; then echo "[$SUB/$T] SKIP: below disk floor"; exit 9; fi
 
 "$PYBIN" scripts/batch_download_bold.py --data-dir "$DATA_DIR" --task "$T" \
+    --dataset "${DATASET:-ds003604}" \
     --subjects "$SUB" --workers 2 >/dev/null 2>&1 || { echo "[$SUB/$T] download failed"; drop_bold; exit 1; }
 
-if ! ls "$DATA_DIR/$SUB"/*/func/*task-${T}_*bold.nii.gz >/dev/null 2>&1; then
+# Both BIDS layouts: sub-XX/ses-YY/func/ (ds003604, ds001894, ds006239) and
+# sub-XX/func/ for datasets with no session entity (ds002236). The glob used to
+# require the session level, so every session-less dataset reported "no BOLD for
+# this task" for every subject and exited 0 -- a silent total loss.
+if ! find "$DATA_DIR/$SUB" -name "*task-${T}_*bold.nii.gz" -print -quit \
+     | grep -q . ; then
   echo "[$SUB/$T] no BOLD for this task"; exit 0
 fi
 

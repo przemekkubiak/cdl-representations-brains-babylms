@@ -89,11 +89,22 @@ class BatchPreprocessor:
         """
         subject_dir = self.data_dir / subject_id
         sessions_runs = {}
-        
-        for session_dir in sorted(subject_dir.glob("ses-*")):
+
+        # Session dirs, or the subject's own func/ for datasets with no session
+        # entity (ds002236). Third place in this pipeline that assumed ses-*;
+        # without the fallback the subject is reported as having no data for the
+        # task and the run is scored as a failure while everything upstream says
+        # the download succeeded.
+        session_dirs = sorted(subject_dir.glob("ses-*"))
+        if not session_dirs and (subject_dir / "func").exists():
+            session_dirs = [subject_dir]
+
+        for session_dir in session_dirs:
             func_dir = session_dir / "func"
             if not func_dir.exists():
                 continue
+            session_label = (session_dir.name if session_dir.name.startswith("ses-")
+                             else "ses-none")
             
             # Find task-specific BOLD files
             bold_files = sorted(func_dir.glob(f"*task-{self.task}*_bold.nii.gz"))
@@ -107,8 +118,8 @@ class BatchPreprocessor:
                             runs.append(part)
                             break
                 
-                sessions_runs[session_dir.name] = runs
-        
+                sessions_runs[session_label] = runs
+
         return sessions_runs
     
     def process_subject(
@@ -284,18 +295,22 @@ def main():
         nargs="+",
         help="Subject IDs to process (default: all)"
     )
+    # No `choices=` on either of these. They used to enumerate ds003604's four
+    # tasks and three sessions, which made every other dataset in the registry
+    # un-runnable: ds001894 (ses-T1/ses-T2, AVWord...), ds006239 (LocalSem...)
+    # and ds002236 (AudSem..., no sessions at all) all die in argparse before a
+    # single volume is read. The dataset registry is the authority on what tasks
+    # and sessions exist; this CLI should not hold a second, staler copy.
     parser.add_argument(
         "--sessions",
         nargs="+",
-        choices=["ses-5", "ses-7", "ses-9"],
-        help="Sessions to process (default: all)"
+        help="Sessions to process, e.g. ses-5 or ses-T1 (default: all)"
     )
     parser.add_argument(
         "--task",
         type=str,
         default="Sem",
-        choices=["Sem", "Phon", "Gram", "Plaus"],
-        help="Task name to process (default: Sem)"
+        help="Task name to process, e.g. Sem, AVWord, LocalSem, AudRhyme"
     )
     parser.add_argument(
         "--smoothing-fwhm",

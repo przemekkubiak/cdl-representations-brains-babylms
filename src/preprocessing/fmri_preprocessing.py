@@ -13,6 +13,8 @@ This module handles:
 
 import os
 from pathlib import Path
+import re
+
 import numpy as np
 import pandas as pd
 import nibabel as nib
@@ -87,12 +89,22 @@ class FMRIPreprocessor:
             List of dictionaries containing 'bold', 'events', 'session', 'run' info
         """
         runs = []
-        
-        # Iterate through sessions (ses-5, ses-7, ses-9)
-        for session_dir in sorted(self.subject_dir.glob("ses-*")):
+
+        # Session directories (ds003604: ses-5/7/9; ds001894: ses-T1/ses-T2), and
+        # -- for datasets with no session entity at all, like ds002236, whose
+        # layout is sub-XX/func/ -- the subject's own func/ under a pseudo-session
+        # label. Without this branch such a dataset yields ZERO runs here and the
+        # whole pipeline reports "no subjects" while exiting 0.
+        session_dirs = sorted(self.subject_dir.glob("ses-*"))
+        if not session_dirs and (self.subject_dir / "func").exists():
+            session_dirs = [self.subject_dir]
+
+        for session_dir in session_dirs:
             func_dir = session_dir / "func"
             if not func_dir.exists():
                 continue
+            session_label = (session_dir.name if session_dir.name.startswith("ses-")
+                             else "ses-none")
             
             # Find all task-specific BOLD files
             for bold_file in sorted(func_dir.glob(f"*task-{self.task}*_bold.nii.gz")):
@@ -103,7 +115,7 @@ class FMRIPreprocessor:
                     run_info = {
                         "bold": bold_file,
                         "events": events_file,
-                        "session": session_dir.name,
+                        "session": session_label,
                         "run": self._extract_run_number(bold_file.name)
                     }
                     runs.append(run_info)
@@ -133,10 +145,63 @@ class FMRIPreprocessor:
             Events dataframe with timing and stimulus information
         """
         df = pd.read_csv(events_file, sep="\t")
-        
-        # Clean up stimulus file names
-        df['stim_file'] = df['stim_file'].str.strip()
-        
+
+        # Canonical stimulus identity. Only ds003604 names it `stim_file`; the
+        # other three datasets in the registry present a PAIR per trial and name
+        # the columns differently (ds002236: stim1_file/stim2_file -- documented
+        # in its own README; ds001894: A_stim/B_stim; ds006239:
+        # prime_stim/targ_stim). This used to KeyError on `stim_file`, which is
+        # why none of them could be preprocessed at all.
+        #
+        # For a pair design the stimulus IS the pair, so the two columns are
+        # joined into one identity rather than one of them being dropped.
+        if 'stim_file' not in df.columns:
+            for a, b in (("stim1_file", "stim2_file"),
+                         ("A_stim", "B_stim"),
+                         ("stim_file_A", "stim_file_B"),
+                         ("prime_stim", "targ_stim")):
+                if a in df.columns and b in df.columns:
+                    left = df[a].astype(str).str.strip()
+                    right = df[b].astype(str).str.strip()
+                    df['stim_file'] = left + "|" + right
+                    break
+            else:
+                single = [c for c in ("stim", "stimulus", "stim_name")
+                          if c in df.columns]
+                if single:
+                    df['stim_file'] = df[single[0]].astype(str)
+                else:
+                    raise KeyError(
+                        f"{events_file.name}: no stimulus-identity column. Looked "
+                        f"for stim_file, stim1_file+stim2_file, A_stim+B_stim, "
+                        f"stim_file_A+stim_file_B, prime_stim+targ_stim. "
+                        f"Columns present: {list(df.columns)}")
+
+        df['stim_file'] = df['stim_file'].astype(str).str.strip()
+
+        # Drop null / fixation / baseline events. These are NOT stimuli, and
+        # ds002236 codes a third of its trials that way (trial_type 0 ->
+        # Tones/nullsilence.WAV); ds006239 carries fixation bitmaps. Left in,
+        # they enter the stimulus set, get their own row and column in every RDM,
+        # and dilute the geometry with baseline-vs-baseline distances.
+        #
+        # A trial is dropped only when EVERY component of its identity looks like
+        # a null, so a real trial that happens to pair a word with a fixation is
+        # kept and only genuine baseline is removed.
+        null_re = re.compile(
+            r"(?i)(^|[/_-])(null|nullsilence|silence|blank|rest|fix|fixation)"
+            r"([._/-]|$)")
+
+        def _is_null(identity: str) -> bool:
+            parts = [Path(p).name for p in str(identity).split("|")]
+            return bool(parts) and all(null_re.search(p) for p in parts)
+
+        mask = df['stim_file'].map(_is_null)
+        if mask.any():
+            self._dropped_null_events = (
+                getattr(self, "_dropped_null_events", 0) + int(mask.sum()))
+            df = df.loc[~mask].reset_index(drop=True)
+
         return df
     
     def load_bold(self, bold_file: Path) -> nib.Nifti1Image:

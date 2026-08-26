@@ -24,7 +24,7 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$ROOT"
 . "$ROOT/env_brainalign.sh"
 
-DATASET="${DATASET:-ds003604}"
+export DATASET="${DATASET:-ds003604}"
 export DATA_DIR="${DATA_DIR:-data/brain/$DATASET}"
 RDM_ROOT="${BRAIN_RDM_ROOT:-data/processed/fmri/$DATASET}"
 PHENOMENA=(${PHENOMENA:-Sem Phon Gram Plaus})
@@ -81,9 +81,22 @@ for T in "${PHENOMENA[@]}"; do
   # smallest working set that can produce any output; there is no way to go finer without changing
   # the science. So batch by session: prep it, reduce it, reclaim it, move on. Peak disk becomes
   # one session instead of one task, and `session_based_rsa.py --sessions` already supports it.
+  # Session labels are NOT always ses-<digits>. ds001894 uses ses-T1/ses-T2, and
+  # ds002236 has no session entity at all (sub-XX/func/...). The old pattern was
+  # `ses-[0-9]+` with a non-printing sed, so for those two datasets every path
+  # passed through unchanged and SESSIONS filled up with full file paths --
+  # silently producing garbage globs rather than an error. Match any session
+  # token, print only real matches, and fall back to a single pseudo-session.
   mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
-      | sed -E 's|.*_(ses-[0-9]+)_.*|\1|' | sort -u)
-  [ "${#SESSIONS[@]}" -eq 0 ] && { log "$T: no sessions found, skipping"; continue; }
+      | sed -nE 's|.*_(ses-[A-Za-z0-9]+)_.*|\1|p' | sort -u)
+  if [ "${#SESSIONS[@]}" -eq 0 ]; then
+    if [ -n "$(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" -print -quit)" ]; then
+      SESSIONS=(ses-none)
+      log "$T: no session entity in filenames -- single pseudo-session ses-none"
+    else
+      log "$T: no runs found, skipping"; continue
+    fi
+  fi
 
   # ONLY_SESSIONS / SKIP_SESSIONS -- run a subset of sessions.
   # A session RDM aggregates across every subject in that session, so one session's patterns is an
@@ -138,8 +151,13 @@ for T in "${PHENOMENA[@]}"; do
       log "ABORT $T/$S: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
     fi
 
-    mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
-        | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    if [ "$S" = "ses-none" ]; then
+      mapfile -t SUBS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
+          | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    else
+      mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
+          | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
+    fi
     [ "$MAX_SUBJECTS" -gt 0 ] && SUBS=("${SUBS[@]:0:$MAX_SUBJECTS}")
     [ "${#SUBS[@]}" -eq 0 ] && { log "$T/$S: no subjects, skipping"; continue; }
     log "$T/$S: ${#SUBS[@]} subjects, JOBS=$JOBS, $(free_gb)GB free"
