@@ -76,10 +76,33 @@ CONTRAST_SPEC_DS006239 = {
     "SemLocal": {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "LocalSem"},
 }
 
+# --- ds002236 (Lytle et al. 2020) -------------------------------------------
+# Verified against data/brain/ds002236 events.tsv (scripts/inspect_dataset.py,
+# 2026-08-26; codes read from the trial_type VALUES directly -- this dataset's
+# task JSON sidecars don't carry a Levels map, so the labels below come from
+# the events.tsv trial_type text itself, cross-checked across all 91 subjects'
+# files, not guessed):
+#   AudRhyme: 1=O+P+ 2=O-P+ 3=O+P- 4=O-P- 5=Single Tone 6=Three Tone
+#   AudSem:   1=High Related 2=Low Related 3=Non-Related 4=Single Tone 5=Three Tone
+# Six tasks exist (Aud/Vis x Rhyme/Sem/Spell); Rhyme and Spell share the
+# IDENTICAL O+-P+ crossing, just under a different judgment (rhyme vs.
+# spelling) -- Phon is drawn from Rhyme specifically, not Spell, so the
+# contrast isn't confounded with an orthographic-judgment task demand. Orth
+# (from Spell) and the Vis-modality tasks are deliberately not included yet --
+# scoped decision, not an oversight; see MASKING.md-adjacent notes / ask before
+# adding them. Unlike ds001894 (where Phon/Orth pool across all six of ITS
+# tasks because the codes are modality-invariant there), each entry here names
+# its ONE source task explicitly, because we are restricting to Aud only.
+CONTRAST_SPEC_DS002236 = {
+    "Phon": {"positive": ["1", "2"], "negative": ["3", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "AudRhyme"},
+    "Sem":  {"positive": ["1"],      "negative": ["3"],      "perceptual": ["4", "5"], "kind": "stim_pair_filename", "task": "AudSem"},
+}
+
 CONTRAST_SPECS: dict[str, dict] = {
     "ds003604": CONTRAST_SPEC,
     "ds001894": CONTRAST_SPEC_DS001894,
     "ds006239": CONTRAST_SPEC_DS006239,
+    "ds002236": CONTRAST_SPEC_DS002236,
 }
 
 
@@ -170,7 +193,13 @@ def condition_of(
 ) -> str | None:
     """Return 'positive' / 'negative' for a trial_type under a task's contrast,
     or None if the trial is not part of the contrast."""
-    spec = get_contrast_spec(dataset)[task]
+    dataset_spec = get_contrast_spec(dataset)
+    if task not in dataset_spec:
+        raise ContrastSpecUnavailable(
+            f"'{task}' is not a registered phenomenon for dataset '{dataset}'. "
+            f"Known: {sorted(dataset_spec)}."
+        )
+    spec = dataset_spec[task]
     trial_type = normalise_trial_type(trial_type)
     if trial_type in spec["positive"]:
         return "positive"

@@ -1,0 +1,288 @@
+# Multi-dataset infrastructure — what changed, how to run it, what's verified
+
+Written 2026-08-26, alongside [MASKING.md](MASKING.md) (read that first for the
+masking/ROI-registration story — this document assumes it). Answers: how to
+run any of the four registered datasets, how the three ROI groupings work,
+how the age-group taxonomy replaces "session" for cross-sectional datasets,
+and what's verified vs. still ds003604-only.
+
+## 1. The four datasets
+
+| key | paper | status | sessions | age |
+|---|---|---|---|---|
+| `ds003604` | Wang et al. 2022 | ready (flagship) | ses-5/7/9 | per-subject, discrete |
+| `ds001894` | Lytle et al. 2019 | ready | ses-T1/T2 | per-subject, continuous (7.4–16.4) |
+| `ds006239` | Wang et al. 2025 | ready | ses-1 | per-subject, continuous (10.1–16.9) — corrected 2026-08-26, was wrongly recorded as cohort-only |
+| `ds002236` | Lytle et al. 2020 | ready | none (session-less) | per-subject, continuous (8.7–15.5) |
+
+Full detail — trial-type codes, run/stimulus structure, quirks — is in
+`configs/neuro_datasets.yaml`, each entry's own comments.
+
+## 2. ROI groupings
+
+Three named sets in `src/preprocessing/roi_atlas.py`, each a real per-subject
+registered mask (MASKING.md), not a whole-brain default:
+
+| name | AAL regions | use |
+|---|---|---|
+| `language` | the original 12-region set | language-network alignment |
+| `phonology` | Heschl's gyrus + superior temporal gyrus + precentral gyrus (auditory ∪ motor) | phonological/articulatory processing |
+| `all` | union of every set above | everything at once |
+
+Run the same task three times, once per grouping, to get all three — each
+writes to its own subdirectory so they never overwrite each other (see §4).
+
+```bash
+ROI_SET=language  DATASET=ds002236 bash prepare_brain_rdms.sh
+ROI_SET=phonology DATASET=ds002236 bash prepare_brain_rdms.sh
+ROI_SET=all       DATASET=ds002236 bash prepare_brain_rdms.sh
+```
+
+Omit `ROI_SET` for the whole-brain default (still gets the `mask_strategy=
+'epi'` fix from MASKING.md regardless).
+
+## 3. Age groups replace "session" for three of the four datasets
+
+ds003604's three BIDS sessions already correspond to three developmental
+timepoints (`configs/age_groups.yaml` `verified_against`). The other three
+are cross-sectional: a single BIDS session (or none, for ds002236) can span
+multiple age-group bins — ds001894's `ses-T1` alone runs 7.36–14.54 years.
+Building one RDM per BIDS session for those would average children years
+apart in development, so `scripts/regroup_patterns_by_age.py` relabels each
+subject's pattern file by their *real* age-group bin
+(5/7/9/11/11+, `configs/age_groups.yaml`) before any RDM is built.
+`prepare_brain_rdms.sh` runs this automatically for every dataset except
+ds003604 (untouched by design) — nothing to invoke manually.
+
+**What this means for output**: for ds001894/ds006239/ds002236, the
+`session_rdm_ses-*.npz` files you get are keyed by age-group bin
+(`ses-9`, `ses-11`, `ses-11+`, ...), not by the dataset's own BIDS session
+label. `ses-5`/`ses-7` will be empty for these three — nobody in that age
+range exists in their cohorts; that's real, not a bug (see the coverage
+table below).
+
+| dataset | 5 | 7 | 9 | 11 | 11+ |
+|---|---|---|---|---|---|
+| ds003604 | ✅ | ✅ | ✅ | — | — |
+| ds001894 | — | (3 obs) | ✅ | ✅ | ✅ |
+| ds006239 | — | — | — | ✅ | ✅ |
+| ds002236 | — | — | ✅ | ✅ | ✅ |
+
+## 4. Running a new dataset end to end
+
+```bash
+DATASET=ds002236 PHENOMENA="Phon Sem" ROI_SET=phonology WITHIN_RUN_NORM=1 \
+    bash prepare_brain_rdms.sh
+```
+
+Notes specific to non-ds003604 datasets:
+
+- **`PHENOMENA` must be set explicitly.** The default (`Sem Phon Gram Plaus`)
+  is ds003604's four; the other three only have `Phon`/`Sem` registered
+  (`configs/neuro_datasets.yaml` → `phenomena`).
+- **`WITHIN_RUN_NORM=1` is required for all three** — every one of them is
+  `nested` (each stimulus in exactly one run), same confound class as
+  ds003604. Without it the RDM measures scanner run, not language.
+- **Output layout**: `data/processed/fmri/<DATASET>/[roi-<SET>/]<PHENOMENON>/session_rdm_ses-<BIN>.npz`.
+  The `roi-<SET>/` segment only appears when `ROI_SET` is set, so the
+  whole-brain default's path is unchanged from before ROI support existed.
+- **Disk floor caveat**: for these three datasets, patterns for *every*
+  on-disk session of a task stay on disk simultaneously until every age-group
+  RDM for that task is built (they have to, to be relabeled correctly) —
+  this is the one place these datasets depart from ds003604's strict
+  per-session reclaim discipline (`PICKUP.md`). All three are much smaller
+  than ds003604 (91–322 subjects vs. ds003604's ~3,851 runs), so this should
+  stay well inside the disk floor, but it hasn't been measured on the real
+  box — watch `free_gb` in the log on a first run.
+- **Resumption is coarser** than ds003604's: a re-run after an interruption
+  redoes that task's preprocessing (bounded, cheap relative to a fresh
+  sweep), but never redoes an already-built (or already Hub-cached) age-group
+  RDM — see the comment in `prepare_brain_rdms.sh` above the age-group block.
+
+## 5. How this was verified
+
+No GPU, no BOLD download, on the writing end — same constraint as MASKING.md.
+Verified instead against:
+
+- **Real metadata checkouts** of all four datasets (`scripts/inspect_dataset.py
+  --bootstrap`) — real `events.tsv`/`participants.tsv`, no synthetic
+  substitutes for anything dataset-structural.
+- **Real events + synthetic-but-brain-shaped BOLD** through the actual GLM
+  fit (`FirstLevelModel.fit` → `compute_contrast` → pattern extraction) for
+  both a new dataset (ds002236: 48/48 trials → correctly keyed word-pair
+  patterns) and ds003604 (48/48 patterns, identical keys to the pre-existing
+  behaviour — zero regression).
+- **`session_based_rsa.py` run unmodified** against synthetic multi-subject
+  patterns using the new pair-format stimulus keys (`"word|word2"`) — RDM
+  built correctly, all 10/10 stimuli matched across subjects. This is why
+  that file needed no changes: its core aggregation only ever treats
+  stimulus keys as opaque strings, and the one place it does read
+  `--task` (`_get_non_control_stimuli`) already no-ops gracefully when
+  the ds003604-only characteristics file it looks for doesn't exist.
+- **The shell session-detection logic**, re-implemented portably (this
+  machine's `/bin/bash` is 3.2 and lacks `mapfile`, which the real script
+  requires — a pre-existing constraint, not something introduced here) and
+  run against real directory listings for all four datasets: correctly
+  finds `ses-5/7/9` (ds003604), `ses-T1` (ds001894), `ses-1` (ds006239), and
+  falls back to `ses-all` for ds002236 (no session entity at all).
+- `tests/test_multi_dataset_pipeline.py` — 26 tests, all passing, covering
+  ROI-set composition, the age taxonomy, `classify_trials` against real
+  events for every dataset, `FMRIPreprocessor` task/session resolution, and
+  the regrouping script.
+
+**Never run end to end on the real GPU box** — the shell orchestration
+(`prepare_brain_rdms.sh`'s age-group block) has not been exercised against
+real multi-GB BOLD downloads or measured for actual peak disk. Treat the
+first real run of each new dataset as a validation run: watch the logs,
+check `roi_mask_status.csv` (MASKING.md §5), and confirm `frac_voxels_nonzero`
+the same way MASKING.md describes before trusting any resulting RDM.
+
+## 6. Brain-side localization (2026-08-26, second pass)
+
+`src/rsa/brain_localization.py` is now generalized for all four datasets —
+but getting there surfaced a bug that predates any of this dataset work and
+affected ds003604 too:
+
+**The bug**: `prepare_brain_rdms.sh` reclaims (deletes) a task's pattern
+files immediately after that task's session RDM is built — it always has,
+for disk-floor reasons (`PICKUP.md`). The brain-localization call sat once,
+at the very end of the whole script, by which point every task's patterns
+had already been deleted. There is no trace of a real
+`brain_specialization.csv` or `brain_localization_by_session.csv` anywhere
+in `paper_results/` or `hf_results_staging/` — this had likely never
+produced real output, for ds003604 or anyone, independent of anything
+dataset-specific.
+
+**The fix**: `scripts/run_brain_localization.py` now has `--append` (compute
++ merge one session's rows into a running table) and `--finalize-only`
+(collapse the accumulated table into onsets + a figure, no pattern files
+touched). `prepare_brain_rdms.sh` calls `--append` right before each reclaim
+point (both the ds003604 per-session branch and the age-group branch) and
+`--finalize-only` once at the very end.
+
+**The generalization**: `build_stim_lookup_for_dataset` dispatches on
+`stimuli.kind`, same pattern as `src/datasets/stim_identity.py` — ds003604's
+characteristics-TSV path is untouched; the other three build their
+(phenomenon, condition) lookup from events.tsv directly, via
+`classify_trials`, so a stimulus's condition here can never disagree with
+what it was treated as when its pattern was extracted.
+
+**Two more real bugs found while testing this against real data** (not by
+inspection — a combined multi-dataset figure that didn't match the expected
+coverage table is what caught both):
+- The lookup was a flat `stim_id -> single (phenomenon, condition)` dict.
+  ds001894's Phon and Orth contrasts are drawn from the *same* word pairs
+  (positive/negative differently for each), so building Orth's entries
+  after Phon's silently overwrote every one of Phon's — ds001894 lost its
+  entire Phon axis. Fixed: lookup is now `stim_id -> LIST of (phenomenon,
+  condition)` pairs.
+- `_list_subject_sessions`'s regex character class didn't include `+`, so
+  every `ses-11+` pattern file (the oldest age-group bin) was silently
+  dropped from consideration for every dataset that has one.
+
+Verified end to end against real events.tsv-derived stimulus lookups and
+synthetic patterns for all four datasets together, including the
+multi-phenomenon and 11+-bin cases above.
+
+## 7. Visualizing brain specialization by age group and domain
+
+`scripts/plot_activation_by_age_domain.py` combines every dataset's
+`brain_localization_by_session.csv` into one figure: one panel per
+phenomenon, x-axis = age group, one series per dataset (only where that
+dataset actually has data at that bin — matching the coverage table in §3).
+
+```bash
+python scripts/plot_activation_by_age_domain.py \
+    --dataset ds003604 data/processed/fmri/ds003604/localization \
+    --dataset ds001894 data/processed/fmri/ds001894/localization \
+    --dataset ds006239 data/processed/fmri/ds006239/localization \
+    --dataset ds002236 data/processed/fmri/ds002236/localization \
+    --output-dir paper_results/activation_by_age
+```
+
+**What this shows, and does not show.** These are *not* anatomical brain
+maps — no picture of a brain with colored activation on it, just the
+selectivity index (or Gini/overlap/entropy, via `--metric`) per phenomenon
+per age group per dataset: how concentrated and how phenomenon-specific the
+condition>control response is, with no information about *where*. For an
+actual picture of the brain, see §7b.
+
+## 7b. Real anatomical brain maps (2026-08-26, third pass)
+
+The scalar figures in §7 answer "how specialized"; this answers "where".
+It reconstructs each subject's condition>control t-map back into 3D space
+and warps it into MNI152 space using the SAME per-subject registration
+infrastructure §6/MASKING.md built for ROI masking (`spatial_normalization.py`),
+then renders it on the real MNI152 template with `nilearn.plotting`.
+
+**Why this wasn't possible before**: `fmri_preprocessing.py` saves each
+stimulus's pattern as a flat masked voxel vector; the mask's shape/affine
+needed to put that vector back into 3D space wasn't saved alongside it, and
+no registration to a common space existed for whole-brain (non-ROI) runs.
+Both gaps are now closed.
+
+**Three-step pipeline, all opt-in (adds registration cost, so off by
+default — nothing above needs it and existing runs are unaffected):**
+
+1. **Preprocessing** — pass `--save-native-maps` (needs `--mask-cache-dir`;
+   `--roi-set` may NOT be combined with it — an ROI-intersected pattern can't
+   be unmasked back against the whole-brain mask this saves, see the
+   `ValueError` in `fmri_preprocessing.py`). Saves each subject-session's
+   whole-brain mask and triggers registration to MNI152 while the raw BOLD
+   still exists (registration needs an EPI reference volume; by localization
+   time the BOLD is long gone under the reclaim discipline in §1).
+   ```bash
+   python src/preprocessing/batch_preprocessing.py --data-dir data/brain/ds002236 \
+       --output-dir data/processed/fmri/ds002236/Sem --task Sem --dataset ds002236 \
+       --mask-cache-dir data/processed/fmri/ds002236/_masks --save-native-maps
+   ```
+   Or in `prepare_brain_rdms.sh`: set `SAVE_NATIVE_MAPS=1` (env var, mirrors
+   `ROI_SET`) — `brainprep_subject.sh` only applies it when `ROI_SET` is
+   unset, per the constraint above.
+
+2. **Export** — add `--mask-cache-dir`/`--mni-maps-dir` to
+   `run_brain_localization.py` (any non-`--finalize-only` call; `prepare_brain_rdms.sh`
+   wires this in automatically off the same `SAVE_NATIVE_MAPS`/`MNI_MAPS_DIR`
+   env vars). Writes `<mni_maps_dir>/<dataset>/<subject>_<session>_<phenomenon>_tmap_mni.nii.gz`,
+   one real NIfTI per subject-session-phenomenon, in real MNI152 space.
+   For the three cross-sectional datasets `session` here is the age-group
+   bin (§3), not the BIDS session the subject was actually scanned in — the
+   exporter resolves the real scan session on its own (mask/registration are
+   properties of a physical scan, not an age bin) and skips a subject-session
+   only if that resolution is genuinely ambiguous (more than one on-disk
+   session for that subject), never by guessing.
+
+3. **Render** — `scripts/render_brain_atlas_figures.py` aggregates every
+   subject's map for a given (dataset, session, phenomenon) with a one-sample
+   t-test at each voxel (never pooled across datasets — different scanners,
+   tasks, populations) and renders it on the real MNI152 template:
+   ```bash
+   python scripts/render_brain_atlas_figures.py \
+       --mni-maps-dir data/processed/fmri/ds002236/_mni_maps \
+       --output-dir figures/brain_atlas
+   ```
+   `--display-mode ortho` (default, 3-slice cuts through the template) or
+   `glass` (glass-brain projection); `--threshold` is a *visualization*
+   threshold only, not a corrected significance level — these are exploratory
+   figures. A group with only one subject is rendered as that subject's own
+   map, labeled as such rather than as a group result.
+
+**Verified with synthetic data** (real MNI-template-derived T1/EPI, real
+`ds002236` stimulus lookup): the full chain — registration →
+`brain_specialization()` with export enabled → `render_brain_atlas_figures.py`
+— produces `.nii.gz` files with the correct MNI152 shape/affine and PNG
+figures showing real anatomy (sulcal/gyral outlines, cerebellum, ventricles)
+in both display modes, for both single-subject and n=4-subject groups, and
+for the age-bin-vs-real-session mismatch case specifically (confirmed the
+exporter resolves the real session and, separately, correctly refuses to
+guess when more than one candidate session exists). Not yet run against real
+GPU/data — that's the collaborator's side, same boundary as everything else
+in this doc.
+
+## 8. What's still ds003604-only
+
+- **`positive_control.py`, `ceiling_report.py`, `run_confound_check.py`** —
+  still read stimulus properties from ds003604's `Stimulus_Characteristics.tsv`
+  norms format. The other three datasets don't ship that format and would
+  need their own stimulus-property sources before these diagnostics could
+  run on them.

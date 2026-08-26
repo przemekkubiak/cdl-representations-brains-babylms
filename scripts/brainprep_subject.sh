@@ -26,9 +26,32 @@ if ! ls "$DATA_DIR/$SUB"/*/func/*task-${T}_*bold.nii.gz >/dev/null 2>&1; then
   echo "[$SUB/$T] no BOLD for this task"; exit 0
 fi
 
+# ROI_SET (e.g. "auditory,motor") triggers per-subject registration to MNI152
+# instead of a plain whole-brain mask -- see src/preprocessing/roi_atlas.py
+# and MASKING.md. MASK_CACHE_DIR MUST be the same across every task for this
+# dataset (set once in prepare_brain_rdms.sh, above the per-task loop) so
+# registration is computed once per subject-session and reused, not redone
+# for each of Sem/Phon/Gram/Plaus.
+ROI_ARGS=()
+if [ -n "${ROI_SET:-}" ]; then
+  # OUT is "$RDM_ROOT/$T" (task-scoped); its parent is the dataset-level
+  # RDM_ROOT, which is the right default cache location -- shared across
+  # every task's invocation of this script for the same dataset.
+  ROI_ARGS=(--roi-set "$ROI_SET" --mask-cache-dir "${MASK_CACHE_DIR:-$(dirname "$OUT")/_masks}")
+elif [ "${SAVE_NATIVE_MAPS:-0}" = "1" ]; then
+  # SAVE_NATIVE_MAPS is the whole-brain counterpart of ROI_SET above: it also
+  # needs --mask-cache-dir (same shared cache, same reasoning), but is
+  # mutually exclusive with --roi-set at the FMRIPreprocessor level (an
+  # ROI-intersected pattern can't be unmasked back against the whole-brain
+  # mask this saves -- see the ValueError in fmri_preprocessing.py), so it
+  # only applies in the branch where ROI_SET is unset.
+  ROI_ARGS=(--mask-cache-dir "${MASK_CACHE_DIR:-$(dirname "$OUT")/_masks}" --save-native-maps)
+fi
+
 "$PYBIN" src/preprocessing/batch_preprocessing.py --data-dir "$DATA_DIR" \
-    --output-dir "$OUT" --task "$T" --subjects "$SUB" \
-    --smoothing-fwhm "${SMOOTHING:-6.0}" --high-pass "${HIGHPASS:-0.01}" >/dev/null 2>&1
+    --output-dir "$OUT" --task "$T" --dataset "${DATASET:-ds003604}" --subjects "$SUB" \
+    --smoothing-fwhm "${SMOOTHING:-6.0}" --high-pass "${HIGHPASS:-0.01}" \
+    "${ROI_ARGS[@]}" >/dev/null 2>&1
 rc=$?
 drop_bold                      # raw BOLD is an intermediate; RDMs are the product
 [ $rc -eq 0 ] || { echo "[$SUB/$T] preprocess failed"; exit 1; }

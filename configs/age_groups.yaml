@@ -1,0 +1,79 @@
+# Cross-dataset developmental age-group taxonomy.
+#
+# WHY THIS EXISTS. ds003604 defines the developmental axis as three discrete
+# BIDS sessions (ses-5/7/9), and everything downstream (SESSION_TO_AGE in
+# src/rsa/brain_localization.py, the corrected-grid checkpoint dimension, the
+# alignment-trajectory tables) is built around that. The three datasets added
+# 2026-08-26 (ds001894, ds006239, ds002236) are CROSS-SECTIONAL with
+# CONTINUOUS per-subject age, not discrete sessions -- ds001894's own ses-T1
+# alone spans 7.36-14.54 years, so pooling it as "one developmental point"
+# would be scientifically wrong. This registry re-bins every dataset's real
+# per-subject age (not nominal session labels) into a small set of age groups
+# that are comparable ACROSS datasets, so a table can show which datasets
+# cover which part of development without conflating a BIDS session with a
+# developmental timepoint.
+#
+# Bin design: 2-year-wide bins centered on ds003604's own three ages (5, 7, 9),
+# continuing that same spacing to 11, with a catch-all "11+" for everything
+# older (the added datasets run up to ~17). Boundaries are the midpoints
+# between adjacent anchors. This was chosen, not fit: it keeps ds003604's own
+# sessions almost entirely within their own bin (see `verified_against` below)
+# rather than deriving boundaries from the pooled data, which would make the
+# scheme dataset-dependent and unstable as more datasets are added.
+#
+# HOW TO COMPUTE A SUBJECT'S BIN: age_years = (scan_date - birthdate).days /
+# 365.25, or the dataset's own direct age column where one exists (see each
+# dataset's `ages:` block in neuro_datasets.yaml). Then bin_of(age_years) below.
+# For a multi-date subject (ds006239 has up to 4 candidate dates), use the
+# dataset's documented default (see neuro_datasets.yaml `ages.source`), not an
+# average -- keeps the rule the same for every subject rather than conditional
+# on how many dates happen to be present.
+
+bins:
+  - name: "5"
+    min: null      # no floor -- nothing in these datasets is younger than ds003604's ses-5
+    max: 6.0        # exclusive
+  - name: "7"
+    min: 6.0
+    max: 8.0
+  - name: "9"
+    min: 8.0
+    max: 10.0
+  - name: "11"
+    min: 10.0
+    max: 12.0
+  - name: "11+"
+    min: 12.0
+    max: null       # no ceiling
+
+# Verified 2026-08-26 against real per-subject ages computed from each
+# dataset's own metadata checkout (data/brain/<accession>/participants.tsv),
+# not from paper-reported cohort ranges. n = number of (subject, timepoint)
+# age observations contributing to the counts (ds003604 and ds001894 have
+# multiple timepoints per subject, so n > n_subjects for those two).
+verified_against:
+  ds003604:
+    n: 575
+    counts: {"5": 147, "7": 285, "9": 143, "11": 0, "11+": 0}
+    note: >
+      All three sessions land almost entirely in their own nominal bin
+      (ses-5 -> "5", ses-7 -> "7", ses-9 -> "9"), which is the check that these
+      boundaries are a sane continuation of ds003604's own structure rather
+      than an arbitrary rebinning of it.
+  ds001894:
+    n: 237
+    counts: {"5": 0, "7": 3, "9": 73, "11": 80, "11+": 81}
+    note: >
+      Longitudinal (same children at ses-T1 and ses-T2), pooled here as 237
+      independent age observations for coverage purposes. ses-T1 alone spans
+      "7" through "11+" -- the reason per-subject rebinning matters for this
+      dataset specifically.
+  ds006239:
+    n: 89
+    counts: {"5": 0, "7": 0, "9": 0, "11": 39, "11+": 50}
+    note: >
+      Age source corrected 2026-08-26 -- see neuro_datasets.yaml. Was
+      previously (wrongly) recorded as cohort-level-only.
+  ds002236:
+    n: 91
+    counts: {"5": 0, "7": 0, "9": 27, "11": 30, "11+": 34}
