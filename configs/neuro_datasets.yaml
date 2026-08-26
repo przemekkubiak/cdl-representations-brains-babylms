@@ -185,35 +185,48 @@ datasets:
     status: ready
 
   # ------------------------------------------------------------ lytle-2020 ----
-  lytle-2020:
-    accession: null              # <-- NOT RESOLVED. Do not guess one.
-    snapshot: null
-    name: "Lytle et al. 2020 (children 8.7-15.5; phonological, semantic, orthographic)"
-    citation: "Lytle et al. 2020"
+  ds002236:
+    accession: ds002236
+    snapshot: "1.0.1"
+    name: "Lytle et al. 2020 (children 8.7-15.5; orthographic, phonological, semantic)"
+    citation: "Lytle MN, Bitan T & Booth JR (2020), Data in Brief 28:105091"
     paper_url: "https://pubmed.ncbi.nlm.nih.gov/31956678/"
     data_article: "https://www.sciencedirect.com/science/article/pii/S2352340919314477"
-    tasks: []
-    phenomena:
-      Phon: []
-      Sem: []
-      Orth: []                   # NEW phenomenon -- not covered by ds003604
-    sessions: []
+    dataset_title: "Cross-Sectional Multidomain Lexical Processing"
+    resolution_note: >
+      RESOLVED 2026-08-26 and VERIFIED, not guessed. The data article gives no
+      accession, so ds002236 was confirmed against OpenNeuro's own
+      dataset_description.json ("Cross-Sectional Multidomain Lexical Processing",
+      Booth lab) and its participants.tsv, whose per-subject `age` column spans
+      8.67-15.5 -- matching the 8.7-15.5 range the article reports. Both the name
+      and the age range had to match before this was written down.
     ages:
       kind: cross_sectional
       per_subject: true
-      note: "Per-participant age is documented as available."
+      column: age
+      note: >
+        BEST-IN-CLASS for the developmental axis: participants.tsv carries an
+        explicit per-subject `age` in years at testing (8.67-15.5), plus a
+        shifted birthdate. Per-image shifted acquisition dates are in the sidecar
+        JSONs.
+    phenomena:
+      Phon: []
+      Sem: []
+      Orth: []
+    tasks: []
+    sessions: []
     design:
-      modality: unknown
-      run_stimulus: unknown
+      modality: both             # auditory AND visual variants per the article
+      run_stimulus: unknown      # to be measured by scripts/inspect_dataset.py
     stimuli:
       kind: unknown
+      local: "stimuli"
     contrast_spec: null
-    status: unresolved
+    status: needs_inspection
     blocker: >
-      The linked database is a Data in Brief data article, not an OpenNeuro
-      accession. The actual accession must be resolved from the data article
-      before this can be implemented. Do NOT substitute a guessed accession --
-      downloading a different study into a directory named for this one and
-      labelling those rows as a distinct dataset would fabricate results, which
-      is exactly the failure PICKUP.md documents for the old fig10 cross-dataset
-      arm.
+      Accession resolved; structure not yet inspected. Run
+      `scripts/inspect_dataset.py --dataset ds002236 --bootstrap` to read tasks,
+      trial-type codes and run/stimulus crossing off the checkout, then transcribe
+      the trial types into CONTRAST_SPECS before any preprocessing.
+    quirks:
+      - "README notes events.tsv uses stim1_file/stim2_file, not stim_file."
