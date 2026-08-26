@@ -88,6 +88,16 @@ else
   log "  no corrected grid output -- skipped"
 fi
 
+step "positive control + RDM dimensionality (the gate on every alignment claim)"
+if [ -d "$WRN" ]; then
+  "$PY" scripts/positive_control.py --out paper_results/control 2>&1 \
+    | grep -viE "warn|libmpi" | sed 's/^/  /' | tee -a logs/autopilot.log
+  "$PY" scripts/rdm_dimensionality.py --out paper_results/control 2>&1 \
+    | grep -viE "warn|libmpi" | sed 's/^/  /' | tee -a logs/autopilot.log
+else
+  log "  no corrected RDMs -- skipped"
+fi
+
 step "PARC seed-null analysis (if the grid produced rows)"
 if [ -d data/processed/language_models/devai_grid_parc/ds003604 ]; then
   "$PY" scripts/parc_seed_null.py \
@@ -113,7 +123,8 @@ stage.mkdir(parents=True, exist_ok=True)
 copied = 0
 for src, sub in [(Path("paper_results/ceiling"), "ceiling"),
                  (Path("paper_results/parc"), "parc"),
-                 (Path("paper_results/corrected"), "grid")]:
+                 (Path("paper_results/corrected"), "grid"),
+                 (Path("paper_results/control"), "control")]:
     if not src.exists():
         continue
     dst = stage / sub

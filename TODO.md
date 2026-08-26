@@ -4,12 +4,25 @@ Reviewer-driven work plan. Each item says what to do, where it lands in the
 codebase, and what currently blocks it. Status: `[ ]` todo, `[~]` partial,
 `[x]` done.
 
-Context for anyone reading cold: the current results (`hf_results_staging/`)
-report **no detectable brain alignment** for 10 model families × 262
-checkpoints against ds003604 — but that null is not yet defensible, because the
-RDMs are dominated by a scanner-run confound and no noise ceiling was ever
-computed. See `hf_results_staging/README.md` for the confound write-up. Most of
-what follows is about turning an uninterpretable null into a defensible one.
+**READ THIS FIRST — the ds003604 null is NOT publishable, and as of 2026-08-26
+the reason is known.** The positive control failed: nothing stimulus-driven
+correlates with these brain RDMs (0/108 tests) — not the acoustic spectrum of
+the audio subjects actually heard, not the study's own condition contrast. The
+cause is measured, not guessed: the voxel patterns are **unmasked whole-volume**
+(917,504 voxels, 100% non-zero), their leading component tracks the volume's
+**global signal** (|ρ| = 0.85), and the 72-item RDMs live in **4 dimensions**.
+The RDMs largely encode scanner brightness, which is why the 0.85 noise ceiling
+is so high — brightness is very consistent across subjects — and why no model
+can align with them.
+
+So the null is a measurement artefact, not a finding about language models.
+Everything downstream of these RDMs is on hold: the 15-family grid, the Pythia
+ladder, the PARC seed-null, the training trends. See
+`paper_results/control/README.md`. Fix order: brain mask → global-signal
+handling → GLM betas → re-run the control → only then re-run the grid.
+
+The scanner-run confound described below WAS real and IS fixed (run correlation
+0.56 → −0.04); it was simply not the only thing wrong.
 
 ---
 
@@ -48,13 +61,21 @@ datasets on top of the current pipeline just multiplies an untrustworthy null.
   - Confounded tables (`hf_results_staging/by-model/`, `overall/`) are
     superseded by `corrected-sweep/grid/`.
 
-- [~] **Positive controls — show the pipeline can detect alignment that exists.**
-  **THE ONE REMAINING BLOCKER IN §0.** Brain-to-brain split-half is done (it is
-  the ceiling, 0.85 — so the RDMs are demonstrably reliable). What is still
-  missing is a *stimulus-driven* control: reliability is not sensitivity, and
-  until one exists the honest claim is "no LM alignment detectable in RDMs of
-  demonstrated inter-subject reliability", not "LMs do not align".
-  Cheapest first:
+- [x] **Positive controls — RUN 2026-08-26, AND THEY FAILED.** This is now the
+  project's headline finding, not a checkbox. `scripts/positive_control.py` and
+  `scripts/rdm_dimensionality.py`; write-up in `paper_results/control/README.md`.
+  - The TEST has power: it recovers run identity at ρ = +0.67 (best cell +0.87)
+    on the uncorrected RDMs, and the correction removes it (−0.12). So a null
+    from this test is a real null.
+  - **0/108 stimulus × cell tests significant** on the corrected RDMs, after
+    Holm correction, with 5000 permutations each.
+  - Cause: unmasked whole-volume patterns dominated by global signal; RDM
+    effective rank 4 (72 stimuli) / 7 (60 stimuli); RDM vs a pure amplitude RDM
+    ρ = +0.43.
+  - **Therefore the ds003604 LM null is vacuous.** Do not publish it.
+  - Fix order: brain mask → remove/model global signal → GLM betas → re-run this
+    control → only then re-run the grid. Needs a tier-0 re-download, ~2 h.
+  - Original plan, for the re-run:
   - Low-level acoustic / word-length RDM vs auditory cortex. If a spectrogram
     RDM does not correlate, the RDMs carry no usable stimulus signal and the LM
     null is vacuous.

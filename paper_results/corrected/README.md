@@ -4,6 +4,15 @@ Written by `scripts/corrected_sweep_summary.py`. Supersedes every alignment
 number in `hf_results_staging/by-model/` and `hf_results_staging/overall/`,
 which were computed against RDMs carrying the scanner-run confound.
 
+> **SUPERSEDED IN TURN — 2026-08-26. Do not quote these numbers as a finding.**
+> The positive control failed: nothing stimulus-driven correlates with these
+> brain RDMs (0/108 tests), because the voxel patterns are unmasked whole-volume
+> and dominated by the global signal. The RDMs largely encode scanner
+> brightness, so the null below is an artefact of the measurement, not a result
+> about language models — and the high ceiling is brightness consistency, not
+> representational reliability. See `../control/README.md`. The analyses here
+> are correct as analyses; their input is not a representational geometry.
+
 ## What changed since the confounded tables
 
 The old RDMs correlated with run identity at **ρ = 0.56**; after per-run voxel
