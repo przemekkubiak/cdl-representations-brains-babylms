@@ -41,7 +41,20 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-TASKS = ["Sem", "Phon", "Gram", "Plaus"]
+# ds003604's tasks, used only as a fallback. The real list is discovered from
+# the RDM root, because every other dataset in the registry has different task
+# names (AudRhyme/VisSem..., ReadPhon/LocalSem..., AAWord/AVWord...) and a
+# hardcoded list silently reports "no RDM for Sem" and produces nothing.
+DEFAULT_TASKS = ["Sem", "Phon", "Gram", "Plaus"]
+TASKS = list(DEFAULT_TASKS)
+
+
+def discover_tasks(rdm_root) -> list:
+    from pathlib import Path as _P
+    root = _P(rdm_root)
+    found = sorted(d.name for d in root.iterdir()
+                   if d.is_dir() and any(d.glob("session_rdm_*.npz"))) if root.exists() else []
+    return found or DEFAULT_TASKS
 
 
 def effective_rank(m: np.ndarray, thresh: float = 0.9) -> int:
@@ -140,6 +153,10 @@ def main() -> None:
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     root = Path(a.rdm_root)
     sessions = [s.strip() for s in a.sessions.split(",") if s.strip()]
+
+    global TASKS
+    TASKS = discover_tasks(root)
+    print(f"tasks discovered: {TASKS}")
 
     r = rdm_report(root, sessions)
     if len(r):

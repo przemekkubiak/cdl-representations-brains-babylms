@@ -65,7 +65,20 @@ plt.rcParams.update({
     "legend.frameon": False, "figure.dpi": 150,
 })
 
-TASKS = ["Sem", "Phon", "Gram", "Plaus"]
+# ds003604's tasks, used only as a fallback. The real list is discovered from
+# the RDM root, because every other dataset in the registry has different task
+# names (AudRhyme/VisSem..., ReadPhon/LocalSem..., AAWord/AVWord...) and a
+# hardcoded list silently reports "no RDM for Sem" and produces nothing.
+DEFAULT_TASKS = ["Sem", "Phon", "Gram", "Plaus"]
+TASKS = list(DEFAULT_TASKS)
+
+
+def discover_tasks(rdm_root) -> list:
+    from pathlib import Path as _P
+    root = _P(rdm_root)
+    found = sorted(d.name for d in root.iterdir()
+                   if d.is_dir() and any(d.glob("session_rdm_*.npz"))) if root.exists() else []
+    return found or DEFAULT_TASKS
 
 # Controls that describe HOW the data was acquired rather than WHAT was
 # presented. Kept in their own family: on the uncorrected RDMs they are expected
@@ -221,14 +234,87 @@ def acoustic_features(paths: dict[str, Path], n_mels: int = 40,
     return spec, env
 
 
+def image_features(paths: dict[str, Path], size: int = 32) -> tuple[dict, dict]:
+    """Low-level visual features: greyscale pixels and mean luminance.
+
+    The visual counterpart of the acoustic control. ds006239 is entirely visual
+    (669 bitmaps, no audio at all), so without this its gate reduces to the
+    design controls and cannot test whether the RDMs carry any stimulus signal.
+    A downsampled greyscale image is the standard first-order model of what early
+    visual cortex responds to, and mean luminance is its scalar summary.
+    """
+    pix, lum = {}, {}
+    try:
+        from PIL import Image
+    except Exception:
+        return pix, lum
+    for name, path in paths.items():
+        try:
+            with Image.open(path) as im:
+                g = im.convert("L").resize((size, size))
+                v = np.asarray(g, dtype=float).ravel() / 255.0
+        except Exception:
+            continue
+        pix[name] = v
+        lum[name] = np.array([v.mean()])
+    return pix, lum
+
+
+def _resolve(vecs: dict, identity: str) -> np.ndarray | None:
+    """Feature vector for one stimulus identity, which may be a PAIR.
+
+    Pair designs join two stimulus files with "|". The trial presents both, so
+    the trial's low-level content is the mean of the two components' features.
+    A pair is usable when at least one side has features -- for a mixed-modality
+    trial like "a.wav|b.bmp" the audio model sees the audio side and the image
+    model sees the image side, which is the honest reading of each.
+    """
+    parts = [Path(p).name for p in str(identity).split("|")]
+    got = [vecs[p] for p in parts if p in vecs]
+    if not got:
+        return None
+    n = min(len(g) for g in got)
+    return np.mean([g[:n] for g in got], axis=0)
+
+
 def rdm_from_vectors(vecs: dict, order: list[str]) -> np.ndarray | None:
     """Correlation-distance RDM over per-stimulus feature vectors."""
-    if any(s not in vecs for s in order):
+    resolved = [_resolve(vecs, s) for s in order]
+    if any(r is None for r in resolved):
         return None
-    M = np.vstack([vecs[s] for s in order])
+    M = np.vstack(resolved)
     M = M - M.mean(axis=1, keepdims=True)
     M /= (np.linalg.norm(M, axis=1, keepdims=True) + 1e-12)
     return 1.0 - (M @ M.T)
+
+
+def find_norms(stim_root: Path, task: str) -> pd.DataFrame | None:
+    """Locate a per-stimulus norms table, whatever the dataset chose to call it.
+
+    Only ds003604 uses the per-task
+    `Stimulus_Characteristics/task-<T>_Stimulus_Characteristics.tsv` layout.
+    ds006239 ships a single `Stimulus_Characteristics.tsv`, ds001894 ships
+    `WordAudDuration.tsv`/`NonWordAudDuration.tsv`, and ds002236's is a single
+    file whose NAME IS MISSPELLED in the release -- `Stimulus_Charactersitics.tsv`.
+    Globbing for the misspelling as well is not defensive programming for its own
+    sake; without it that dataset silently loses every norm-based control.
+    """
+    exact = stim_root / "Stimulus_Characteristics" / f"task-{task}_Stimulus_Characteristics.tsv"
+    if exact.exists():
+        try:
+            return pd.read_csv(exact, sep="\t")
+        except Exception:
+            return None
+    frames = []
+    for pat in ("*Charact*.tsv", "*Charact*.csv", "*Duration.tsv"):
+        for f in sorted(stim_root.rglob(pat)):
+            try:
+                frames.append(pd.read_csv(f, sep="\t" if f.suffix == ".tsv" else ","))
+            except Exception:
+                continue
+    if not frames:
+        return None
+    return frames[0] if len(frames) == 1 else pd.concat(frames, ignore_index=True)
 
 
 # ------------------------------------------------------------------ test ----
@@ -273,8 +359,11 @@ def rsa_with_permutation(brain: np.ndarray, ctrl: np.ndarray, n_perm: int,
 
 # ------------------------------------------------------------------ main ----
 def build_controls(cell: dict, task: str, norms: pd.DataFrame | None,
-                   spec: dict, env: dict) -> dict[str, np.ndarray]:
+                   spec: dict, env: dict, pix: dict | None = None,
+                   lum: dict | None = None) -> dict[str, np.ndarray]:
     out: dict[str, np.ndarray] = {}
+    pix = pix or {}
+    lum = lum or {}
     stim, texts = cell["stimuli"], cell["texts"]
 
     if norms is not None and "stim_file" in norms.columns:
@@ -318,6 +407,14 @@ def build_controls(cell: dict, task: str, norms: pd.DataFrame | None,
     m = rdm_from_vectors(env, stim)
     if m is not None:
         out["acoustic_envelope"] = m
+    m = rdm_from_vectors(pix, stim)
+    if m is not None:
+        out["visual_pixels"] = m
+    if lum:
+        vals = [_resolve(lum, s) for s in stim]
+        if all(v is not None for v in vals):
+            out["visual_luminance"] = rdm_from_scalar(
+                np.array([float(v[0]) for v in vals]))
     return out
 
 
@@ -339,10 +436,23 @@ def main() -> None:
     rdm_root, stim_root = Path(a.rdm_root), Path(a.stimuli)
     sessions = [s.strip() for s in a.sessions.split(",") if s.strip()]
 
-    wavs = {p.name: p for p in stim_root.rglob("*.wav") if p.is_file()}
+    global TASKS
+    TASKS = discover_tasks(rdm_root)
+    print(f"tasks discovered: {TASKS}")
+
+    # Case-insensitive: ds003604 ships .wav, ds002236 ships .WAV. A lowercase-only
+    # glob silently yields zero audio and the acoustic control -- the strongest
+    # low-level control for an auditory design -- vanishes without a word.
+    wavs = {p.name: p for p in stim_root.rglob("*")
+            if p.is_file() and p.suffix.lower() == ".wav" and p.stat().st_size > 1024}
     print(f"{len(wavs)} stimulus wav files readable under {stim_root}")
     spec, env = acoustic_features(wavs) if wavs else ({}, {})
     print(f"acoustic features extracted for {len(spec)} stimuli")
+    imgs = {p.name: p for p in stim_root.rglob("*")
+            if p.is_file() and p.suffix.lower() in (".bmp", ".jpg", ".jpeg", ".png")
+            and p.stat().st_size > 512}
+    pix, lum = image_features(imgs) if imgs else ({}, {})
+    print(f"{len(imgs)} image files -> visual features for {len(pix)} stimuli")
 
     variants = [("corrected", rdm_root)]
     if a.compare_root and Path(a.compare_root).exists():
@@ -352,14 +462,13 @@ def main() -> None:
     rows = []
     for variant, root in variants:
      for task in TASKS:
-        tsv = stim_root / "Stimulus_Characteristics" / f"task-{task}_Stimulus_Characteristics.tsv"
-        norms = pd.read_csv(tsv, sep="\t") if tsv.exists() else None
+        norms = find_norms(stim_root, task)
         for session in sessions:
             cell = load_cell(root, task, session)
             if cell is None:
                 print(f"  no RDM for {variant} {task}/{session}")
                 continue
-            ctrls = build_controls(cell, task, norms, spec, env)
+            ctrls = build_controls(cell, task, norms, spec, env, pix, lum)
             for name, c in ctrls.items():
                 if c.shape != cell["rdm"].shape or not np.isfinite(c).all():
                     continue

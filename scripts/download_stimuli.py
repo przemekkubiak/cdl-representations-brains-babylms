@@ -52,7 +52,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", default="ds003604")
     ap.add_argument("--data-root", default="data/brain")
-    ap.add_argument("--pattern", default="*.wav")
+    ap.add_argument("--pattern", default="",
+                    help="glob to match; default = every stimulus media type, "
+                         "case-insensitively")
     ap.add_argument("--jobs", type=int, default=8)
     ap.add_argument("--limit", type=int, default=0, help="0 = no limit")
     a = ap.parse_args()
@@ -62,14 +64,25 @@ def main() -> None:
     # spec.stimulus_dir() points at the *characteristics* subfolder for
     # ds003604, not the audio, so search the BIDS stimuli/ tree and fall back to
     # the registry path only if that finds nothing.
+    # Case matters and extensions vary: ds003604 ships .wav, ds002236 ships .WAV,
+    # ds006239 is entirely .bmp, ds001894 has both. A single lowercase glob finds
+    # nothing for two of the four and exits "no files matching *.wav".
+    MEDIA = {".wav", ".bmp", ".jpg", ".jpeg", ".png", ".mp3", ".aiff", ".aif"}
+
+    def _match(root):
+        if a.pattern:
+            return sorted(root.rglob(a.pattern))
+        return sorted(f for f in root.rglob("*")
+                      if f.suffix.lower() in MEDIA)
+
     stim_dir = data_dir / "stimuli"
-    files = sorted(stim_dir.rglob(a.pattern)) if stim_dir.exists() else []
+    files = _match(stim_dir) if stim_dir.exists() else []
     if not files:
         alt = spec.stimulus_dir(a.data_root)
         if alt and alt.exists():
-            stim_dir, files = alt, sorted(alt.rglob(a.pattern))
+            stim_dir, files = alt, _match(alt)
     if not files:
-        print(f"no files matching {a.pattern} under {stim_dir}")
+        print(f"no stimulus media found under {stim_dir}")
         sys.exit(1)
     if a.limit:
         files = files[: a.limit]

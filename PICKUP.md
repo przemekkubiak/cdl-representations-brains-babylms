@@ -20,32 +20,45 @@ that is not `Z*`. If you write your own check, do the same.
 
 ---
 
-## GPUs — read before running anything
+## GPUs — the old reservation is LIFTED (verified 2026-08-26)
 
-| GPUs | Whose | Rule |
-|------|-------|------|
-| **0, 1, 2** | **ours** | the only cards this project may use |
-| 3 | reserved | must stay free |
-| **4, 5, 6, 7** | **another project** | a **96-hour merge sweep** (`/root/mergeability`). Touching these destroys days of work. |
+**All eight cards are free.** `nvidia-smi` reports 0 MiB used and no compute
+processes on any of 0–7, and the 96-hour merge sweep in `/root/mergeability` that
+owned 4–7 has finished — only a metrics-publishing loop remains, which uses no
+GPU. The user confirmed the other project no longer holds cards.
 
-The pin lives in `env_brainalign.sh` (`CUDA_VISIBLE_DEVICES=0,1,2`) and every launch path
-sources it. This is load-bearing, not decoration: `slurm/run_devai_grid.sh` is an `#SBATCH`
-file, and under plain `bash` those headers are inert comments — nothing scopes the devices,
-so an unpinned process sees all eight cards including the merge sweep's.
+| GPUs | Status |
+|------|--------|
+| **0–7** | **all available to this project** |
+
+The historical rule was: 0–2 ours, 3 reserved, 4–7 another project's 96-hour merge
+sweep. That is why `env_brainalign.sh` still pins `CUDA_VISIBLE_DEVICES=0,1,2` and
+why the launchers default to `GPUS=0,1,2`. **The pin is now a conservative default,
+not a hard constraint** — widen it to `0,1,2,3,4,5,6,7` for anything that would
+benefit, and check `nvidia-smi` first in case the other project has started
+something new.
+
+What has NOT changed: `slurm/run_devai_grid.sh` is an `#SBATCH` file, and under
+plain `bash` those headers are inert comments, so nothing scopes the devices by
+itself. Whatever you want a process to see still has to be set explicitly.
 
 ---
 
-## Disk floor: 350 GB. Do not lower it.
+## Disk floor: 350 GB. Still the right number.
 
-`/` is a **single 1.8T overlay shared with the merge sweep**, which aborts itself below
-**250 GB** free. The 350 GB floor leaves it that margin. The driver checks free space before
+`/` is a **single 1.8T overlay shared with `/root/mergeability`**. That project's
+sweep has finished and it ran a large disk reclaim (the box went from ~124 GB free
+to ~900 GB), so the floor is no longer defending an actively-aborting neighbour —
+but it is still a shared volume, this project can consume hundreds of GB in a
+single stage, and the streaming design below depends on the floor being enforced.
+Leave it at 350. The driver checks free space before
 every stage *and every 60 s during* one, and terminates the stage if it is breached.
 
 This matters more than it sounds. ds003604 is **3851 BOLD runs at ~154 MiB each (~578 GiB)**,
-and preprocessing turns each run into **~176 MiB of voxel patterns (~660 GiB more)**. Free
-space is ~757 GB, so the real budget is **~407 GB**. Downloading it all and keeping it —
-which is what the original inline pipeline does — **would breach the floor and take the
-other project down with it.**
+and preprocessing turns each run into **~176 MiB of voxel patterns (~660 GiB more)**. Free space is ~865 GB as of
+2026-08-26, so the real budget is **~515 GB**. Downloading it all and keeping it — which is
+what the original inline pipeline does — **would still breach the floor**, and the overlay
+is shared, so it would take the neighbour with it.
 
 So `prepare_brain_rdms.sh` streams: each subject's raw BOLD is deleted the moment it is
 preprocessed, and each task's patterns are deleted once its session RDMs exist. Peak is
@@ -82,7 +95,9 @@ kill -TERM $(cat logs/driver.pid)     # traps, kills the child process group, ex
 ```
 
 Do **not** `kill -9` the driver first — that orphans its children on the GPUs. If you do it
-anyway, clean up with `nvidia-smi --id=0,1,2` and kill leftover pids **on cards 0-2 only**.
+anyway, clean up with `nvidia-smi` and kill the leftover pids. (Historically this said
+"cards 0-2 only", because 4-7 belonged to another project's sweep. That sweep is finished —
+see the GPU section — so check what is actually running rather than assuming ownership.)
 
 ## Restart it
 
