@@ -58,6 +58,42 @@ def semantic_categories_from_trial_types(trial_types: Iterable[Optional[str]]) -
     return [semantic_category_from_trial_type(trial_type) for trial_type in trial_types]
 
 
+def texts_from_pair_stimuli(stimuli: Iterable[str]) -> List[str]:
+    """Recover stimulus text from a pair-of-filenames stimulus KEY.
+
+    ds001894/ds006239/ds002236 identify a trial by the two stimulus files it
+    presented, so `stimuli` holds keys like "bad.WAV|wad.WAV" or
+    "T3_post.bmp|F1_lost.bmp" -- and the presented WORDS are already in those
+    filenames (configs/neuro_datasets.yaml, `stimuli.kind: stim_pair_filename`).
+    ds003604 instead identifies a trial by one opaque audio filename
+    ("stereo_1SH01A0.wav") whose text is only recoverable from its
+    Stimulus_Characteristics table, which is what load_semantic_metadata below
+    does.
+
+    This matters because scripts/run_devai_grid.py feeds `stimulus_texts`
+    straight to the language model: an empty text means that cell contributes no
+    alignment row at all, which is what produced "0 alignment files" for every
+    new dataset. Returns [] if these keys are not pair keys, so the caller can
+    fall through to the table.
+
+    Output format matches reconstruct_text's word_pair kind exactly -- the two
+    words, space-separated ("bad wad") -- so the LM sees the same shape of input
+    on every dataset.
+    """
+    from src.contrast_spec import text_from_stim_filename
+
+    texts, saw_pair = [], False
+    for stim in stimuli:
+        raw = str(stim)
+        if "|" not in raw:
+            texts.append("")
+            continue
+        saw_pair = True
+        words = [text_from_stim_filename(part) for part in raw.split("|")]
+        texts.append(" ".join(w for w in words if w).strip())
+    return texts if saw_pair else []
+
+
 def load_semantic_metadata(
     stimuli: Iterable[str],
     task: str = "Sem",
@@ -68,8 +104,22 @@ def load_semantic_metadata(
 
     The returned arrays match the provided stimulus order.
     """
+    # Pair-filename datasets carry the words in the stimulus key itself and ship
+    # no per-task Stimulus_Characteristics table (ds002236's is a single
+    # misspelled file; ds001894/ds006239 have none in this layout), so the key is
+    # the only source of text -- and the authoritative one, since it is what the
+    # RDM was actually built over. Checked BEFORE the table so a dataset that has
+    # both is still read from the thing the RDM is keyed by.
+    pair_texts = texts_from_pair_stimuli(stimuli)
+
     char_file = Path(characteristics_dir) / f"task-{task}_Stimulus_Characteristics.tsv"
     if not char_file.exists():
+        if pair_texts:
+            return {
+                "trial_types": np.asarray(["unknown"] * len(pair_texts), dtype=object),
+                "semantic_categories": np.asarray(["unknown"] * len(pair_texts), dtype=object),
+                "stimulus_texts": np.asarray(pair_texts, dtype=object),
+            }
         return {}
 
     try:
@@ -117,6 +167,11 @@ def load_semantic_metadata(
     trial_types = [stim_to_trial_type.get(stimulus, "unknown") for stimulus in ordered_stimuli]
     semantic_categories = semantic_categories_from_trial_types(trial_types)
     stimulus_texts = [stim_to_text.get(stimulus, "") for stimulus in ordered_stimuli]
+    # A table that exists but does not key on these stimuli leaves every text
+    # empty, which is indistinguishable downstream from "no text exists". Prefer
+    # the pair key in that case rather than emitting a silent all-empty column.
+    if pair_texts and not any(t for t in stimulus_texts):
+        stimulus_texts = pair_texts
 
     return {
         "trial_types": np.asarray(trial_types, dtype=object),

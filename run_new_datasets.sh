@@ -116,6 +116,18 @@ for DS in $DATASETS; do
     [ "$N" -eq 0 ] && { log "$DS: no RDMs -- SKIPPING the rest of this dataset"; continue; }
   fi
 
+  # ---- 1b. stimulus texts --------------------------------------------------
+  # run_devai_grid.py feeds `stimulus_texts` to the LM; a cell whose texts are
+  # empty contributes no alignment row at all. RDMs built before the
+  # pair-filename derivation landed in src/rsa/semantic_metadata.py (and any
+  # pulled from the Hub cache) have an all-empty column, so annotate in place --
+  # the RDM itself is untouched. Idempotent, and a no-op for ds003604.
+  "$PY" scripts/backfill_rdm_texts.py --roots "$RDM_ROOT" \
+      --characteristics-dir "data/brain/$DS/stimuli/Stimulus_Characteristics" \
+      >>"logs/newds_stage1_$DS.log" 2>&1 \
+    && log "$DS: stimulus texts present on every RDM" \
+    || log "$DS: WARNING -- some RDMs still have no stimulus text (see log); those cells cannot produce alignment rows"
+
   # ---- 2. ceilings ---------------------------------------------------------
   "$PY" scripts/collect_ceilings.py --rdm-root "$RDM_ROOT" \
       --out "$OUTDIR/ceilings_$DS.csv" >>"logs/newds_stage1_$DS.log" 2>&1 \
@@ -155,9 +167,14 @@ PYEOF
       [ $((j % NGPU)) -eq "$i" ] && shard+=("${FAMILIES[$j]}")
     done
     [ ${#shard[@]} -eq 0 ] && continue
+    # PHENOMENA must be passed: slurm/run_devai_grid.sh defaults to ds003604's
+    # "Sem Phon Gram Plaus", so without this the grid looked for RDMs under
+    # Gram/ and Plaus/ (which do not exist here) and missed Orth/ and SemLocal/
+    # entirely -- it printed "Tasks: Sem Phon Gram Plaus", found nothing, and
+    # reported "(no rows for alignment)" while exiting 0.
     env CUDA_VISIBLE_DEVICES="${GPU_ARR[$i]}" SKIP_BRAIN=1 ABLATE=0 \
         MAX_CKPT="$MAX_CKPT" DATASET="$DS" BRAIN_RDM_ROOT="$RDM_ROOT" \
-        GRID_PARENT="$GRID_PARENT" BACKUP=0 \
+        PHENOMENA="$TASKS" GRID_PARENT="$GRID_PARENT" BACKUP=0 \
         bash slurm/run_devai_grid.sh "${shard[@]}" \
         >>"logs/newds_grid_${DS}_gpu${GPU_ARR[$i]}.log" 2>&1 &
     pids+=($!)

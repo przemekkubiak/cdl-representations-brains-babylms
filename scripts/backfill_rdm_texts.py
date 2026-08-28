@@ -23,12 +23,25 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.rsa.semantic_metadata import load_semantic_metadata  # noqa: E402
 
+# ds003604's four. The other three datasets add Orth and SemLocal
+# (configs/neuro_datasets.yaml `phenomena:`), and hardcoding this tuple silently
+# skipped those directories -- so a dataset could come back "all ok" having left
+# half its cells textless. Any directory that names a registered phenomenon is
+# valid; the tuple stays as the fallback when the registry cannot be read.
 TASKS = ("Sem", "Phon", "Gram", "Plaus")
+
+
+def _known_phenomena() -> set:
+    try:
+        from src.contrast_spec import CONTRAST_SPECS
+        return {p for spec in CONTRAST_SPECS.values() for p in spec}
+    except Exception:
+        return set(TASKS)
 
 
 def backfill(path: Path, characteristics_dir: str) -> str:
     task = path.parent.name
-    if task not in TASKS:
+    if task not in _known_phenomena() and task not in TASKS:
         return f"skip (unknown task dir '{task}')"
     d = np.load(path, allow_pickle=True)
     data = {k: d[k] for k in d.files}
@@ -61,6 +74,8 @@ def backfill(path: Path, characteristics_dir: str) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--roots", nargs="+", default=["data/processed/fmri/ds003604"])
+    # Age-group bins ("ses-11+") contain a regex-special character, so the glob
+    # below is literal rather than patterned -- see main().
     ap.add_argument("--characteristics-dir",
                     default="data/brain/ds003604/stimuli/Stimulus_Characteristics")
     args = ap.parse_args()
