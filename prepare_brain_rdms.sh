@@ -78,6 +78,36 @@ fi
 [ -f contrasts/Sem.csv ] || "$PY" scripts/build_contrasts.py --source github --out-dir contrasts
 
 for T in "${PHENOMENA[@]}"; do
+  # $T is a PHENOMENON (Sem/Phon/Orth/SemLocal), which is what the Python side
+  # wants: FMRIPreprocessor resolves it through the registry's `phenomena:`
+  # mapping (_resolve_real_tasks), and src/contrast_spec.py CONTRAST_SPECS is
+  # keyed by it. But the BOLD files on disk are named after the real BIDS task
+  # -- ds002236's Phon lives in task-AudRhyme_*, ds001894's spans six tasks --
+  # so every *filename glob* in this script has to use the resolved labels, not
+  # $T. Globbing "*task-Phon_*" against ds002236 matched nothing and the run
+  # exited with "no runs found, skipping" and rc=0. Resolve once here; the
+  # arrays below are what the finds use. For ds003604 each phenomenon maps to
+  # its own name, so REAL_TASKS=($T) and every find is byte-identical to before.
+  mapfile -t REAL_TASKS < <("$PY" - "$DATASET" "$T" <<'RESOLVE'
+import sys
+sys.path.insert(0, ".")
+ds, phen = sys.argv[1], sys.argv[2]
+try:
+    from src.datasets import get_dataset
+    tasks = get_dataset(ds).phenomena.get(phen) or [phen]
+except Exception:
+    tasks = [phen]
+print("\n".join(tasks))
+RESOLVE
+)
+  [ "${#REAL_TASKS[@]}" -eq 0 ] && REAL_TASKS=("$T")
+  # find predicates: -name "*task-X_*bold.nii.gz" OR'd across REAL_TASKS.
+  TASK_FIND=(); for _rt in "${REAL_TASKS[@]}"; do
+    [ ${#TASK_FIND[@]} -gt 0 ] && TASK_FIND+=(-o)
+    TASK_FIND+=(-name "*task-${_rt}_*bold.nii.gz")
+  done
+  TASK_FIND=(\( "${TASK_FIND[@]}" \))
+  [ "${REAL_TASKS[*]}" != "$T" ] && log "$T -> BIDS task(s): ${REAL_TASKS[*]}"
   # ROI_SET changes what's IN a pattern file (which voxels), so language/
   # phonology/all runs must not share a path with each other or with the
   # whole-brain default -- otherwise the second grouping's patterns and RDMs
@@ -131,10 +161,10 @@ for T in "${PHENOMENA[@]}"; do
   # SESSIONLESS_LABEL ("ses-all") -- both sides of the pipeline must agree on
   # this name, since it ends up in the actual pattern filenames FMRIPreprocessor
   # writes, not just here.
-  mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
+  mapfile -t SESSIONS < <(find "$DATA_DIR" "${TASK_FIND[@]}" \
       | sed -nE 's|.*_(ses-[A-Za-z0-9+]+)_.*|\1|p' | sort -u)
   if [ "${#SESSIONS[@]}" -eq 0 ]; then
-    if [ -n "$(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" -print -quit)" ]; then
+    if [ -n "$(find "$DATA_DIR" "${TASK_FIND[@]}" -print -quit)" ]; then
       SESSIONS=(ses-all)
       log "$T: no ses-* entity found in filenames -- treating as one session (ses-all)"
     else
@@ -209,11 +239,23 @@ for T in "${PHENOMENA[@]}"; do
       log "ABORT $T/$S: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
     fi
 
-    if [ "$S" = "ses-none" ]; then
-      mapfile -t SUBS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
+    # "ses-all" is the pseudo-session used when the dataset has no session
+    # entity at all (ds002236) -- it must match fmri_preprocessing.py's
+    # SESSIONLESS_LABEL, since that is the label baked into the pattern
+    # filenames. This test read "ses-none" until 2026-08-28, a label nothing in
+    # the pipeline produces any more, so a session-less dataset fell to the
+    # else-branch and globbed "*ses-all_task-..." -- which matches nothing,
+    # because those filenames carry no session token. Zero subjects, skipped,
+    # rc=0.
+    if [ "$S" = "ses-all" ]; then
+      mapfile -t SUBS < <(find "$DATA_DIR" "${TASK_FIND[@]}" \
           | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
     else
-      mapfile -t SUBS < <(find "$DATA_DIR" -name "*${S}_task-${T}_*bold.nii.gz" \
+      SES_TASK_FIND=(); for _rt in "${REAL_TASKS[@]}"; do
+        [ ${#SES_TASK_FIND[@]} -gt 0 ] && SES_TASK_FIND+=(-o)
+        SES_TASK_FIND+=(-name "*${S}_task-${_rt}_*bold.nii.gz")
+      done
+      mapfile -t SUBS < <(find "$DATA_DIR" \( "${SES_TASK_FIND[@]}" \) \
           | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)
     fi
     [ "$MAX_SUBJECTS" -gt 0 ] && SUBS=("${SUBS[@]:0:$MAX_SUBJECTS}")

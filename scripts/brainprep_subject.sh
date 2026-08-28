@@ -12,14 +12,42 @@ FLOOR="${DISK_FLOOR_GB:-350}"
 PYBIN="$ROOT/venv/bin/python"
 
 free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
-drop_bold() { find "$DATA_DIR/$SUB" -name "*task-${T}_*bold.nii.gz" -type f -delete 2>/dev/null; }
+
+# $T is a PHENOMENON key (Sem/Phon/Orth/SemLocal), which is what
+# batch_preprocessing.py wants -- it resolves it through the registry itself
+# (FMRIPreprocessor._resolve_real_tasks) and src/contrast_spec.py is keyed by
+# it. The FILES on disk, and batch_download_bold.py's own globs, are named
+# after the real BIDS task: ds002236's Phon is task-AudRhyme, ds001894's spans
+# six tasks. Using $T for those matched nothing and every subject reported
+# "no BOLD for this task" and exited 0. Resolve once, here.
+mapfile -t REAL_TASKS < <("$PYBIN" - "${DATASET:-ds003604}" "$T" <<'RESOLVE'
+import sys
+sys.path.insert(0, ".")
+ds, phen = sys.argv[1], sys.argv[2]
+try:
+    from src.datasets import get_dataset
+    tasks = get_dataset(ds).phenomena.get(phen) or [phen]
+except Exception:
+    tasks = [phen]
+print("\n".join(tasks))
+RESOLVE
+)
+[ "${#REAL_TASKS[@]}" -eq 0 ] && REAL_TASKS=("$T")
+TASK_FIND=(); for _rt in "${REAL_TASKS[@]}"; do
+  [ ${#TASK_FIND[@]} -gt 0 ] && TASK_FIND+=(-o)
+  TASK_FIND+=(-name "*task-${_rt}_*bold.nii.gz")
+done
+TASK_FIND=(\( "${TASK_FIND[@]}" \))
+DL_TASK_ARGS=(--tasks "${REAL_TASKS[@]}")
+
+drop_bold() { find "$DATA_DIR/$SUB" "${TASK_FIND[@]}" -type f -delete 2>/dev/null; }
 
 # already preprocessed?
 if ls "$OUT/${SUB}_"*_patterns.npz >/dev/null 2>&1; then drop_bold; exit 0; fi
 
 if [ "$(free_gb)" -lt "$FLOOR" ]; then echo "[$SUB/$T] SKIP: below disk floor"; exit 9; fi
 
-"$PYBIN" scripts/batch_download_bold.py --data-dir "$DATA_DIR" --task "$T" \
+"$PYBIN" scripts/batch_download_bold.py --data-dir "$DATA_DIR" "${DL_TASK_ARGS[@]}" \
     --dataset "${DATASET:-ds003604}" \
     --subjects "$SUB" --workers 2 >/dev/null 2>&1 || { echo "[$SUB/$T] download failed"; drop_bold; exit 1; }
 
@@ -27,7 +55,7 @@ if [ "$(free_gb)" -lt "$FLOOR" ]; then echo "[$SUB/$T] SKIP: below disk floor"; 
 # sub-XX/func/ for datasets with no session entity (ds002236). The glob used to
 # require the session level, so every session-less dataset reported "no BOLD for
 # this task" for every subject and exited 0 -- a silent total loss.
-if ! find "$DATA_DIR/$SUB" -name "*task-${T}_*bold.nii.gz" -print -quit \
+if ! find "$DATA_DIR/$SUB" "${TASK_FIND[@]}" -print -quit \
      | grep -q . ; then
   echo "[$SUB/$T] no BOLD for this task"; exit 0
 fi

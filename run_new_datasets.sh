@@ -59,24 +59,30 @@ json.dump(d, open(path, "w"), indent=2, sort_keys=True)
 PYEOF
 }
 
-tasks_for() {   # read the task list off the registry, falling back to the checkout
+tasks_for() {   # PHENOMENON keys, not BIDS task labels -- see comment below.
+  # prepare_brain_rdms.sh's PHENOMENA is consumed as FMRIPreprocessor(task=...),
+  # which przemek's _resolve_real_tasks() maps through the registry's
+  # `phenomena:` block to the real BIDS task(s), and which src/contrast_spec.py
+  # CONTRAST_SPECS is keyed by. Handing it raw BIDS task labels (AAWord,
+  # AudRhyme, ReadPhon...) finds BOLD runs -- _resolve_real_tasks falls back to
+  # the literal name -- but has no contrast spec, so the condition>control
+  # contrast is undefined and the RDM is not the one we claim to be building.
+  # ds003604 is unaffected either way: its phenomena map to their own names.
   "$PY" - "$1" <<'PYEOF'
 import sys, glob, os, re
 sys.path.insert(0, ".")
 ds = sys.argv[1]
-tasks = []
+phenomena = []
 try:
     from src.datasets import get_dataset
-    tasks = list(get_dataset(ds).tasks or [])
+    from src.contrast_spec import CONTRAST_SPECS
+    spec = get_dataset(ds)
+    have = set(CONTRAST_SPECS.get(spec.contrast_spec, {}))
+    # only phenomena that BOTH the registry declares and a contrast spec defines
+    phenomena = [p for p in (spec.phenomena or {}) if p in have]
 except Exception:
     pass
-if not tasks:
-    seen = set()
-    for f in glob.glob(f"data/brain/{ds}/**/*_bold.nii.gz", recursive=True):
-        m = re.search(r"task-([A-Za-z0-9]+)", os.path.basename(f))
-        if m: seen.add(m.group(1))
-    tasks = sorted(seen)
-print(" ".join(tasks))
+print(" ".join(phenomena))
 PYEOF
 }
 
