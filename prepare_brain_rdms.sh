@@ -247,6 +247,23 @@ RESOLVE
     # else-branch and globbed "*ses-all_task-..." -- which matches nothing,
     # because those filenames carry no session token. Zero subjects, skipped,
     # rc=0.
+    # Restore dropped BOLD pointers BEFORE counting subjects, not only after
+    # preprocessing them. brainprep_subject.sh deletes each subject's raw BOLD
+    # once it is preprocessed, and because the downloaded blob REPLACED the
+    # git-annex symlink, deleting it removes the path entirely. The post-batch
+    # `git checkout` further down puts them back -- but if a run is interrupted
+    # before reaching it (killed, disk floor, machine reboot), the paths stay
+    # gone, and the NEXT run enumerates its cohort from what is left on disk.
+    # Measured on ds001894 2026-08-28 after an interrupted run: the restore had
+    # not happened, so ses-T1 offered 40 subjects where the full checkout has
+    # 188, and the pipeline would have built and published a session RDM over a
+    # 4.7x undersized cohort without a single warning. Restoring first costs ~0
+    # bytes (they are pointers) and makes the cohort a property of the dataset
+    # rather than of how the previous run happened to end.
+    if git -C "$DATA_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      git -C "$DATA_DIR" checkout -- . 2>/dev/null || true
+    fi
+
     if [ "$S" = "ses-all" ]; then
       mapfile -t SUBS < <(find "$DATA_DIR" "${TASK_FIND[@]}" \
           | sed -E 's|.*/(sub-[^/]+)/.*|\1|' | sort -u)

@@ -37,4 +37,14 @@ export DISK_FLOOR_GB="${DISK_FLOOR_GB:-350}"
 # coverage onto the Hub in about an hour and unblocks Tier 1, instead of a fourth abort with
 # nothing to show. Clear MAX_SUBJECTS and rerun once the sweep is done to rebuild at full N --
 # rdm_cache_hf.py push overwrites, so the cached RDMs upgrade in place.
-export MAX_SUBJECTS="${MAX_SUBJECTS:-40}"
+# CLEARED 2026-08-28. The condition this cap existed for is gone: the merge sweep
+# that aborted below 250 GB has finished (PICKUP.md), `/` reports ~810 GB free
+# against our 350 GB floor, so the headroom is ~460 GB rather than ~80 GB. At the
+# Phon rate above, ds001894's largest batch is 188 subjects x 1.42 GB = ~267 GB,
+# which fits. Leaving it at 40 was silently costing real statistical power on
+# every dataset -- ds002236's age bins came out at n=8..11 subjects where the
+# cohort supports roughly double, and the noise ceiling IS a function of n, so it
+# was deflating the denominator that every ceiling-normalised alignment number is
+# divided by. rdm_cache_hf.py push overwrites, so the Hub-cached RDMs upgrade in
+# place, exactly as the note above anticipated. 0 = all subjects.
+export MAX_SUBJECTS="${MAX_SUBJECTS:-0}"
