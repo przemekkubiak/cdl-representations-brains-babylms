@@ -1,0 +1,32 @@
+{
+  "dataset": "ds003604",
+  "rdms": "within-run normalised",
+  "n_families": 15,
+  "n_rows": 524,
+  "n_cells": 2,
+  "ceiling_lower_mean": 0.32733078349243566,
+  "best_rsa_abs": 0.1138561732640086,
+  "best_frac_of_ceiling": 0.4454914519651354,
+  "seed_null_sd_median": 0.008568462436998249,
+  "null_max_p95_median": 0.0654010891444828,
+  "families_beating_null_max": 10,
+  "families_equivalent_to_zero": 0,
+  "sesoi": 0.05,
+  "scale_trend_rho": 0.14770978917519928,
+  "scale_trend_p": 0.683842812890721,
+  "var_pct_cell": 10.930595079819067,
+  "var_pct_family": 3.37922514957471,
+  "var_pct_residual": 85.49934007594973,
+  "untrained_mean": 7.506508343583656e-05,
+  "untrained_n": 22,
+  "trained_mean": 0.018659627615233362,
+  "trained_n": 502,
+  "untrained_vs_trained_t": -4.000119640000254,
+  "untrained_vs_trained_p": 0.0005219055861491026,
+  "null_trend_range": [
+    -0.16339869281045752,
+    0.23631535947712423
+  ],
+  "families_outside_null_trend_range": 10,
+  "families_trending_down": 2
+}

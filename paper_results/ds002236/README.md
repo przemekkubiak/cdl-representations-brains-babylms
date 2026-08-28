@@ -59,6 +59,36 @@ rather than language) and an inter-subject noise ceiling.
 | Sem    | ses-11    |       48 |        0.390186 |        0.542448 |           8 |
 | Sem    | ses-9     |       48 |        0.344433 |        0.482067 |          11 |
 
+Model grid: **15 families**, 524 alignment rows across 2 cells.
+
+| | |
+|---|---|
+| mean noise ceiling | 0.327 |
+| best alignment anywhere | 0.1139 |
+| as a fraction of ceiling | 44.5% |
+| families equivalent to zero (TOST ±0.05) | 0/15 |
+| Pythia scale trend | ρ = +0.148, p = 0.68 |
+
+### Per family
+
+| family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
+|:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
+| babylm-gpt2           |               9 |     0.0287 |   0.0059 |        0.0534 |                    0.1689 |                  nan |
+| pico-decoder-medium   |              21 |     0.0276 |   0.0346 |        0.1139 |                    0.4455 |                  nan |
+| pythia-1b-full        |              21 |     0.0217 |   0.0268 |        0.0762 |                    0.298  |                  nan |
+| pico-decoder-small    |              21 |     0.0213 |   0.0167 |        0.1044 |                    0.4086 |                  nan |
+| babylm-gpt2-7         |               9 |     0.0207 |   0.0065 |        0.0445 |                    0.1292 |                  nan |
+| pythia-410m-full      |              21 |     0.0188 |   0.0139 |        0.0741 |                    0.2901 |                  nan |
+| babylm-gpt2-5         |               9 |     0.0186 |   0.0034 |        0.0368 |                    0.116  |                  nan |
+| babylm-gpt2-3         |               9 |     0.018  |   0.007  |        0.0432 |                    0.1346 |                  nan |
+| pico-decoder-large    |              21 |     0.0179 |   0.0334 |        0.0796 |                    0.3116 |                  nan |
+| beetle-fineweb3-eng   |              19 |     0.0177 |   0.0213 |        0.0778 |                    0.3044 |                  nan |
+| pythia-160m-full      |              21 |     0.0155 |   0.012  |        0.0716 |                    0.2801 |                  nan |
+| pico-decoder-tiny     |              21 |     0.014  |   0.0121 |        0.0758 |                    0.2967 |                  nan |
+| pythia-1.4b-full      |              21 |     0.0125 |   0.0271 |        0.0946 |                    0.37   |                  nan |
+| pythia-70m-full       |              21 |     0.0121 |   0.0155 |        0.0753 |                    0.2947 |                  nan |
+| beetle-humanscale-eng |              18 |     0.0101 |   0.006  |        0.0477 |                    0.1865 |                  nan |
+
 ## Dataset-specific notes
 
 The accession is not stated in the data article; it was resolved to ds002236 by matching OpenNeuro's own dataset name ("Cross-Sectional Multidomain Lexical Processing") AND the per-subject age range in participants.tsv (8.67–15.5) against the range the article reports. Best developmental axis of the four datasets: explicit per-subject age at scan, continuous rather than binned. Six tasks crossing modality (auditory/visual) with judgement (rhyme/spelling/semantic) — a modality control no other dataset here provides. A third of trials are coded null (Tones/nullsilence.WAV) and are excluded from the stimulus set.
