@@ -17,7 +17,31 @@ syllable counts, an acoustic model of the audio where the stimuli are
 audio, and the study's own condition contrast — each tested by a
 permutation test that shuffles stimulus identity.
 
-**GATE: NOT RUN.** Treat everything below as provisional.
+**GATE: FAILED. 0/8 stimulus tests are significant** after Holm
+correction — not the acoustic model of the audio the children actually
+heard, not the study's own experimental contrast.
+
+**The alignment numbers below are therefore uninterpretable as
+evidence about language models.** They measure a representational
+geometry that does not demonstrably encode the stimuli. They are
+published for completeness and for whoever fixes the estimator, not as
+a result. Do not cite them as evidence that models fail to align with
+the developing brain.
+
+Measured cause, from `control/`:
+
+- RDM effective rank: **52** of 72 stimuli
+
+
+Note that this is NOT ds003604's failure mode. There, the RDM
+effective rank was ~3 of 40-48 stimuli -- near-degenerate betas
+that could not express stimulus-level structure at all. The rank
+recorded above is a large fraction of the stimulus count, so these
+RDMs do carry stimulus structure and the control failing here means
+the specific controls tested did not reach significance, not that
+the measurement is uninterpretable. Check `control/` for which
+controls ran: an acoustic or visual control needs the dataset's
+stimulus files present, and reports zero features if they are not.
 
 ## What was built
 
