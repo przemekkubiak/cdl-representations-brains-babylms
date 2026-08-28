@@ -1,0 +1,7 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Phon,ses-11+,data/processed/fmri_wrn/ds002236/Phon/session_rdm_ses-11+.npz,True,96,20,0.302747026574171,0.4039104702457667,0.013964742487926812,20
+Phon,ses-11,data/processed/fmri_wrn/ds002236/Phon/session_rdm_ses-11.npz,True,96,10,0.23471121317364824,0.41181894257457197,0.013517690668112693,10
+Phon,ses-9,data/processed/fmri_wrn/ds002236/Phon/session_rdm_ses-9.npz,True,96,9,0.25557431632362526,0.4415161230088828,0.00943095062491941,9
+Sem,ses-11+,data/processed/fmri_wrn/ds002236/Sem/session_rdm_ses-11+.npz,True,48,21,0.4363326367407608,0.506525303172536,0.021033710688081183,21
+Sem,ses-11,data/processed/fmri_wrn/ds002236/Sem/session_rdm_ses-11.npz,True,48,8,0.3901863856661571,0.5424479904532422,0.022299811643450664,8
+Sem,ses-9,data/processed/fmri_wrn/ds002236/Sem/session_rdm_ses-9.npz,True,48,11,0.3444331224762516,0.4820671069933455,0.02447877105995856,11
