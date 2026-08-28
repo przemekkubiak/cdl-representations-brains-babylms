@@ -1,0 +1,9 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Orth,ses-11+,data/processed/fmri_wrn/ds006239/Orth/session_rdm_ses-11+.npz,True,96,22,0.5621949382011503,0.6148499112992352,0.01234567376083645,22
+Orth,ses-11,data/processed/fmri_wrn/ds006239/Orth/session_rdm_ses-11.npz,True,96,18,0.5225248471008304,0.589811427500849,0.016597029213103368,18
+Phon,ses-11+,data/processed/fmri_wrn/ds006239/Phon/session_rdm_ses-11+.npz,True,96,22,0.5621949382011503,0.6148499112992352,0.01234567376083645,22
+Phon,ses-11,data/processed/fmri_wrn/ds006239/Phon/session_rdm_ses-11.npz,True,96,18,0.5225248471008304,0.589811427500849,0.016597029213103368,18
+Sem,ses-11+,data/processed/fmri_wrn/ds006239/Sem/session_rdm_ses-11+.npz,True,48,22,0.3566337683002468,0.43856118803736893,0.013140611705559167,22
+Sem,ses-11,data/processed/fmri_wrn/ds006239/Sem/session_rdm_ses-11.npz,True,48,18,0.28934360551161054,0.394830531388445,0.01189643515198474,18
+SemLocal,ses-11+,data/processed/fmri_wrn/ds006239/SemLocal/session_rdm_ses-11+.npz,True,48,23,0.305570844145469,0.38963014956958925,0.01905777705067397,23
+SemLocal,ses-11,data/processed/fmri_wrn/ds006239/SemLocal/session_rdm_ses-11.npz,True,48,15,0.23056863983728407,0.36420619058596826,0.016610179981223657,15
