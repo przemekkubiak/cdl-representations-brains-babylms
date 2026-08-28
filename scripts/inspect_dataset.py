@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime
 import json
 import re
 import subprocess
@@ -69,6 +70,7 @@ STIM_COLUMN_SETS = [
     ["A_stim", "B_stim"],
     ["stim_file_A", "stim_file_B"],
     ["prime_stim", "targ_stim"],
+    ["stim1_file", "stim2_file"],  # ds002236 -- see its `quirks` note in the registry
 ]
 
 
@@ -119,6 +121,42 @@ def report_participants(data_dir: Path) -> None:
         c for c in cols
         if ("date" in c.lower() or "acq_time" in c.lower()) and c not in birth_cols
     ]
+    # Name-pattern matching alone MISSED a real case: ds006239's participants.tsv
+    # has no "date"/"acq_time" column, but does have mri_1_complete /
+    # mri_2_complete / mri_3_complete / st_complete -- REDCap's naming for "date
+    # this instrument was completed" -- which ARE scan dates (verified: paired
+    # with birthdate, the computed ages land at 10.13-16.87, matching the
+    # paper's stated 10-17 cohort range). That cost a real "per_subject: false"
+    # entry in the registry that turned out to be wrong. Sniff VALUES instead of
+    # guessing more name substrings: any other column whose non-empty values
+    # mostly parse as a date is a candidate, regardless of what it's called.
+    _DATE_FORMATS = ("%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y")
+
+    def _looks_like_date(v: str) -> bool:
+        v = v.strip()
+        if not v:
+            return False
+        for fmt in _DATE_FORMATS:
+            try:
+                datetime.datetime.strptime(v, fmt)
+                return True
+            except ValueError:
+                continue
+        return False
+
+    named_cols = set(age_cols) | set(birth_cols) | set(scan_date_cols)
+    sniffed_date_cols = []
+    for c in cols:
+        if c in named_cols or c == "participant_id":
+            continue
+        vals = [r.get(c, "") for r in rows[:20]]
+        nonempty = [v for v in vals if v and v.strip().lower() not in ("n/a", "na")]
+        if len(nonempty) >= 3 and sum(_looks_like_date(v) for v in nonempty) / len(nonempty) > 0.8:
+            sniffed_date_cols.append(c)
+    if sniffed_date_cols:
+        print(f"   NOTE: column name patterns missed these, but their VALUES parse as "
+              f"dates: {sniffed_date_cols}")
+        scan_date_cols = scan_date_cols + sniffed_date_cols
 
     if age_cols:
         print(f"   -> AGE AT SCAN available directly: {len(age_cols)} column(s)")

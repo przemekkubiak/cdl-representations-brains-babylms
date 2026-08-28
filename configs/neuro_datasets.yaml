@@ -148,14 +148,25 @@ datasets:
     sessions: [ses-1]
     ages:
       kind: cross_sectional
-      per_subject: false          # VERIFIED: NOT recoverable from the release
+      per_subject: true            # CORRECTED 2026-08-26 -- see note
+      source: "participants.tsv, birthdate minus mri_1_complete (or st_complete/mri_2/mri_3)"
       note: >
-        participants.tsv carries birthdate but NO scan-date column, and the
-        release contains ZERO *_scans.tsv files, so age at scan is not derivable
-        from the data as published. The cohort range 10-17 is documented in the
-        paper. Treat this dataset as COHORT-LEVEL ONLY: it cannot carry the
-        developmental axis, though it is still usable for alignment magnitude.
-        Request per-subject age from the authors if the axis is needed.
+        Previously recorded as NOT recoverable -- that was wrong. participants.tsv
+        has no column with "date" or "acq_time" in its name, which is what the
+        original check looked for, but it does carry birthdate plus
+        st_complete/mri_1_complete/mri_2_complete/mri_3_complete -- REDCap's
+        naming for "date this instrument was completed" -- and those ARE scan
+        dates. Verified two ways: (1) values parse as real dates, not status
+        flags, and (2) ages computed from birthdate minus mri_1_complete land at
+        10.13-16.87 across all 89 subjects, matching the paper's stated 10-17
+        cohort range closely. *_scans.tsv is still absent, which is why the
+        original check found nothing -- it just wasn't the only place to look.
+        The four date columns for one subject typically sit within ~2 weeks of
+        each other (median 14 days, max 185 days across all subjects), so any
+        one of them is a reasonable single "age at scan" scalar; mri_1_complete
+        (first scan-related date) is used as the default.
+        scripts/inspect_dataset.py now sniffs column VALUES for date-like
+        strings as a fallback to catch this class of miss on future datasets.
     design:
       modality: visual
       run_stimulus: mixed          # VERIFIED per task -- see below
@@ -185,6 +196,15 @@ datasets:
     status: ready
 
   # ------------------------------------------------------------ lytle-2020 ----
+  # INSPECTED 2026-08-26 by scripts/inspect_dataset.py against the checkout
+  # (data/brain/ds002236, metadata-only). The inspector's stimulus-column list
+  # didn't know this dataset's stim1_file/stim2_file naming, which silently
+  # blocked the run/stimulus-crossing check (the decisive one) -- fixed in
+  # scripts/inspect_dataset.py before trusting the result below. Codes were
+  # then independently spot-checked against real stimulus pairs, not just the
+  # inspector's label extraction: "mouth"/"youth" under code 3 (O+P-) share
+  # spelling but don't actually rhyme; "tone"/"known" under code 2 (O-P+) are
+  # spelled differently but do rhyme. Both confirm the mapping below.
   ds002236:
     accession: ds002236
     snapshot: "1.0.1"
@@ -200,6 +220,17 @@ datasets:
       Booth lab) and its participants.tsv, whose per-subject `age` column spans
       8.67-15.5 -- matching the 8.7-15.5 range the article reports. Both the name
       and the age range had to match before this was written down.
+    n_subjects: 91
+    tasks: [AudRhyme, AudSem, AudSpell, VisRhyme, VisSem, VisSpell]
+    phenomena:
+      # Only Aud is wired up for now (deliberate scope decision, not a gap):
+      # Phon from AudRhyme, Sem from AudSem. AudSpell/VisRhyme/VisSem/VisSpell
+      # exist and are structurally identical in design (see design.note below)
+      # but are not yet in CONTRAST_SPECS -- add them the same way if/when
+      # Orth or the visual modality axis is wanted.
+      Phon: [AudRhyme]
+      Sem: [AudSem]
+    sessions: []          # single session, cross-sectional (not longitudinal)
     ages:
       kind: cross_sectional
       per_subject: true
@@ -209,24 +240,23 @@ datasets:
         explicit per-subject `age` in years at testing (8.67-15.5), plus a
         shifted birthdate. Per-image shifted acquisition dates are in the sidecar
         JSONs.
-    phenomena:
-      Phon: []
-      Sem: []
-      Orth: []
-    tasks: []
-    sessions: []
     design:
-      modality: both             # auditory AND visual variants per the article
-      run_stimulus: unknown      # to be measured by scripts/inspect_dataset.py
+      modality: both             # auditory AND visual variants exist; only Aud used so far
+      run_stimulus: nested       # VERIFIED: 99% of stimuli occur in one run, all 6 tasks
+      note: >
+        Rhyme and Spell tasks share the IDENTICAL O+-P+ crossing (same trial_type
+        codes) under different task instructions -- rhyme judgment vs. spelling
+        judgment on the same word pairs. Phon is drawn from Rhyme, not Spell, so
+        as not to fold an orthographic-judgment demand into a phonological
+        contrast. Same nested-run confound as ds003604/ds001894: within-run
+        voxel normalisation is mandatory before pooling across runs.
+      trials_per_run: ~145 stimuli (Rhyme/Spell), ~121 (Sem)
+      runs: [run-01, run-02]
     stimuli:
-      kind: unknown
+      kind: stim_pair_filename
+      columns: [stim1_file, stim2_file]
       local: "stimuli"
-    contrast_spec: null
-    status: needs_inspection
-    blocker: >
-      Accession resolved; structure not yet inspected. Run
-      `scripts/inspect_dataset.py --dataset ds002236 --bootstrap` to read tasks,
-      trial-type codes and run/stimulus crossing off the checkout, then transcribe
-      the trial types into CONTRAST_SPECS before any preprocessing.
-    quirks:
-      - "README notes events.tsv uses stim1_file/stim2_file, not stim_file."
+      note: "Filenames carry a category subfolder then the word (Semantic/handle.WAV -> 'handle')."
+    contrast_spec: ds002236
+    status: ready
+

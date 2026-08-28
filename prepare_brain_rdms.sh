@@ -40,6 +40,28 @@ KEEP_PATTERNS="${KEEP_PATTERNS:-0}"    # 1 = keep per-run patterns (needs ~660 G
 # stimulus property. See configs/neuro_datasets.yaml and hf_results_staging/README.md.
 WITHIN_RUN_NORM="${WITHIN_RUN_NORM:-0}"
 WRN_FLAG=(); [ "$WITHIN_RUN_NORM" = "1" ] && WRN_FLAG=(--within-run-normalize)
+# ROI_SET (comma-separated: language,auditory,motor -- see
+# src/preprocessing/roi_atlas.py) restricts every subject's mask to the named
+# region(s), via real per-subject registration to MNI152 (MASKING.md). Unset
+# (default) = whole-brain mask only -- which still gets the mask_strategy=
+# 'epi' fix (see fmri_preprocessing.py) regardless of this variable; that fix
+# is not optional and applies either way.
+# MASK_CACHE_DIR is exported here, ONCE, above the per-task loop below, so
+# every task's call to brainprep_subject.sh shares the same cache and
+# registration is computed once per subject-session rather than once per
+# task. Do not set this per-task.
+export ROI_SET="${ROI_SET:-}"
+export MASK_CACHE_DIR="${MASK_CACHE_DIR:-$RDM_ROOT/_masks}"
+# SAVE_NATIVE_MAPS=1 turns on real anatomical brain maps: each subject-session's
+# whole-brain mask is saved during preprocessing (brainprep_subject.sh, only
+# when ROI_SET is unset -- see the comment there) and run_brain_localization.py
+# then reconstructs + warps each condition t-map to MNI space into MNI_MAPS_DIR.
+# Off by default -- it adds a per-subject registration cost that most runs
+# (which only need the scalar Gini/entropy table) don't need to pay.
+export SAVE_NATIVE_MAPS="${SAVE_NATIVE_MAPS:-0}"
+MNI_MAPS_DIR="${MNI_MAPS_DIR:-$RDM_ROOT/_mni_maps}"
+LOCALIZE_MAP_ARGS=()
+[ "$SAVE_NATIVE_MAPS" = "1" ] && LOCALIZE_MAP_ARGS=(--mask-cache-dir "$MASK_CACHE_DIR" --mni-maps-dir "$MNI_MAPS_DIR" --data-dir "$DATA_DIR")
 PY="$ROOT/venv/bin/python"
 
 free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
@@ -56,7 +78,24 @@ fi
 [ -f contrasts/Sem.csv ] || "$PY" scripts/build_contrasts.py --source github --out-dir contrasts
 
 for T in "${PHENOMENA[@]}"; do
-  export OUT="$RDM_ROOT/$T"
+  # ROI_SET changes what's IN a pattern file (which voxels), so language/
+  # phonology/all runs must not share a path with each other or with the
+  # whole-brain default -- otherwise the second grouping's patterns and RDMs
+  # would silently overwrite the first's. Only add a subdirectory when
+  # ROI_SET is actually set, so the default (unset) path is byte-identical to
+  # before this existed -- an already-completed ds003604 run's cache/output
+  # location does not move.
+  ROI_SUBDIR=""
+  [ -n "${ROI_SET:-}" ] && ROI_SUBDIR="roi-${ROI_SET//,/+}/"
+  export OUT="$RDM_ROOT/${ROI_SUBDIR}$T"
+  # Cross-sectional datasets (everything except ds003604) need patterns
+  # relabeled by real per-subject age-group bin before an RDM is built --
+  # see scripts/regroup_patterns_by_age.py and configs/age_groups.yaml for
+  # why: a BIDS session there does not correspond to one developmental
+  # timepoint the way ds003604's ses-5/7/9 do. ds003604 is untouched --
+  # everything below behaves exactly as it did before this existed.
+  NEEDS_AGE_REGROUP=1
+  [ "$DATASET" = "ds003604" ] && NEEDS_AGE_REGROUP=0
   # NO task-level skip here. This used to be
   #     if ls "$OUT"/session_rdm_ses-*.npz; then continue; fi
   # which globs across sessions, so ONE finished session skipped the WHOLE task.
@@ -86,13 +125,18 @@ for T in "${PHENOMENA[@]}"; do
   # `ses-[0-9]+` with a non-printing sed, so for those two datasets every path
   # passed through unchanged and SESSIONS filled up with full file paths --
   # silently producing garbage globs rather than an error. Match any session
-  # token, print only real matches, and fall back to a single pseudo-session.
+  # token (letters/digits/+, for the age-group "11+" bin further down), print
+  # only real matches (sed -n ... p, not a blanket substitution), and fall back
+  # to a single pseudo-session labeled to match fmri_preprocessing.py's own
+  # SESSIONLESS_LABEL ("ses-all") -- both sides of the pipeline must agree on
+  # this name, since it ends up in the actual pattern filenames FMRIPreprocessor
+  # writes, not just here.
   mapfile -t SESSIONS < <(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" \
-      | sed -nE 's|.*_(ses-[A-Za-z0-9]+)_.*|\1|p' | sort -u)
+      | sed -nE 's|.*_(ses-[A-Za-z0-9+]+)_.*|\1|p' | sort -u)
   if [ "${#SESSIONS[@]}" -eq 0 ]; then
     if [ -n "$(find "$DATA_DIR" -name "*task-${T}_*bold.nii.gz" -print -quit)" ]; then
-      SESSIONS=(ses-none)
-      log "$T: no session entity in filenames -- single pseudo-session ses-none"
+      SESSIONS=(ses-all)
+      log "$T: no ses-* entity found in filenames -- treating as one session (ses-all)"
     else
       log "$T: no runs found, skipping"; continue
     fi
@@ -123,26 +167,40 @@ for T in "${PHENOMENA[@]}"; do
   log "$T: ${#SESSIONS[@]} session(s) to run: ${SESSIONS[*]}"
 
   for S in "${SESSIONS[@]}"; do
-    if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
-      log "$T/$S: RDM already present -- skip"; continue
-    fi
-    # Try the Hub cache before doing hours of CPU. Session RDMs are deterministic given the
-    # dataset, so a run that has already produced one anywhere never needs to produce it again;
-    # `rdm_cache_hf.py pull` exits 0 only if it actually placed the file.
-    # Cache paths are namespaced by dataset AND correction variant, so a pull can
-    # only ever return an RDM built the same way this run is building them. Before
-    # that namespacing existed the cache was a hazard here -- it held the original
-    # confounded RDMs under bare "{task}/session_rdm_{session}.npz" and would have
-    # served one into a corrected run. It is now safe, and worth using: a session
-    # RDM is deterministic given the dataset, so preprocessing is paid for once
-    # ever rather than once per run.
-    CACHE_VARIANT=raw
-    [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
-    if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
-         pull --task "$T" --session "$S" --dir "$OUT" \
-         --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
+    if [ "$NEEDS_AGE_REGROUP" = "1" ]; then
+      # No per-on-disk-session skip/cache-pull here (unlike the ds003604
+      # branch below): which on-disk sessions feed which age-group bin is an
+      # M:N relationship (ds001894's ses-T1 alone spans 4 bins), so "this
+      # session's RDM already exists" isn't a coherent question to ask per S.
+      # Resumption still works, just at a coarser grain: the age-group block
+      # after this loop checks per-BIN whether an RDM (or a Hub-cached one)
+      # already exists before doing any RSA work, so a re-run after an
+      # interruption redoes at most this task's preprocessing (bounded, cheap
+      # relative to the GPU-hours a fresh sweep costs) rather than any
+      # already-finished RDM computation.
+      :
+    else
       if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
-        log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
+        log "$T/$S: RDM already present -- skip"; continue
+      fi
+      # Try the Hub cache before doing hours of CPU. Session RDMs are deterministic given the
+      # dataset, so a run that has already produced one anywhere never needs to produce it again;
+      # `rdm_cache_hf.py pull` exits 0 only if it actually placed the file.
+      # Cache paths are namespaced by dataset AND correction variant, so a pull can
+      # only ever return an RDM built the same way this run is building them. Before
+      # that namespacing existed the cache was a hazard here -- it held the original
+      # confounded RDMs under bare "{task}/session_rdm_{session}.npz" and would have
+      # served one into a corrected run. It is now safe, and worth using: a session
+      # RDM is deterministic given the dataset, so preprocessing is paid for once
+      # ever rather than once per run.
+      CACHE_VARIANT=raw
+      [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
+      if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
+           pull --task "$T" --session "$S" --dir "$OUT" \
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
+        if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
+          log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
+        fi
       fi
     fi
     # Re-check the floor per session, not just per task: a session batch is the unit that can now
@@ -179,9 +237,21 @@ for T in "${PHENOMENA[@]}"; do
     fi
 
     NP=$(ls "$OUT"/*${S}*_patterns.npz 2>/dev/null | wc -l)
-    log "$T/$S: $NP pattern files, $(free_gb)GB free -- computing session RDM"
-    [ "$NP" -eq 0 ] && { log "$T/$S: no patterns produced, skipping RSA"; continue; }
+    [ "$NP" -eq 0 ] && { log "$T/$S: no patterns produced, skipping"; continue; }
 
+    if [ "$NEEDS_AGE_REGROUP" = "1" ]; then
+      # Patterns stay on disk -- the age-group block below needs every
+      # on-disk session's patterns present at once to relabel by real age.
+      # This is the one place this dataset class departs from the per-
+      # session reclaim discipline the comment at the top of this file
+      # describes; see MASKING.md-adjacent notes / the disk-floor checks
+      # both here and in the age-group block for how that's bounded.
+      log "$T/$S: $NP pattern files -- deferring RDM build until every on-disk "
+      log "  session for this task is preprocessed (age-group regrouping)"
+      continue
+    fi
+
+    log "$T/$S: $NP pattern files, $(free_gb)GB free -- computing session RDM"
     # --task is REQUIRED. It used to be omitted and session_based_rsa.py defaulted it to
     # "Sem", so Phon/Gram/Plaus stimuli were matched against Sem's stimulus list, matched
     # nothing, and no session RDM was ever produced for three of the four tasks.
@@ -192,6 +262,19 @@ for T in "${PHENOMENA[@]}"; do
         || { log "$T/$S: RSA failed"; continue; }
 
     if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
+      # MUST run before reclaim, not after: brain_specialization() needs the
+      # actual pattern files, which the very next block deletes. Calling this
+      # once at the end of the whole script -- what this used to do -- found
+      # nothing for ANY task/session, ever, because every one of them had
+      # already been reclaimed by the time it ran. See the module docstring
+      # in scripts/run_brain_localization.py for the full story.
+      "$PY" scripts/run_brain_localization.py --dataset "$DATASET" \
+          --pattern-dir "$OUT" --sessions "$S" --append \
+          --output-dir "$RDM_ROOT/localization" \
+          --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
+          "${LOCALIZE_MAP_ARGS[@]}" \
+          2>&1 | sed "s/^/  [localize] /" \
+          || log "$T/$S: brain localization failed (non-fatal, continuing)"
       if [ "$KEEP_PATTERNS" != "1" ]; then
         log "$T/$S: RDM built -- reclaiming $NP pattern files"
         find "$OUT" -name "*${S}*_patterns.npz" -type f -delete
@@ -207,14 +290,91 @@ for T in "${PHENOMENA[@]}"; do
       log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"
     fi
   done
+
+  # ---------------------------------------------------------- age-group RDMs
+  # For cross-sectional datasets: every on-disk session for this task has now
+  # been preprocessed (patterns for ALL of them still on disk, deliberately --
+  # see the "deferring" log line above). Relabel by real per-subject age, then
+  # build one RDM per age-group bin that actually has patterns, using the
+  # SAME session_based_rsa.py call the ds003604 path uses -- the only thing
+  # that differs is which session label is passed.
+  if [ "$NEEDS_AGE_REGROUP" = "1" ]; then
+    if [ "$(free_gb)" -lt "$((DISK_FLOOR_GB + 40))" ]; then
+      log "ABORT $T: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor before age regrouping"
+      exit 3
+    fi
+    log "$T: regrouping patterns by real per-subject age (configs/age_groups.yaml)"
+    "$PY" scripts/regroup_patterns_by_age.py --dataset "$DATASET" --pattern-dir "$OUT" --mode copy \
+      || log "$T: age regrouping failed (see above) -- no age-group RDMs will be built"
+
+    for BIN in 5 7 9 11 "11+"; do
+      AS="ses-$BIN"
+      NP=$(ls "$OUT"/*"_${AS}_"*_patterns.npz 2>/dev/null | wc -l)
+      [ "$NP" -eq 0 ] && continue
+      if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then
+        log "$T/$AS: RDM already present -- skip"; continue
+      fi
+      CACHE_VARIANT=raw
+      [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
+      if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
+           pull --task "$T" --session "$AS" --dir "$OUT" \
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
+        if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then
+          log "$T/$AS: pulled from Hub cache -- skipping"; continue
+        fi
+      fi
+      if [ "$(free_gb)" -lt "$((DISK_FLOOR_GB + 40))" ]; then
+        log "ABORT $T/$AS: $(free_gb)GB free, too close to the ${DISK_FLOOR_GB}GB floor"; exit 3
+      fi
+      log "$T/$AS: $NP pattern files (age group), $(free_gb)GB free -- computing session RDM"
+      "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
+          --task "$T" --sessions "$AS" --metric correlation --aggregation hyperalignment \
+          "${WRN_FLAG[@]}" \
+          --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
+          || { log "$T/$AS: RSA failed"; continue; }
+      if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then
+        # Before reclaim, same reasoning as the ds003604 branch above -- this
+        # is the ONLY point in this branch where the age-group-labeled
+        # patterns for $AS are guaranteed to still be on disk (reclaim below
+        # happens once, after every bin in this loop is done).
+        "$PY" scripts/run_brain_localization.py --dataset "$DATASET" \
+            --pattern-dir "$OUT" --sessions "$AS" --append \
+            --output-dir "$RDM_ROOT/localization" \
+            "${LOCALIZE_MAP_ARGS[@]}" \
+            2>&1 | sed "s/^/  [localize] /" \
+            || log "$T/$AS: brain localization failed (non-fatal, continuing)"
+        [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
+            push --task "$T" --session "$AS" --dir "$OUT" \
+            --dataset "$DATASET" 2>&1 | sed "s/^/  /"
+        log "$T/$AS: done, $(free_gb)GB free"
+      else
+        log "$T/$AS: NO session RDM produced -- keeping patterns for diagnosis"
+      fi
+    done
+
+    if [ "$KEEP_PATTERNS" != "1" ]; then
+      NP_ALL=$(ls "$OUT"/*_patterns.npz 2>/dev/null | wc -l)
+      log "$T: reclaiming all $NP_ALL pattern files (on-disk-session + age-group copies)"
+      find "$OUT" -name "*_patterns.npz" -type f -delete
+    fi
+  fi
 done
 
-SPEC="$RDM_ROOT/localization/brain_specialization.csv"
-if [ ! -f "$SPEC" ]; then
-  log "brain isolation localizer"
-  "$PY" scripts/run_brain_localization.py --pattern-dir "$RDM_ROOT" \
-      --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
-      || log "brain localization skipped (patterns/characteristics missing)"
+# Finalize the brain localizer: collapse the table accumulated by every
+# --append call above (across every task/session/bin, whichever branch built
+# it) into onsets + a figure. Does NOT re-scan any pattern directory -- by
+# this point in the script every one of them has been reclaimed, which is
+# exactly the bug this two-phase append/finalize design exists to route
+# around (see scripts/run_brain_localization.py's module docstring).
+LOC_OUT="$RDM_ROOT/localization"
+if [ -f "$LOC_OUT/brain_localization_by_session.csv" ]; then
+  log "brain isolation localizer: finalizing accumulated table -> $LOC_OUT"
+  "$PY" scripts/run_brain_localization.py --finalize-only --output-dir "$LOC_OUT" \
+      || log "brain localization finalize failed (non-fatal)"
+else
+  log "brain isolation localizer: no accumulated table at $LOC_OUT -- nothing to finalize "
+  log "  (every --append call above must have failed or found no patterns; check the "
+  log "  [localize] lines further up this log)"
 fi
 
 N=$(find "$RDM_ROOT" -name "session_rdm_ses-*.npz" | wc -l)
