@@ -148,13 +148,41 @@ def build_readme(ds: str, results: Path, gate: str) -> str:
               f"of {dims.get('n_stim_median')} stimuli")
             A(f"- voxels per pattern: {dims.get('pattern_n_voxels_median'):,}" if
               dims.get('pattern_n_voxels_median') else "")
-            A(f"- leading component vs the pattern's global signal: "
-              f"|ρ| = {dims.get('pc1_vs_global_signal_median', float('nan')):.2f}")
+            # .get(k, default) still returns None when the key EXISTS and is
+            # null, which is what the dimensionality summary writes when the
+            # global-signal probe did not run. Formatting None with :.2f raised
+            # TypeError and took the whole publish down.
+            _pc1 = dims.get('pc1_vs_global_signal_median')
+            if _pc1 is not None:
+                A(f"- leading component vs the pattern's global signal: |ρ| = {_pc1:.2f}")
             A("")
-            A("This reproduces what was found on ds003604: the per-stimulus GLM")
-            A("betas are near-degenerate, so the RDM cannot express stimulus-level")
-            A("structure regardless of what it is compared against. The estimator")
-            A("is shared across datasets, which is why the failure repeats.")
+            # Do NOT assert degeneracy: it is a measurement, and on these
+            # datasets it is often false. ds003604 sat at rank ~3 of 40-48, which
+            # is what made its null uninterpretable; ds002236 measures 70 of 96
+            # and ds006239 similarly, so the same sentence would have been a
+            # fabricated explanation attached to a real number. Decide from the
+            # ratio actually recorded above.
+            _rank = dims.get('group_rdm_effective_rank_median')
+            _nstim = dims.get('n_stim_median')
+            _degenerate = (
+                _rank is not None and _nstim not in (None, 0)
+                and (_rank / _nstim) < 0.25
+            )
+            if _degenerate:
+                A("This reproduces what was found on ds003604: the per-stimulus GLM")
+                A("betas are near-degenerate, so the RDM cannot express stimulus-level")
+                A("structure regardless of what it is compared against. The estimator")
+                A("is shared across datasets, which is why the failure repeats.")
+            else:
+                A("Note that this is NOT ds003604's failure mode. There, the RDM")
+                A("effective rank was ~3 of 40-48 stimuli -- near-degenerate betas")
+                A("that could not express stimulus-level structure at all. The rank")
+                A("recorded above is a large fraction of the stimulus count, so these")
+                A("RDMs do carry stimulus structure and the control failing here means")
+                A("the specific controls tested did not reach significance, not that")
+                A("the measurement is uninterpretable. Check `control/` for which")
+                A("controls ran: an acoustic or visual control needs the dataset's")
+                A("stimulus files present, and reports zero features if they are not.")
     else:
         A("**GATE: NOT RUN.** Treat everything below as provisional.")
     A("")

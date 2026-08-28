@@ -105,7 +105,13 @@ for DS in $DATASETS; do
   else
     log "$DS: brain prep (streamed; floor ${DISK_FLOOR_GB}GB, $(free_gb)GB free)"
     ledger_set "$DS" stage1 running
-    DATASET="$DS" PHENOMENA="$TASKS" WITHIN_RUN_NORM=1 RDM_CACHE=0 KEEP_PATTERNS=0 \
+    # RDM_CACHE=1: push each session RDM to the Hub as it is built, and pull
+    # instead of rebuilding on any later run. Turning fMRI into RDMs costs hours
+    # of CPU and hundreds of transient GB per dataset, and nothing about that
+    # work is machine-specific -- paying it again on a fresh checkout is pure
+    # waste. This was 0, so every one of these datasets would have had to be
+    # reprocessed from BOLD by anyone who wanted the RDMs.
+    DATASET="$DS" PHENOMENA="$TASKS" WITHIN_RUN_NORM=1 RDM_CACHE=1 KEEP_PATTERNS=0 \
       JOBS="$JOBS" DISK_FLOOR_GB="$DISK_FLOOR_GB" BRAIN_RDM_ROOT="$RDM_ROOT" \
       bash prepare_brain_rdms.sh >>"logs/newds_stage1_$DS.log" 2>&1
     rc=$?
@@ -127,6 +133,13 @@ for DS in $DATASETS; do
       >>"logs/newds_stage1_$DS.log" 2>&1 \
     && log "$DS: stimulus texts present on every RDM" \
     || log "$DS: WARNING -- some RDMs still have no stimulus text (see log); those cells cannot produce alignment rows"
+
+  # Sync every RDM this dataset has on disk, including ones built before
+  # RDM_CACHE was turned on. `sync` skips what the Hub already holds.
+  "$PY" scripts/rdm_cache_hf.py sync --root "$RDM_ROOT" --dataset "$DS" \
+      >>"logs/newds_stage1_$DS.log" 2>&1 \
+    && log "$DS: session RDMs synced to the Hub cache" \
+    || log "$DS: WARNING -- RDM Hub sync failed (results unaffected; reprocessing will be needed elsewhere)"
 
   # ---- 2. ceilings ---------------------------------------------------------
   "$PY" scripts/collect_ceilings.py --rdm-root "$RDM_ROOT" \
