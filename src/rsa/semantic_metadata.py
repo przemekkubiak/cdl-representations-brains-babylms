@@ -94,10 +94,59 @@ def texts_from_pair_stimuli(stimuli: Iterable[str]) -> List[str]:
     return texts if saw_pair else []
 
 
+def conditions_from_stim_lookup(
+    stimuli: Iterable[str], dataset: str, task: str,
+) -> Optional[np.ndarray]:
+    """Real positive/negative labels for stim_pair_filename datasets, via the
+    SAME classify_trials()-derived lookup src/rsa/brain_localization.py's
+    build_stim_lookup_for_dataset uses to build the RDM's own stimulus set --
+    so a label here can never disagree with what a stimulus was actually
+    treated as when its pattern was extracted. This is what
+    scripts/positive_control.py's `condition` control reads (via
+    load_semantic_metadata's `trial_types`); before this it was hardcoded to
+    the placeholder "unknown" for every stimulus in these three datasets,
+    which made that control permanently degenerate for them.
+
+    Verified 2026-08-29 against the real published ds002236/ds006239 RDMs
+    (BrainAlign/ds003604-session-rdms on HF): 100% of every cell's stimuli
+    matched this lookup, with a balanced positive/negative split in every
+    case (e.g. ds002236 Sem 24/24, ds006239 Phon 48/48).
+
+    Returns None (not a placeholder array) if the lookup itself can't be
+    built at all (e.g. this dataset's raw events.tsv aren't on disk -- the
+    caller then falls back the same way it always has). Returns "unknown"
+    only for an individual stimulus this lookup has no entry for, never for
+    the whole array at once, so a partial-coverage dataset still gets real
+    labels for the stimuli it can find.
+    """
+    try:
+        from src.rsa.brain_localization import build_stim_lookup_for_dataset
+    except Exception:
+        return None
+    try:
+        lookup = build_stim_lookup_for_dataset(dataset, phenomena=[task])
+    except Exception:
+        return None
+    if not lookup:
+        return None
+
+    def _pair_key(s: str) -> str:
+        parts = str(s).split("|")
+        return "|".join(Path(p).name for p in parts)
+
+    labels = []
+    for s in stimuli:
+        entries = lookup.get(_pair_key(s), [])
+        cond = next((c for p, c in entries if p == task), None)
+        labels.append(cond or "unknown")
+    return np.asarray(labels, dtype=object)
+
+
 def load_semantic_metadata(
     stimuli: Iterable[str],
     task: str = "Sem",
     characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
+    dataset: str = "ds003604",
 ) -> Dict[str, np.ndarray]:
     """
     Load stimulus metadata for a list of stimuli.
@@ -115,9 +164,16 @@ def load_semantic_metadata(
     char_file = Path(characteristics_dir) / f"task-{task}_Stimulus_Characteristics.tsv"
     if not char_file.exists():
         if pair_texts:
+            stimuli = list(stimuli)
+            conditions = conditions_from_stim_lookup(stimuli, dataset, task)
+            if conditions is None:
+                conditions = np.asarray(["unknown"] * len(stimuli), dtype=object)
             return {
-                "trial_types": np.asarray(["unknown"] * len(pair_texts), dtype=object),
-                "semantic_categories": np.asarray(["unknown"] * len(pair_texts), dtype=object),
+                # positive/negative doubles as the coarse category here --
+                # these datasets have no finer-grained semantic taxonomy than
+                # the binary contrast itself (see contrast_spec.py).
+                "trial_types": conditions,
+                "semantic_categories": conditions,
                 "stimulus_texts": np.asarray(pair_texts, dtype=object),
             }
         return {}

@@ -53,10 +53,11 @@ class SessionBasedRSA:
         pattern_dir: str = "data/processed/fmri",
         characteristics_dir: str = "data/brain/ds003604/stimuli/Stimulus_Characteristics",
         within_run_normalize: bool = False,
+        dataset: str = "ds003604",
     ):
         """
         Initialize session-based RSA analyzer.
-        
+
         Parameters
         ----------
         pattern_dir : str
@@ -72,10 +73,19 @@ class SessionBasedRSA:
             between an RDM that encodes scanner drift (run predicts dissimilarity
             at rho +0.49..+0.87) and one that does not (rho -0.041). See
             configs/neuro_datasets.yaml for which datasets need it.
+        dataset : str
+            Registry key from configs/neuro_datasets.yaml (default: ds003604,
+            preserving old behaviour for existing callers that don't pass it).
+            Used only to look up real condition (positive/negative) labels for
+            stim_pair_filename datasets -- see
+            src.rsa.semantic_metadata.conditions_from_stim_lookup. Does not
+            affect which stimuli enter the RDM; that's already fixed by the
+            time patterns reach this class (src/datasets/stim_identity.py).
         """
         self.pattern_dir = Path(pattern_dir)
         self.characteristics_dir = Path(characteristics_dir)
         self.within_run_normalize = within_run_normalize
+        self.dataset = dataset
         self.patterns_by_subject = {}
         self.session_rdms = {}
         self.normalization_report = {}
@@ -746,6 +756,7 @@ class SessionBasedRSA:
             session_stimuli,
             task=task,
             characteristics_dir=str(self.characteristics_dir),
+            dataset=self.dataset,
         )
         self.session_rdms[session] = {
             "rdm": session_rdm,
@@ -1178,14 +1189,24 @@ def main():
             "scanner run rather than stimulus."
         ),
     )
-    
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default="ds003604",
+        help="Registry key from configs/neuro_datasets.yaml (default: ds003604). "
+             "Only used to look up real condition (positive/negative) labels for "
+             "the RDM's trial_types/semantic_categories metadata on stim_pair_filename "
+             "datasets -- does not change which stimuli enter the RDM.",
+    )
+
     args = parser.parse_args()
-    
+
     # Initialize
     rsa = SessionBasedRSA(
         pattern_dir=args.pattern_dir,
         within_run_normalize=args.within_run_normalize,
         characteristics_dir=args.characteristics_dir,
+        dataset=args.dataset,
     )
     
     # Load patterns

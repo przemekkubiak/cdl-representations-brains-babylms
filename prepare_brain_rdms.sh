@@ -316,7 +316,7 @@ RESOLVE
     # nothing, and no session RDM was ever produced for three of the four tasks.
     "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
         --task "$T" --sessions "$S" --metric correlation --aggregation hyperalignment \
-        "${WRN_FLAG[@]}" \
+        "${WRN_FLAG[@]}" --dataset "$DATASET" \
         --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
         || { log "$T/$S: RSA failed"; continue; }
 
@@ -388,7 +388,7 @@ RESOLVE
       log "$T/$AS: $NP pattern files (age group), $(free_gb)GB free -- computing session RDM"
       "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
           --task "$T" --sessions "$AS" --metric correlation --aggregation hyperalignment \
-          "${WRN_FLAG[@]}" \
+          "${WRN_FLAG[@]}" --dataset "$DATASET" \
           --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
           || { log "$T/$AS: RSA failed"; continue; }
       if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then

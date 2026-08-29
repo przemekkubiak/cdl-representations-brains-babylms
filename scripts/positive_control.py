@@ -108,6 +108,111 @@ NORMS = {
                       "Plaus": ["stim_averaged_frequency"]},
 }
 
+# The three stim_pair_filename datasets' own norming studies (find_norms locates
+# the file; this is what to DO with it once found) are NOT stim_file-keyed the
+# way NORMS above assumes -- ds002236's Stimulus_Charactersitics.tsv and
+# ds006239's Stimulus_Characteristics.tsv are indexed by PRIME/TARGET WORD TEXT
+# (one row per item, columns like "insect"/"bug"), with a TASK column pooling
+# several tasks' items in one file. A stim_file-keyed lookup against these
+# tables matches nothing, silently (build_controls's `"stim_file" in
+# norms.columns` guard just skips them) -- confirmed empirically 2026-08-29:
+# `find_norms` locates both files correctly, but zero of NORMS' six controls
+# ever populate for either dataset, which is why ds002236's control_by_cell.csv
+# had exactly one control (text_edit_distance) and not the seven-plus a
+# stim_file-keyed dataset gets.
+#
+# Column names differ per dataset's own norming study -- verified against the
+# real files (data/brain/<dataset>/stimuli/Stimulus_Charact*.tsv), not guessed:
+#   ds002236: PRIME, TARGET, ASS (association), T_WF/P_WF (word frequency)
+#   ds006239: PRIME, TARGET, ASS, T_CH_WF/P_CH_WF (Christiansen word frequency)
+# "ASS" (association strength) is the SAME column name in both -- exactly the
+# control a semantic-relatedness contrast wants, and the reason this exists as
+# a first-class control here rather than folded into "word_frequency".
+WORD_PAIR_NORMS = {
+    "ds002236": {"word_frequency": ("T_WF", "P_WF")},
+    "ds006239": {"word_frequency": ("T_CH_WF", "P_CH_WF")},
+}
+WORD_PAIR_ASSOCIATION_COL = "ASS"
+
+# dataset -> {real BIDS task name -> the norms table's OWN TASK column value}.
+# Only needed where the two spellings differ -- ds006239's real task names
+# (ReadMean, ReadPhon, LocalSem, ...) already match its TASK column verbatim,
+# so it needs no entry here; ds002236's registry names (AudRhyme, AudSem)
+# don't match the table's own lowercase labels (rhyme, semantic) at all.
+WORD_PAIR_TASK_LABEL_OVERRIDE = {
+    "ds002236": {"AudRhyme": "rhyme", "AudSem": "semantic"},
+}
+
+
+def word_pair_index(norms: pd.DataFrame, task_label: str | None = None) -> dict[tuple[str, str], "pd.Series"]:
+    """(prime.lower(), target.lower()) -> row, both orders, for a PRIME/TARGET-
+    keyed norms table.
+
+    MUST be restricted to `task_label` (this table's own TASK value) when one
+    is available, not left to match across the whole table -- confirmed
+    empirically 2026-08-29: unfiltered, ds006239's "dog"/"cat" pair resolved
+    to a row from a DIFFERENT task that leaves the frequency columns blank,
+    even though the identical pair also appears under ReadMean with real
+    values, because plain dict insertion order (not which task the RDM
+    actually came from) decided which row won. A word pair can legitimately
+    recur across this table's tasks with different per-task norm columns
+    populated, so "the same words" is not a safe join key on its own.
+    """
+    idx: dict[tuple[str, str], "pd.Series"] = {}
+    if "PRIME" not in norms.columns or "TARGET" not in norms.columns:
+        return idx
+    df = norms
+    if task_label is not None and "TASK" in df.columns:
+        subset = df[df["TASK"].astype(str) == task_label]
+        if len(subset):
+            df = subset
+    for _, row in df.iterrows():
+        p = str(row.get("PRIME", "")).strip().lower()
+        t = str(row.get("TARGET", "")).strip().lower()
+        if not p or not t:
+            continue
+        idx.setdefault((p, t), row)
+        idx.setdefault((t, p), row)
+    return idx
+
+
+def word_pair_task_label(dataset: str | None, task: str) -> str | None:
+    """This norms table's own TASK value for (dataset, phenomenon), via the
+    registry's real-task mapping plus WORD_PAIR_TASK_LABEL_OVERRIDE. None if
+    it can't be resolved (unregistered dataset/task) -- callers then fall
+    back to matching across the whole table, same as before this existed."""
+    if not dataset:
+        return None
+    try:
+        from src.datasets import get_dataset
+        real_tasks = get_dataset(dataset).phenomena.get(task) or []
+    except Exception:
+        return None
+    if not real_tasks:
+        return None
+    override = WORD_PAIR_TASK_LABEL_OVERRIDE.get(dataset, {})
+    return override.get(real_tasks[0], real_tasks[0])
+
+
+def word_pair_scalar(idx: dict, texts: list[str], columns: tuple[str, ...]) -> np.ndarray | None:
+    """Per-stimulus scalar (mean of `columns`) via `idx`, matched against each
+    stimulus's reconstructed TEXT ("word1 word2"), not its filename -- these
+    tables have no filename column at all. None (not a partially-NaN array)
+    if ANY stimulus can't be resolved, same all-or-nothing contract
+    rdm_from_vectors already uses for the acoustic/visual controls.
+    """
+    vals = []
+    for text in texts:
+        words = str(text).split()
+        row = idx.get((words[0].lower(), words[1].lower())) if len(words) == 2 else None
+        if row is None:
+            vals.append(np.nan)
+            continue
+        nums = pd.to_numeric(pd.Series([row.get(c) for c in columns]), errors="coerce")
+        vals.append(float(nums.mean()))
+    v = np.asarray(vals, dtype=float)
+    return None if np.isnan(v).any() else v
+
 
 # ------------------------------------------------------------------ rdms ----
 def load_cell(rdm_root: Path, task: str, session: str) -> dict | None:
@@ -360,7 +465,7 @@ def rsa_with_permutation(brain: np.ndarray, ctrl: np.ndarray, n_perm: int,
 # ------------------------------------------------------------------ main ----
 def build_controls(cell: dict, task: str, norms: pd.DataFrame | None,
                    spec: dict, env: dict, pix: dict | None = None,
-                   lum: dict | None = None) -> dict[str, np.ndarray]:
+                   lum: dict | None = None, dataset: str | None = None) -> dict[str, np.ndarray]:
     out: dict[str, np.ndarray] = {}
     pix = pix or {}
     lum = lum or {}
@@ -385,6 +490,20 @@ def build_controls(cell: dict, task: str, norms: pd.DataFrame | None,
             if label == "log_frequency":
                 v = np.log10(np.clip(v, 1, None))
             out[label] = rdm_from_scalar(v)
+    elif norms is not None and {"PRIME", "TARGET"} <= set(norms.columns):
+        # The word-pair-indexed schema (ds002236/ds006239's own norming
+        # studies) -- see WORD_PAIR_NORMS's docstring for why this is a
+        # separate branch from the stim_file-keyed one above.
+        idx = word_pair_index(norms, word_pair_task_label(dataset, task))
+        if idx:
+            for label, cols in WORD_PAIR_NORMS.get(dataset or "", {}).items():
+                v = word_pair_scalar(idx, texts, cols)
+                if v is not None:
+                    out[label] = rdm_from_scalar(v)
+            if WORD_PAIR_ASSOCIATION_COL in norms.columns:
+                v = word_pair_scalar(idx, texts, (WORD_PAIR_ASSOCIATION_COL,))
+                if v is not None:
+                    out["word_association"] = rdm_from_scalar(v)
 
     # Design/acquisition controls. run_identity is the confound the whole
     # correction exists to remove: on the RAW RDMs it should be large, on the
@@ -430,6 +549,10 @@ def main() -> None:
     ap.add_argument("--perms", type=int, default=5000)
     ap.add_argument("--lm-cells", default="paper_results/corrected/alignment_by_cell.csv",
                     help="for the side-by-side against the language models")
+    ap.add_argument("--dataset", default="ds003604",
+                    help="Registry key -- selects which columns WORD_PAIR_NORMS reads "
+                         "for the word-pair-indexed norms controls (ds002236/ds006239). "
+                         "No effect on ds003604's own stim_file-keyed controls.")
     a = ap.parse_args()
 
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
@@ -468,7 +591,7 @@ def main() -> None:
             if cell is None:
                 print(f"  no RDM for {variant} {task}/{session}")
                 continue
-            ctrls = build_controls(cell, task, norms, spec, env, pix, lum)
+            ctrls = build_controls(cell, task, norms, spec, env, pix, lum, dataset=a.dataset)
             for name, c in ctrls.items():
                 if c.shape != cell["rdm"].shape or not np.isfinite(c).all():
                     continue
