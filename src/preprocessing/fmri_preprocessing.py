@@ -726,8 +726,13 @@ class FMRIPreprocessor:
             bold_data = bold_img.get_fdata()
             print(f"  BOLD shape: {bold_data.shape}")
             
-            # Get TR from header
-            tr = bold_img.header.get_zooms()[3] if len(bold_img.header.get_zooms()) > 3 else 2.0
+            # Get TR from header. nibabel's get_zooms() returns numpy.float32,
+            # and newer nilearn (0.10.x+) validates FirstLevelModel(t_r=...)
+            # with isinstance(t_r, (int, float)) -- numpy.float32 fails that
+            # check ("'t_r' must be a float or an integer"), even though it
+            # behaves like one everywhere else. Cast to a plain Python float
+            # at the source rather than at every downstream call site.
+            tr = float(bold_img.header.get_zooms()[3]) if len(bold_img.header.get_zooms()) > 3 else 2.0
             print(f"  TR: {tr}s")
             
             # Preprocess functional data

@@ -40,6 +40,16 @@ KEEP_PATTERNS="${KEEP_PATTERNS:-0}"    # 1 = keep per-run patterns (needs ~660 G
 # stimulus property. See configs/neuro_datasets.yaml and hf_results_staging/README.md.
 WITHIN_RUN_NORM="${WITHIN_RUN_NORM:-0}"
 WRN_FLAG=(); [ "$WITHIN_RUN_NORM" = "1" ] && WRN_FLAG=(--within-run-normalize)
+# AGGREGATION: how subjects are combined into one session RDM (passed straight
+# to session_based_rsa.py --aggregation). Default "hyperalignment" is what
+# every published number here uses, but it needs brainiak's SRM, which needs
+# a working MPI install (mpi4py) -- not present on every machine (e.g. a
+# laptop without `brew install open-mpi`/similar). Override to "mean" (or
+# "median"/"stimulus_mean") to run without that dependency. NOT a drop-in
+# replacement for published numbers -- different aggregation is a different
+# RDM, not a faster way to the same one; say so if you publish from a "mean"
+# run rather than silently treating it as equivalent.
+AGGREGATION="${AGGREGATION:-hyperalignment}"
 # ROI_SET (comma-separated: language,auditory,motor -- see
 # src/preprocessing/roi_atlas.py) restricts every subject's mask to the named
 # region(s), via real per-subject registration to MNI152 (MASKING.md). Unset
@@ -315,7 +325,7 @@ RESOLVE
     # "Sem", so Phon/Gram/Plaus stimuli were matched against Sem's stimulus list, matched
     # nothing, and no session RDM was ever produced for three of the four tasks.
     "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
-        --task "$T" --sessions "$S" --metric correlation --aggregation hyperalignment \
+        --task "$T" --sessions "$S" --metric correlation --aggregation "$AGGREGATION" \
         "${WRN_FLAG[@]}" --dataset "$DATASET" \
         --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
         || { log "$T/$S: RSA failed"; continue; }
@@ -387,7 +397,7 @@ RESOLVE
       fi
       log "$T/$AS: $NP pattern files (age group), $(free_gb)GB free -- computing session RDM"
       "$PY" src/rsa/session_based_rsa.py --pattern-dir "$OUT" --output-dir "$OUT" \
-          --task "$T" --sessions "$AS" --metric correlation --aggregation hyperalignment \
+          --task "$T" --sessions "$AS" --metric correlation --aggregation "$AGGREGATION" \
           "${WRN_FLAG[@]}" --dataset "$DATASET" \
           --characteristics-dir "$DATA_DIR/stimuli/Stimulus_Characteristics" \
           || { log "$T/$AS: RSA failed"; continue; }

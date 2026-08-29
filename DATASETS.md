@@ -281,8 +281,71 @@ in this doc.
 
 ## 8. What's still ds003604-only
 
-- **`positive_control.py`, `ceiling_report.py`, `run_confound_check.py`** —
-  still read stimulus properties from ds003604's `Stimulus_Characteristics.tsv`
-  norms format. The other three datasets don't ship that format and would
-  need their own stimulus-property sources before these diagnostics could
-  run on them.
+- **`ceiling_report.py`, `run_confound_check.py`** — still read stimulus
+  properties from ds003604's `Stimulus_Characteristics.tsv` norms format.
+  `positive_control.py` no longer belongs on this list (2026-08-29): it now
+  handles both the stim_file-keyed layout (ds003604) and the PRIME/TARGET
+  word-indexed layout ds002236/ds006239 actually ship (`--dataset` selects
+  which columns `WORD_PAIR_NORMS` reads) — see §9 below for what that fixed.
+
+## 9. Running locally, without a GPU cluster
+
+The fMRI side of this pipeline (download → GLM → RDM → positive-control gate)
+is CPU-only; only the language-model embedding side needs a GPU. Verified
+end-to-end on a Mac laptop, 2026-08-29 (ds002236, 5 subjects) -- real bugs
+found and fixed in the process, not just environment friction:
+
+- **macOS ships bash 3.2** (Apple hasn't shipped a GPL3 bash since 2007).
+  `prepare_brain_rdms.sh`/`brainprep_subject.sh` use bash-4+ `mapfile` and
+  GNU-only `df` flags throughout -- both silently produce **zero output, exit
+  0** on stock macOS bash rather than an error (`mapfile: command not found`
+  looks like a warning, not a fatal one, from inside a script with
+  `set -uo pipefail`... but the subsequent `REAL_TASKS` array being unset
+  self-corrects wrong, and downstream just finds 0 patterns). Fix:
+  `brew install bash coreutils`, then run with
+  `PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"`
+  prepended so both the top-level script AND every `bash ...`/`df ...` it
+  shells out to internally (via `xargs`) resolve to the GNU versions too --
+  invoking the top-level script with `/opt/homebrew/bin/bash` alone is not
+  enough, since `brainprep_subject.sh` is invoked as bare `bash` by `xargs`
+  and re-resolves via `PATH`.
+- **`--aggregation hyperalignment`** (the default, and what every published
+  number here uses) needs `brainiak`'s SRM, which needs a working MPI install
+  (`mpi4py`) -- not present on a stock Mac. Rather than requiring
+  `brew install open-mpi` just to explore, `prepare_brain_rdms.sh` now reads
+  an `AGGREGATION` env var (default unchanged: `hyperalignment`). Set
+  `AGGREGATION=mean` to skip the dependency entirely. **Not a drop-in
+  replacement for published numbers** -- a different aggregation is a
+  different RDM, not a faster way to the same one.
+- **A real, environment-independent bug**: `fmri_preprocessing.py` read TR
+  from `bold_img.header.get_zooms()[3]`, which nibabel returns as
+  `numpy.float32`. Newer nilearn (0.10.x+) validates
+  `FirstLevelModel(t_r=...)` with `isinstance(t_r, (int, float))`, which
+  numpy.float32 fails -- `'t_r' must be a float or an integer`. Every subject
+  on every dataset would hit this once the environment's nilearn is new
+  enough; fixed by casting to `float()` at the source. Whether the GPU
+  cluster's pinned nilearn is old enough to not yet show this is untested --
+  worth checking before assuming it's Mac-only.
+- **`brain_localization.py`'s `build_stim_lookup_for_dataset`** (what
+  `conditions_from_stim_lookup`/the positive-control gate's `condition`
+  control now depends on) transitively imports `torch` via
+  `src.language_models.circuit_localization`, even though the function
+  itself only reads `events.tsv` -- real module coupling, not a hard
+  requirement of what it does. Install CPU-only torch
+  (`pip install torch --index-url https://download.pytorch.org/whl/cpu`) to
+  unblock without pulling in CUDA; worth a lazy-import cleanup in
+  `circuit_localization.py` at some point so this dependency isn't forced on
+  every caller of an events.tsv-only utility.
+- Minimal local venv for this stage: `numpy scipy pandas nibabel nilearn dipy
+  pyyaml matplotlib seaborn pillow scikit-learn brainiak` (+ `torch` per
+  above if you need `build_stim_lookup_for_dataset`/brain localization).
+  `torch`/`transformers` are NOT needed just to build RDMs and run the gate.
+
+Example, matching what's verified above:
+
+```bash
+PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH" \
+DATASET=ds002236 PHENOMENA="Sem Phon" MAX_SUBJECTS=5 JOBS=4 \
+WITHIN_RUN_NORM=1 AGGREGATION=mean \
+  bash prepare_brain_rdms.sh
+```
