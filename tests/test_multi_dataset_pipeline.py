@@ -137,7 +137,16 @@ def test_classify_trials_against_real_events(dataset, phenomenon, task_glob):
         rows = list(csv.DictReader(fh, delimiter="\t"))
     trials = classify_trials(rows, dataset, phenomenon)
     assert len(trials) > 0
-    assert all(t.condition in ("positive", "negative") for t in trials)
+    # "included" (2026-08-29): an on-contrast intermediate condition (e.g.
+    # ds002236 Sem's "Low Related") that belongs in the RDM like any other
+    # trial but isn't part of the binary positive/negative split -- see
+    # condition_of's docstring. Currently only (ds002236, Sem) and
+    # (ds006239, Sem) have one; every other cell here should still be purely
+    # binary, so assert that precisely rather than just widening the check.
+    allowed = {"positive", "negative", "included"} if (dataset, phenomenon) in {
+        ("ds002236", "Sem"), ("ds006239", "Sem"),
+    } else {"positive", "negative"}
+    assert all(t.condition in allowed for t in trials)
     # every trial's text should be two non-empty words (all four stim_pair_
     # filename datasets present a pair)
     for t in trials[:5]:

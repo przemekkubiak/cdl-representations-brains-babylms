@@ -131,12 +131,19 @@ def test_conditions_from_stim_lookup_against_real_data(dataset, phenomenon):
 
     labels = conditions_from_stim_lookup(stimuli, dataset, phenomenon)
     assert labels is not None
-    assert set(labels.tolist()) <= {"positive", "negative"}, (
+    # "included" (2026-08-29): (ds002236, Sem) and (ds006239, Sem) have a
+    # genuine third label -- an intermediate condition that's in the RDM but
+    # not the binary contrast, see condition_of's docstring. Every other
+    # cell here should still be purely binary.
+    allowed = {"positive", "negative", "included"} if (dataset, phenomenon) in {
+        ("ds002236", "Sem"), ("ds006239", "Sem"),
+    } else {"positive", "negative"}
+    assert set(labels.tolist()) <= allowed, (
         "conditions_from_stim_lookup produced an 'unknown' for a stimulus "
         "the lookup itself returned -- the two should never disagree"
     )
-    # A real contrast has both sides represented, not a degenerate all-one-label RDM.
-    assert len(set(labels.tolist())) == 2
+    # A real contrast has more than one label, not a degenerate all-one-label RDM.
+    assert len(set(labels.tolist())) >= 2
 
 
 def test_load_semantic_metadata_stim_pair_filename_dataset_gets_real_labels():
@@ -161,9 +168,12 @@ def test_load_semantic_metadata_stim_pair_filename_dataset_gets_real_labels():
         characteristics_dir="/nonexistent/Stimulus_Characteristics",
     )
     assert "unknown" not in set(metadata["trial_types"].tolist())
-    assert set(metadata["trial_types"].tolist()) == {"positive", "negative"}
+    # ds002236 Sem has a genuine third label, "included" (Low Related --
+    # 2026-08-29, see condition_of's docstring): on-contrast, in the RDM,
+    # just not part of the binary positive/negative split.
+    assert set(metadata["trial_types"].tolist()) == {"positive", "negative", "included"}
     # semantic_categories mirrors trial_types for these datasets -- no finer
-    # taxonomy than the binary contrast exists (see contrast_spec.py).
+    # taxonomy than this exists (see contrast_spec.py).
     assert metadata["semantic_categories"].tolist() == metadata["trial_types"].tolist()
 
 

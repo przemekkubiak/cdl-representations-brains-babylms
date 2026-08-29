@@ -64,15 +64,26 @@ CONTRAST_SPEC_DS001894 = {
 #   ReadPhon: 1=OyPy 2=OnPy 3=OyPn 4=OnPn  5=PercY 6=PercN 7=FixY 8=FixN
 #   ReadMean: 1=HighY 2=LowY 3=UnrN       5/6=Perc 7/8=Fix
 #   LocalSem: 1=PicY  3=PicN              5/6=Perc 7/8=Fix
-# ReadMean mirrors ds003604's Sem (high / low / unrelated association), so we
-# take the same positive=high, negative=unrelated contrast and leave the low
-# condition out, for comparability with ds003604 rather than for any deeper
-# reason. LocalSem is the ONLY confound-free cell found across all three
-# datasets (stimuli recur across runs) -- see configs/neuro_datasets.yaml.
+# ReadMean mirrors ds003604's Sem (high / low / unrelated association): same
+# positive=high, negative=unrelated contrast for the binary circuit-
+# localization/build_contrasts.py analyses. code 2 (LowY) is "included" (see
+# condition_of), not dropped -- CORRECTED 2026-08-29. It used to be left out
+# of the spec entirely on the reasoning "for comparability with ds003604",
+# but ds003604's OWN RDM-building path (session_based_rsa.py's
+# _get_non_control_stimuli) keeps its analogous S_L trials in the RDM; only
+# CONTRAST_SPEC's binary classification excludes them. Leaving LowY out of
+# THIS spec entirely made classify_trials skip it as a GLM regressor
+# altogether -- a smaller RDM than ds003604's equivalent, the opposite of the
+# comparability the comment intended. codes 7/8 (Fix) are genuine fixation-
+# baseline trials, not a stimulus condition -- correctly left unclassified
+# (never a regressor), same treatment as ds003604's own null/rest events.
+# LocalSem is the ONLY confound-free cell found across all three datasets
+# (stimuli recur across runs) -- see configs/neuro_datasets.yaml.
 CONTRAST_SPEC_DS006239 = {
     "Phon":     {"positive": ["1", "2"], "negative": ["3", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadPhon"},
     "Orth":     {"positive": ["1", "3"], "negative": ["2", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadPhon"},
-    "Sem":      {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "ReadMean"},
+    "Sem":      {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "included": ["2"],
+                 "kind": "stim_pair_filename", "task": "ReadMean"},
     "SemLocal": {"positive": ["1"],      "negative": ["3"],      "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "LocalSem"},
 }
 
@@ -95,7 +106,15 @@ CONTRAST_SPEC_DS006239 = {
 # its ONE source task explicitly, because we are restricting to Aud only.
 CONTRAST_SPEC_DS002236 = {
     "Phon": {"positive": ["1", "2"], "negative": ["3", "4"], "perceptual": ["5", "6"], "kind": "stim_pair_filename", "task": "AudRhyme"},
-    "Sem":  {"positive": ["1"],      "negative": ["3"],      "perceptual": ["4", "5"], "kind": "stim_pair_filename", "task": "AudSem"},
+    # code 2 (Low Related) is "included" (see condition_of), not dropped --
+    # CORRECTED 2026-08-29, same reasoning as ds006239 Sem/ReadMean's "included"
+    # above: it used to be silently excluded as a GLM regressor entirely,
+    # making this RDM smaller than ds003604's analogous S_L-inclusive one.
+    # code 0 (nullsilence, a true baseline -- verified against the raw
+    # events.tsv, not "Low Related" under a different number) stays
+    # unclassified on purpose.
+    "Sem":  {"positive": ["1"],      "negative": ["3"],      "perceptual": ["4", "5"], "included": ["2"],
+             "kind": "stim_pair_filename", "task": "AudSem"},
 }
 
 CONTRAST_SPECS: dict[str, dict] = {
@@ -192,7 +211,11 @@ def condition_of(
     dataset: str = "ds003604",
 ) -> str | None:
     """Return 'positive' / 'negative' for a trial_type under a task's contrast,
-    or None if the trial is not part of the contrast."""
+    'included' for a trial that belongs in the RDM but isn't part of the
+    binary contrast (see `spec["included"]`'s docstring below), or None if
+    the trial isn't part of this phenomenon at all (perceptual control, null,
+    fixation, off-task -- never a regressor).
+    """
     dataset_spec = get_contrast_spec(dataset)
     if task not in dataset_spec:
         raise ContrastSpecUnavailable(
@@ -206,4 +229,18 @@ def condition_of(
     neg = spec["perceptual"] if use_perceptual_control else spec["negative"]
     if trial_type in neg:
         return "negative"
+    # "included": on-contrast but not part of the positive/negative split --
+    # an intermediate condition (e.g. "low association", between "high" and
+    # "unrelated") that ds003604's own RDM-building path keeps in the RDM by
+    # construction (session_based_rsa.py's _get_non_control_stimuli excludes
+    # only the perceptual-control suffix, nothing else) while classify_trials
+    # here used to exclude it outright for the stim_pair_filename datasets --
+    # a real asymmetry, not the "comparability with ds003604" its addition
+    # was intended to achieve. "included" trials become GLM regressors and
+    # RDM members like any other, just never satisfy `cond == "positive"` or
+    # `cond == "negative"` for a binary-contrast consumer (circuit
+    # localization, build_contrasts.py) -- exactly ds003604's own asymmetry
+    # between "in the RDM" and "in the binary CONTRAST_SPEC classification".
+    if trial_type in spec.get("included", []):
+        return "included"
     return None
