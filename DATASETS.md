@@ -281,8 +281,136 @@ in this doc.
 
 ## 8. What's still ds003604-only
 
-- **`positive_control.py`, `ceiling_report.py`, `run_confound_check.py`** —
-  still read stimulus properties from ds003604's `Stimulus_Characteristics.tsv`
-  norms format. The other three datasets don't ship that format and would
-  need their own stimulus-property sources before these diagnostics could
-  run on them.
+- **`ceiling_report.py`, `run_confound_check.py`** — still read stimulus
+  properties from ds003604's `Stimulus_Characteristics.tsv` norms format.
+  `positive_control.py` no longer belongs on this list (2026-08-29): it now
+  handles both the stim_file-keyed layout (ds003604) and the PRIME/TARGET
+  word-indexed layout ds002236/ds006239 actually ship (`--dataset` selects
+  which columns `WORD_PAIR_NORMS` reads) — see §9 below for what that fixed.
+
+## 9. Running locally, without a GPU cluster
+
+The fMRI side of this pipeline (download → GLM → RDM → positive-control gate)
+is CPU-only; only the language-model embedding side needs a GPU. Verified
+end-to-end on a Mac laptop, 2026-08-29 (ds002236, 5 subjects) -- real bugs
+found and fixed in the process, not just environment friction:
+
+- **macOS ships bash 3.2** (Apple hasn't shipped a GPL3 bash since 2007).
+  `prepare_brain_rdms.sh`/`brainprep_subject.sh` use bash-4+ `mapfile` and
+  GNU-only `df` flags throughout -- both silently produce **zero output, exit
+  0** on stock macOS bash rather than an error (`mapfile: command not found`
+  looks like a warning, not a fatal one, from inside a script with
+  `set -uo pipefail`... but the subsequent `REAL_TASKS` array being unset
+  self-corrects wrong, and downstream just finds 0 patterns). Fix:
+  `brew install bash coreutils`, then run with
+  `PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"`
+  prepended so both the top-level script AND every `bash ...`/`df ...` it
+  shells out to internally (via `xargs`) resolve to the GNU versions too --
+  invoking the top-level script with `/opt/homebrew/bin/bash` alone is not
+  enough, since `brainprep_subject.sh` is invoked as bare `bash` by `xargs`
+  and re-resolves via `PATH`.
+- **`--aggregation hyperalignment`** (the default, and what every published
+  number here uses) needs `brainiak`'s SRM, which needs a working MPI install
+  (`mpi4py`) -- not present on a stock Mac. Rather than requiring
+  `brew install open-mpi` just to explore, `prepare_brain_rdms.sh` now reads
+  an `AGGREGATION` env var (default unchanged: `hyperalignment`). Set
+  `AGGREGATION=mean` to skip the dependency entirely. **Not a drop-in
+  replacement for published numbers** -- a different aggregation is a
+  different RDM, not a faster way to the same one.
+- **A real, environment-independent bug**: `fmri_preprocessing.py` read TR
+  from `bold_img.header.get_zooms()[3]`, which nibabel returns as
+  `numpy.float32`. Newer nilearn (0.10.x+) validates
+  `FirstLevelModel(t_r=...)` with `isinstance(t_r, (int, float))`, which
+  numpy.float32 fails -- `'t_r' must be a float or an integer`. Every subject
+  on every dataset would hit this once the environment's nilearn is new
+  enough; fixed by casting to `float()` at the source. Whether the GPU
+  cluster's pinned nilearn is old enough to not yet show this is untested --
+  worth checking before assuming it's Mac-only.
+- **`brain_localization.py`'s `build_stim_lookup_for_dataset`** (what
+  `conditions_from_stim_lookup`/the positive-control gate's `condition`
+  control now depends on) transitively imports `torch` via
+  `src.language_models.circuit_localization`, even though the function
+  itself only reads `events.tsv` -- real module coupling, not a hard
+  requirement of what it does. Install CPU-only torch
+  (`pip install torch --index-url https://download.pytorch.org/whl/cpu`) to
+  unblock without pulling in CUDA; worth a lazy-import cleanup in
+  `circuit_localization.py` at some point so this dependency isn't forced on
+  every caller of an events.tsv-only utility.
+- Minimal local venv for this stage: `numpy scipy pandas nibabel nilearn dipy
+  pyyaml matplotlib seaborn pillow scikit-learn brainiak` (+ `torch` per
+  above if you need `build_stim_lookup_for_dataset`/brain localization).
+  `torch`/`transformers` are NOT needed just to build RDMs and run the gate.
+
+Example, matching what's verified above:
+
+```bash
+PATH="/opt/homebrew/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH" \
+DATASET=ds002236 PHENOMENA="Sem Phon" MAX_SUBJECTS=5 JOBS=4 \
+WITHIN_RUN_NORM=1 AGGREGATION=mean \
+  bash prepare_brain_rdms.sh
+```
+
+## 10. The three-level ROI analysis is now the standard, not an option
+
+**Every dataset should be analysed at three masking levels, always**:
+
+| `ROI_SET` value | Regions | What it's for |
+|---|---|---|
+| `phonology` | auditory + motor cortex (`Heschl_L/R`, `Temporal_Sup_L/R`, `Precentral_L/R`) | phonological/motor-adjacent processing |
+| `language` | the language network ROI set | higher-level linguistic processing |
+| `all` | union of the above (language + auditory + motor) | the combined footprint |
+| *(unset)* | whole-brain | the existing default -- keep running it too, as the reference condition |
+
+This was designed and unit-tested back in MASKING.md's original work, but **had never actually been run against real data until 2026-08-29** -- and that first real run surfaced two bugs serious enough that, before they were fixed, every `ROI_SET` run on any dataset would have silently produced whole-brain-equivalent output mislabeled as ROI-restricted, with no error. Both are now fixed (see MASKING.md and the `fix-control-gate-plumbing` branch history for the full detail); this section is the operational procedure now that it actually works.
+
+### Prerequisite: T1 anatomicals
+
+ROI masking needs a real T1w file per subject-session for registration (MASKING.md), and nothing before this download step ever resolved one — `batch_download_bold.py` only touches `func/`, `download_stimuli.py` only touches `stimuli/`. Run this once per dataset before any `--roi-set`/`ROI_SET` run:
+
+```bash
+python scripts/download_anat.py --dataset ds002236
+```
+
+Small (a few MB per subject) and idempotent -- safe to re-run, already-resolved files are left alone.
+
+### Running all three levels
+
+`ROI_SET` is an env var read by `prepare_brain_rdms.sh` (and, one level down, `scripts/brainprep_subject.sh`). Each value writes to its own `roi-<value>/` subdirectory under the RDM root, so the three levels (and the whole-brain default) never collide or overwrite each other -- run them back-to-back:
+
+```bash
+for ROI in phonology language all; do
+  DATASET=ds002236 PHENOMENA="Sem Phon" MAX_SUBJECTS=20 JOBS=6 \
+  WITHIN_RUN_NORM=1 ROI_SET=$ROI \
+    bash prepare_brain_rdms.sh
+done
+```
+
+`MASK_CACHE_DIR` defaults to `<RDM_ROOT>/_masks`, shared across all three loop iterations automatically (it's keyed off `RDM_ROOT`, not `ROI_SET`) -- so **registration is computed once per subject-session and reused for all three ROI levels**, not recomputed three times. Only the ROI-specific ordering (BOLD download -> GLM -> pattern extraction) repeats per level, since the mask itself changes what gets extracted.
+
+On a Mac, prepend the bash/coreutils PATH fix from section 9 to every invocation above.
+
+### How to know it actually worked, not silently fell back
+
+Check `<mask_cache_dir>/roi_mask_status.csv` after any `ROI_SET` run -- this is the audit trail, not the RDM output itself:
+
+```bash
+python -c "
+import csv
+from collections import Counter
+rows = list(csv.DictReader(open('data/processed/fmri/ds002236/_masks/roi_mask_status.csv')))
+print(Counter((r['roi_set'], r['status']) for r in rows))
+"
+```
+
+Every row should say `status=ok`. A `no_anat` or `registration_failed` status means that subject-session silently fell back to the whole-brain mask for that ROI set (logged, not crashed -- see `build_subject_roi_mask`'s design in MASKING.md) -- worth knowing before treating that subject as "language-restricted" in an analysis. Verified 2026-08-29 on ds002236, 20 subjects, all three levels: **75/75 rows `ok`, zero fallbacks**, dice range 0.53-0.82, real ROI voxel counts:
+
+| level | mean voxels/subject | range |
+|---|---|---|
+| phonology | 1,135 | 887-1,687 |
+| language | 2,653 | 2,043-4,120 |
+| all | 3,788 | 2,930-5,807 |
+| whole-brain (reference) | ~15,900 | (single-subject check) |
+
+### Reading the results: a real caveat, not a null finding
+
+In that same verification run, noise ceiling was consistently a little *lower* for every ROI-restricted condition than for whole-brain, at every session/task cell checked. **Do not read this as "ROI masking loses signal"** without more data: at n=4-8 subjects and a ~15,900-vs-1,000-to-3,800 voxel gap, a correlation-distance RDM's split-half reliability plausibly stabilises somewhat with more voxels regardless of whether those extra voxels carry task-relevant signal -- this is a known property of high-dimensional RDM estimation, not evidence the ROI captures a worse representation. The positive-control gate's verdict (0/30 stimulus tests significant) was identical across whole-brain and all three ROI levels in this run -- expected at this n, not a level-specific finding. Revisit this comparison once cohorts are larger; the point of this run was confirming the *pipeline* works end-to-end at all three levels, not drawing a scientific conclusion from the numbers yet.

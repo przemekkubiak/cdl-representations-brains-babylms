@@ -147,13 +147,43 @@ for DS in $DATASETS; do
     && log "$DS: ceiling table -> $OUTDIR/ceilings_$DS.csv"
 
   # ---- 3. the gate ---------------------------------------------------------
+  # Two prerequisites the gate silently ran without before 2026-08-29, which is
+  # why ds002236's "0/6 significant" was really "1 of ~9 possible controls had
+  # any data at all" -- see scripts/backfill_rdm_conditions.py's docstring and
+  # PICKUP.md.
+  #
+  # (a) Real trial_types/semantic_categories for THESE datasets' already-built
+  # RDMs. session_based_rsa.py now writes them correctly on a fresh build
+  # (--dataset is threaded through as of this commit), but the RDMs already on
+  # disk from before that fix still carry the "unknown" placeholder, which
+  # made the `condition` control permanently degenerate. Idempotent -- a no-op
+  # once an RDM has real labels, and correctly a no-op for ds003604 (which was
+  # never affected -- see the script's docstring).
+  "$PY" scripts/backfill_rdm_conditions.py --roots "$RDM_ROOT" --dataset "$DS" \
+      >>"logs/newds_stage1_$DS.log" 2>&1 \
+    && log "$DS: real condition labels present on every RDM" \
+    || log "$DS: WARNING -- condition-label backfill failed for some cells (see log); the 'condition' control will stay degenerate for those"
+
+  # (b) The stimulus audio/images themselves. positive_control.py's acoustic
+  # and visual controls need the actual media bytes, not the git-annex
+  # pointers a metadata-only checkout leaves behind -- nothing else in this
+  # pipeline ever resolves them, so without this the acoustic control (the
+  # STRONGEST low-level control for an auditory design) silently has no data
+  # to build from, the same silent-omission failure mode as (a). Small: ~100s
+  # of files, ~100-300MB per dataset (ds003604's own precedent: 352 files,
+  # ~120MB) against the >>1GB BOLD floor this run already clears.
+  "$PY" scripts/download_stimuli.py --dataset "$DS" \
+      >>"logs/newds_stage1_$DS.log" 2>&1 \
+    && log "$DS: stimulus media downloaded" \
+    || log "$DS: WARNING -- stimulus media download failed (see log); the acoustic/visual control will have no data"
+
   log "$DS: positive control (the gate)"
   "$PY" scripts/positive_control.py --rdm-root "$RDM_ROOT" \
       --stimuli "data/brain/$DS/stimuli" --sessions "$(
         find "$RDM_ROOT" -name 'session_rdm_*.npz' -printf '%f\n' 2>/dev/null \
           | sed -E 's/session_rdm_(.*)\.npz/\1/' | sort -u | paste -sd, -)" \
       --compare-root "data/processed/fmri/$DS" \
-      --lm-cells "$OUTDIR/alignment_by_cell.csv" \
+      --lm-cells "$OUTDIR/alignment_by_cell.csv" --dataset "$DS" \
       --out "$OUTDIR/control" >>"logs/newds_control_$DS.log" 2>&1
   "$PY" scripts/rdm_dimensionality.py --rdm-root "$RDM_ROOT" \
       --sessions "$(find "$RDM_ROOT" -name 'session_rdm_*.npz' -printf '%f\n' 2>/dev/null \

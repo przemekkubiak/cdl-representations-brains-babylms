@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 from src.rsa import compute_rdm, compare_rdms
 from src.rsa.semantic_metadata import (
+    conditions_from_stim_lookup,
     load_semantic_metadata,
     semantic_category_from_trial_type,
     semantic_categories_from_trial_types,
@@ -15,6 +16,11 @@ from src.rsa.semantic_distance_analysis import (
     summarize_semantic_distance,
     summarize_directory,
 )
+from src.datasets import get_dataset
+
+
+def _checkout_present(dataset: str) -> bool:
+    return (get_dataset(dataset).data_dir() / "participants.tsv").exists()
 
 
 def test_compute_rdm():
@@ -94,6 +100,81 @@ def test_load_semantic_metadata(tmp_path):
         "high_association",
         "low_association",
     ]
+
+
+def test_conditions_from_stim_lookup_unresolvable_dataset_returns_none():
+    """Never invents a label: an unregistered dataset (lookup can't be built
+    at all) must come back None, not an all-"unknown" array that looks like a
+    real (if uninformative) result."""
+    assert conditions_from_stim_lookup(["a.wav|b.wav"], "not-a-real-dataset", "Sem") is None
+
+
+@pytest.mark.parametrize("dataset,phenomenon", [
+    ("ds002236", "Phon"), ("ds002236", "Sem"),
+    ("ds006239", "Phon"), ("ds006239", "Sem"), ("ds006239", "SemLocal"),
+])
+def test_conditions_from_stim_lookup_against_real_data(dataset, phenomenon):
+    """Real events.tsv, real registry -- this is what fixed the positive-
+    control gate's `condition` control, which had been degenerate ("unknown"
+    for every stimulus) for every stim_pair_filename dataset. Verified
+    2026-08-29 against the actual published RDMs on
+    BrainAlign/ds003604-session-rdms: 100% of every cell's stimuli matched,
+    with a balanced positive/negative split in every one."""
+    if not _checkout_present(dataset):
+        pytest.skip(f"no metadata checkout for {dataset}")
+    from src.rsa.brain_localization import build_stim_lookup_for_dataset
+
+    lookup = build_stim_lookup_for_dataset(dataset, phenomena=[phenomenon])
+    if not lookup:
+        pytest.skip(f"no {phenomenon} trials found for {dataset} in this checkout")
+    stimuli = list(lookup.keys())
+
+    labels = conditions_from_stim_lookup(stimuli, dataset, phenomenon)
+    assert labels is not None
+    # "included" (2026-08-29): (ds002236, Sem) and (ds006239, Sem) have a
+    # genuine third label -- an intermediate condition that's in the RDM but
+    # not the binary contrast, see condition_of's docstring. Every other
+    # cell here should still be purely binary.
+    allowed = {"positive", "negative", "included"} if (dataset, phenomenon) in {
+        ("ds002236", "Sem"), ("ds006239", "Sem"),
+    } else {"positive", "negative"}
+    assert set(labels.tolist()) <= allowed, (
+        "conditions_from_stim_lookup produced an 'unknown' for a stimulus "
+        "the lookup itself returned -- the two should never disagree"
+    )
+    # A real contrast has more than one label, not a degenerate all-one-label RDM.
+    assert len(set(labels.tolist())) >= 2
+
+
+def test_load_semantic_metadata_stim_pair_filename_dataset_gets_real_labels():
+    """End-to-end: load_semantic_metadata (what session_based_rsa.py actually
+    calls) must return real condition labels for a stim_pair_filename dataset
+    when `dataset` is passed, not the "unknown" placeholder every stimulus
+    used to get."""
+    if not _checkout_present("ds002236"):
+        pytest.skip("no metadata checkout for ds002236")
+    from src.rsa.brain_localization import build_stim_lookup_for_dataset
+
+    lookup = build_stim_lookup_for_dataset("ds002236", phenomena=["Sem"])
+    if not lookup:
+        pytest.skip("no Sem trials found for ds002236 in this checkout")
+    stimuli = list(lookup.keys())
+
+    metadata = load_semantic_metadata(
+        stimuli, task="Sem", dataset="ds002236",
+        # A directory that cannot possibly hold ds002236's table -- forces the
+        # pair-key branch, the one this fix touches, deterministically rather
+        # than depending on what happens to be checked out at this path.
+        characteristics_dir="/nonexistent/Stimulus_Characteristics",
+    )
+    assert "unknown" not in set(metadata["trial_types"].tolist())
+    # ds002236 Sem has a genuine third label, "included" (Low Related --
+    # 2026-08-29, see condition_of's docstring): on-contrast, in the RDM,
+    # just not part of the binary positive/negative split.
+    assert set(metadata["trial_types"].tolist()) == {"positive", "negative", "included"}
+    # semantic_categories mirrors trial_types for these datasets -- no finer
+    # taxonomy than this exists (see contrast_spec.py).
+    assert metadata["semantic_categories"].tolist() == metadata["trial_types"].tolist()
 
 
 def test_summarize_semantic_distance():

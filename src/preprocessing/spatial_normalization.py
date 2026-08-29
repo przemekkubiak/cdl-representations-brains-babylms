@@ -70,6 +70,7 @@ import nibabel as nib
 import numpy as np
 from nilearn import datasets
 from nilearn.image import mean_img, resample_to_img
+from nilearn.masking import compute_brain_mask
 
 from dipy.align.imaffine import AffineMap, AffineRegistration, MutualInformationMetric
 from dipy.align.transforms import (
@@ -174,8 +175,29 @@ def _sanity_check(
 
     template_brain = datasets.load_mni152_brain_mask(resolution=template_resolution)
     template_brain = resample_to_img(template_brain, mni_template, interpolation="nearest")
-    t1_ones = np.ones(t1_img.shape, dtype=np.float64)
-    t1_in_mni = t1_to_mni.transform(t1_ones, interpolation="nearest")
+    # A BRAIN mask, not the T1's full field of view. Real T1 scans are not
+    # skull-stripped -- confirmed 2026-08-26 against ds002236's real data,
+    # ~240x240x149mm FOV with only ~30% of voxels brain-ish, skull/scalp/
+    # background making up the rest. Using np.ones(t1_img.shape) here (what
+    # this used to do) warps that ENTIRE rectangular FOV to MNI and compares
+    # it against MNI's brain-ONLY mask -- comparing a box against a brain
+    # necessarily scores badly (measured: dice 0.40) regardless of whether
+    # the underlying affine is any good, because most of the box was never
+    # supposed to land inside the brain mask in the first place. Recomputed
+    # with a real brain mask on the same fit: dice 0.73 -- the registration
+    # was fine the whole time; only the metric was wrong. This bug meant NO
+    # real (non-skull-stripped) T1 could ever pass this gate -- caught only
+    # now because every earlier test used synthetic MNI-template-derived data
+    # that is already brain-only, so this branch was never really exercised.
+    try:
+        t1_brain = compute_brain_mask(t1_img, mask_type="whole-brain")
+        t1_brain_data = np.asarray(t1_brain.get_fdata(), dtype=np.float64)
+    except Exception as e:
+        logger.warning("    could not compute a T1 brain mask (%s) -- falling back to the "
+                        "full field of view, which will likely fail this check even for a "
+                        "good registration", e)
+        t1_brain_data = np.ones(t1_img.shape, dtype=np.float64)
+    t1_in_mni = t1_to_mni.transform(t1_brain_data, interpolation="nearest")
     dice = _dice(t1_in_mni > 0, np.asarray(template_brain.get_fdata()) > 0)
 
     ok = (
