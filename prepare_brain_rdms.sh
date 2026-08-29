@@ -270,8 +270,16 @@ RESOLVE
     # 4.7x undersized cohort without a single warning. Restoring first costs ~0
     # bytes (they are pointers) and makes the cohort a property of the dataset
     # rather than of how the previous run happened to end.
+    # Scoped to *_bold.nii.gz only -- `checkout -- .` (every tracked path)
+    # silently wiped any OTHER locally-resolved annexed file in this same
+    # checkout back to its dangling symlink, discovered 2026-08-29 running
+    # this locally: scripts/download_stimuli.py's real stimulus audio for
+    # ds002236 (1212 files, confirmed present and used by the positive-
+    # control gate's acoustic control) was reverted to symlinks the moment
+    # this ran, with no warning -- `git status` doesn't even flag it as
+    # untracked, since the paths were tracked all along, just as pointers.
     if git -C "$DATA_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      git -C "$DATA_DIR" checkout -- . 2>/dev/null || true
+      git -C "$DATA_DIR" checkout -- ':(glob)**/*_bold.nii.gz' 2>/dev/null || true
     fi
 
     if [ "$S" = "ses-all" ]; then
@@ -300,8 +308,10 @@ RESOLVE
     # runs were simply gone from the experiment. `git checkout` restores every dropped pointer
     # from the metadata checkout for ~0 bytes. Done once per batch, not per subject, because 16
     # parallel workers would contend on .git/index.lock.
+    # Scoped the same way as the pre-enumeration restore above, and for the
+    # same reason -- see that comment.
     if git -C "$DATA_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      git -C "$DATA_DIR" checkout -- . 2>/dev/null \
+      git -C "$DATA_DIR" checkout -- ':(glob)**/*_bold.nii.gz' 2>/dev/null \
         && log "$T/$S: restored dropped BOLD symlinks ($(find "$DATA_DIR" -name '*bold.nii.gz' | wc -l) runs referencable)"
     fi
 
