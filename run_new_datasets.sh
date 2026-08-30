@@ -2,6 +2,30 @@
 # Full replication on the three neuro datasets that have never been run:
 # ds001894 (Lytle 2019), ds006239 (Wang 2025), ds002236 (Lytle 2020).
 #
+# ds003604 (the flagship dataset) is also supported -- pass DATASETS=ds003604
+# explicitly (it is NOT in the default DATASETS list, on purpose: this script's
+# name and its default are about the three NEW datasets, and ds003604 is not
+# new -- an unqualified invocation should not risk starting a many-hour
+# ds003604 run for someone who only wanted the others). Everything below
+# (tasks_for, the per-dataset loop, ROI_SET scoping) is dataset-generic and
+# was verified against ds003604's real registry entry/local checkout
+# 2026-08-30 -- no special-casing needed. Two things ARE ds003604-specific in
+# practice, not in code:
+#   - SCALE. ds003604 is ~575 subject-sessions vs. ~90 for each of the other
+#     three. A first ROI_SET run should set MAX_SUBJECTS (e.g. 20-30) to see
+#     real numbers in a reasonable time before committing to the full cohort
+#     -- see DATASETS.md section 9's local-run example. Whole-brain
+#     (ROI_SET unset) is a different story: its within-run-normalised RDMs
+#     are already Hub-cached (BrainAlign/ds003604-session-rdms), so
+#     RDM_CACHE=1 (this script's default) should make that path a cache pull,
+#     not a full recompute -- MAX_SUBJECTS is irrelevant there.
+#   - The RDM Hub cache is namespaced by ROI_SET (scripts/rdm_cache_hf.py,
+#     fixed 2026-08-30) specifically BECAUSE ds003604 already has whole-brain
+#     RDMs cached -- without that fix, an ROI_SET run here would have
+#     silently pulled the whole-brain RDM and mislabeled it as
+#     ROI-restricted. Already fixed; noted here so nobody "fixes" it again
+#     by disabling the cache instead.
+#
 # Per dataset, in order:
 #   1. brain prep   -- streamed download -> GLM betas -> within-run-normalised
 #                      session RDMs + noise ceilings, raw BOLD deleted per subject
@@ -57,6 +81,21 @@ IFS=',' read -ra GPU_ARR <<< "$GPUS"; NGPU=${#GPU_ARR[@]}
 mkdir -p logs paper_results
 log() { echo "[newds${LOGTAG:-} $(date -u +%FT%TZ)] $*" | tee -a logs/new_datasets.log; }
 free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+
+# ds003604 is ~575 subject-sessions vs. ~90 for each of the other three --
+# see the header comment for why this is a warning, not a block: whole-brain
+# should be a cheap Hub-cache pull regardless of MAX_SUBJECTS, but an
+# ROI_SET run has never been cached for ds003604 at any scale, so it pays
+# the full cost. A one-line heads-up here costs nothing and has already
+# saved a multi-hour surprise once this session (locally, at a much smaller
+# scale, before this dataset was even in scope for this script).
+case " $DATASETS " in
+  *" ds003604 "*)
+    if [ -n "${ROI_SET:-}" ] && [ -z "${MAX_SUBJECTS:-}" ]; then
+      log "WARNING: DATASETS includes ds003604 with ROI_SET=$ROI_SET set and no MAX_SUBJECTS -- this will attempt the FULL ~575-subject-session cohort from scratch (never cached at any ROI level). Consider MAX_SUBJECTS=20-30 for a first look; see DATASETS.md section 9."
+    fi
+    ;;
+esac
 
 ledger_set() {  # ledger_set <dataset> <key> <value>
   "$PY" - "$LEDGER" "$1" "$2" "$3" <<'PYEOF'
