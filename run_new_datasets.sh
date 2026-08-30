@@ -110,6 +110,25 @@ json.dump(d, open(path, "w"), indent=2, sort_keys=True)
 PYEOF
 }
 
+sessions_for() {  # sessions_for <rdm_root> -- comma-separated session labels
+  # with a session_rdm_*.npz present anywhere under rdm_root. GNU find's
+  # `-printf '%f\n'` is not portable -- BSD/macOS find (no findutils
+  # installed) rejects it outright ("illegal option"/"unknown primary"),
+  # which lands on stderr and is invisible inside a `2>/dev/null` command
+  # substitution: the substitution silently returns "", --sessions gets
+  # passed an empty string, and positive_control.py's per-session loop then
+  # runs zero times -- not a fail, no rows at all, printing only "no results
+  # -- check the RDM root and the stimulus directory" with nothing upstream
+  # explaining why. Caught 2026-08-30 on ds003604's first local (macOS) run:
+  # the gate logged as "unknown", not "fail", and the real signal (the
+  # dimensionality report the very same log ran successfully afterwards --
+  # different script, no find in its path) was sitting right next to it.
+  # `-exec basename {} \;` is the portable equivalent, identical behaviour
+  # on GNU and BSD find.
+  find "$1" -name 'session_rdm_*.npz' -exec basename {} \; 2>/dev/null \
+    | sed -E 's/session_rdm_(.*)\.npz/\1/' | sort -u | paste -sd, -
+}
+
 tasks_for() {   # PHENOMENON keys, not BIDS task labels -- see comment below.
   # prepare_brain_rdms.sh's PHENOMENA is consumed as FMRIPreprocessor(task=...),
   # which przemek's _resolve_real_tasks() maps through the registry's
@@ -273,16 +292,14 @@ for DS in $DATASETS; do
     || log "$DS: WARNING -- stimulus media download failed (see log); the acoustic/visual control will have no data"
 
   log "$DS: positive control (the gate)"
+  SESSIONS="$(sessions_for "$RDM_ROOT")"
   "$PY" scripts/positive_control.py --rdm-root "$RDM_ROOT" \
-      --stimuli "data/brain/$DS/stimuli" --sessions "$(
-        find "$RDM_ROOT" -name 'session_rdm_*.npz' -printf '%f\n' 2>/dev/null \
-          | sed -E 's/session_rdm_(.*)\.npz/\1/' | sort -u | paste -sd, -)" \
+      --stimuli "data/brain/$DS/stimuli" --sessions "$SESSIONS" \
       --compare-root "data/processed/fmri/$DS" \
       --lm-cells "$OUTDIR/alignment_by_cell.csv" --dataset "$DS" \
       --out "$OUTDIR/control" >>"logs/newds_control_${DS}${ROI_TAG}.log" 2>&1
   "$PY" scripts/rdm_dimensionality.py --rdm-root "$RDM_ROOT" \
-      --sessions "$(find "$RDM_ROOT" -name 'session_rdm_*.npz' -printf '%f\n' 2>/dev/null \
-          | sed -E 's/session_rdm_(.*)\.npz/\1/' | sort -u | paste -sd, -)" \
+      --sessions "$SESSIONS" \
       --out "$OUTDIR/control" >>"logs/newds_control_${DS}${ROI_TAG}.log" 2>&1
   GATE=$("$PY" - "$OUTDIR/control/summary.json" <<'PYEOF'
 import json, sys, os
