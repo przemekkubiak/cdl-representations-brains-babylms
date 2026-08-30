@@ -22,12 +22,11 @@ permutation test that shuffles stimulus identity.
 correction — not the acoustic model of the audio the children actually
 heard, not the study's own experimental contrast.
 
-**The alignment numbers below are therefore uninterpretable as
-evidence about language models.** They measure a representational
-geometry that does not demonstrably encode the stimuli. They are
-published for completeness and for whoever fixes the estimator, not as
-a result. Do not cite them as evidence that models fail to align with
-the developing brain.
+**No alignment numbers exist in this results directory** -- the
+language-model grid produced zero rows for this run (see this run's
+own logs for why: a real crash, an environment problem, or simply
+never having been run). That is independent of the gate result
+above, which is real either way.
 
 Measured cause, from `control/`:
 
@@ -68,15 +67,19 @@ The only dataset with a longitudinal DEVELOPMENTAL axis across three discrete ag
 
 ## Files
 
-| path | what |
-|---|---|
-| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling |
-| `alignment_by_family.csv` | per family, with equivalence tests |
-| `alignment_by_cell.csv` | per task × session |
-| `ceilings_*.csv` | noise ceiling per cell |
-| `control/` | the positive control and RDM dimensionality — the gate |
-| `scale_ladder.csv` | the Pythia 70M→1.4B scale test |
-| `fig_*.pdf`, `fig_*.png` | figures |
+**No alignment or figure files exist in this results directory** --
+the table below is what a completed run produces; this run's own
+logs say why these are absent.
+
+| path | what | present here |
+|---|---|---|
+| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling | — |
+| `alignment_by_family.csv` | per family, with equivalence tests | — |
+| `alignment_by_cell.csv` | per task × session | — |
+| `ceilings_ds003604.csv` | noise ceiling per cell | ✓ |
+| `control/` | the positive control and RDM dimensionality — the gate | ✓ |
+| `scale_ladder.csv` | the Pythia 70M→1.4B scale test | — |
+| `fig_*.pdf, fig_*.png` | figures | — |
 
 ## Method
 
