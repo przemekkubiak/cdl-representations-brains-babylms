@@ -21,12 +21,11 @@ permutation test that shuffles stimulus identity.
 correction — not the acoustic model of the audio the children actually
 heard, not the study's own experimental contrast.
 
-**The alignment numbers below are therefore uninterpretable as
-evidence about language models.** They measure a representational
-geometry that does not demonstrably encode the stimuli. They are
-published for completeness and for whoever fixes the estimator, not as
-a result. Do not cite them as evidence that models fail to align with
-the developing brain.
+**No alignment numbers exist in this results directory** -- the
+language-model grid produced zero rows for this run (see this run's
+own logs for why: a real crash, an environment problem, or simply
+never having been run). That is independent of the gate result
+above, which is real either way.
 
 Measured cause, from `control/`:
 
@@ -38,26 +37,6 @@ This reproduces what was found on ds003604: the per-stimulus GLM
 betas are near-degenerate, so the RDM cannot express stimulus-level
 structure regardless of what it is compared against. The estimator
 is shared across datasets, which is why the failure repeats.
-
-## Scope of this run: brain-side only, no language-model numbers exist here
-
-This was a local (macOS) smoke test of `run_new_datasets.sh`, not a
-completed replication. It validated the brain-side pipeline for real --
-the 12 session RDMs and the gate result above are genuine, computed from
-real ds003604 BOLD data -- but it never reached the language-model
-alignment grid. Every checkpoint load failed on this machine for
-environment reasons unrelated to the science: first an `HF_HOME=/root/...`
-path that isn't writable off the shared GPU box this pipeline is normally
-run on (fixed in `env_brainalign.sh`), then underneath that, this local
-venv's Python 3.9 is incompatible with the pinned `transformers` release's
-use of `X | None` type unions, which need Python 3.10+ (not yet fixed).
-
-Consequently **`alignment_by_checkpoint.csv`, `alignment_by_family.csv`,
-`alignment_by_cell.csv`, `scale_ladder.csv`, and every figure listed below
-do not exist in this results directory.** The real replication run happens
-on the GPU cluster `env_brainalign.sh` is written for; this smoke test's
-only job was to confirm ds003604 flows through the pipeline's mechanics
-(masking, RDM-building, the gate) correctly, which it did.
 
 ## What was built
 
@@ -87,15 +66,19 @@ The only dataset with a longitudinal DEVELOPMENTAL axis across three discrete ag
 
 ## Files
 
-| path | what |
-|---|---|
-| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling |
-| `alignment_by_family.csv` | per family, with equivalence tests |
-| `alignment_by_cell.csv` | per task × session |
-| `ceilings_*.csv` | noise ceiling per cell |
-| `control/` | the positive control and RDM dimensionality — the gate |
-| `scale_ladder.csv` | the Pythia 70M→1.4B scale test |
-| `fig_*.pdf`, `fig_*.png` | figures |
+**No alignment or figure files exist in this results directory** --
+the table below is what a completed run produces; this run's own
+logs say why these are absent.
+
+| path | what | present here |
+|---|---|---|
+| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling | — |
+| `alignment_by_family.csv` | per family, with equivalence tests | — |
+| `alignment_by_cell.csv` | per task × session | — |
+| `ceilings_ds003604.csv` | noise ceiling per cell | ✓ |
+| `control/` | the positive control and RDM dimensionality — the gate | ✓ |
+| `scale_ladder.csv` | the Pythia 70M→1.4B scale test | — |
+| `fig_*.pdf, fig_*.png` | figures | — |
 
 ## Method
 
