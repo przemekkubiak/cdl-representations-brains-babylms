@@ -81,7 +81,7 @@ def read_json(p: Path) -> dict:
         return {}
 
 
-def build_readme(ds: str, results: Path, gate: str) -> str:
+def build_readme(ds: str, results: Path, gate: str, roi_label: str = "whole-brain") -> str:
     blurb, paper, data_url, notes = DATASET_BLURB.get(
         ds, (f"{ds}", "", f"https://openneuro.org/datasets/{ds}", ""))
 
@@ -95,7 +95,7 @@ def build_readme(ds: str, results: Path, gate: str) -> str:
 
     L: list[str] = []
     A = L.append
-    A(f"# Brain–language-model alignment: {ds}")
+    A(f"# Brain–language-model alignment: {ds} ({roi_label})")
     A("")
     A(blurb)
     A("")
@@ -103,6 +103,9 @@ def build_readme(ds: str, results: Path, gate: str) -> str:
     A(f"- Data: {data_url}")
     A(f"- Generated: {date.today().isoformat()}")
     A(f"- Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms")
+    if roi_label != "whole-brain":
+        A(f"- Masking: **{roi_label}** -- see DATASETS.md section 10 for the three-level standard "
+          f"(phonology/language/all) this is part of, and how it differs from the whole-brain reference.")
     A("")
 
     # ----- the gate, first, always -----
@@ -265,6 +268,12 @@ def main() -> None:
     ap.add_argument("--results", required=True)
     ap.add_argument("--gate", default="unknown")
     ap.add_argument("--org", default=ORG)
+    ap.add_argument("--roi-set", default=None,
+                    help="e.g. 'phonology'/'language'/'all' (see src/preprocessing/roi_atlas.py) -- "
+                         "the SAME repo as the whole-brain default (--roi-set omitted), nested under "
+                         "its own 'roi-<set>/' path so the four masking levels' results coexist "
+                         "without overwriting each other. Match whatever ROI_SET was set to for the "
+                         "run being published; omit entirely for a whole-brain run.")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
 
@@ -273,8 +282,11 @@ def main() -> None:
         print(f"no results at {results}")
         sys.exit(1)
 
+    roi_label = f"roi-{a.roi_set.replace(',', '+')}" if a.roi_set else "whole-brain"
+    path_in_repo = roi_label if a.roi_set else None  # None -> repo root, byte-identical to before this existed
+
     repo_id = f"{a.org}/brain-lm-alignment-{a.dataset}"
-    readme = build_readme(a.dataset, results, a.gate)
+    readme = build_readme(a.dataset, results, a.gate, roi_label)
     (results / "README.md").write_text(readme)
     print(f"README: {len(readme)} chars -> {results / 'README.md'}")
 
@@ -288,9 +300,10 @@ def main() -> None:
     before = set(api.list_repo_files(repo_id, repo_type="dataset"))
     api.upload_folder(
         repo_id=repo_id, repo_type="dataset", folder_path=str(results),
-        commit_message=f"{a.dataset}: alignment results (control gate: {a.gate})")
+        path_in_repo=path_in_repo,
+        commit_message=f"{a.dataset} ({roi_label}): alignment results (control gate: {a.gate})")
     after = set(api.list_repo_files(repo_id, repo_type="dataset"))
-    print(f"https://huggingface.co/datasets/{repo_id}")
+    print(f"https://huggingface.co/datasets/{repo_id}" + (f"/tree/main/{path_in_repo}" if path_in_repo else ""))
     print(f"files {len(before)} -> {len(after)}")
     removed = before - after
     print("REMOVED:", sorted(removed) if removed else "none")
