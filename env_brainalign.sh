@@ -8,7 +8,17 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # Dedicated HF cache. $SCRATCH is unset on this box, so the runbook's
 # "$SCRATCH/hf_cache" would resolve to /hf_cache. Do not share another
 # project's cache -- that has caused failures here before.
-export HF_HOME=/root/hf_cache_brainalign
+#
+# ${HF_HOME:-...} (not a bare assignment) so a caller can override before
+# sourcing this file -- required for running locally off this shared A100
+# box, where /root isn't writable at all. Every model load failed with
+# `[Errno 30] Read-only file system: '/root'` on a local macOS run of
+# run_new_datasets.sh (2026-08-30, ds003604 whole-brain smoke test) because
+# this used to be a bare `export HF_HOME=/root/...` -- 0 of ~330 checkpoints
+# loaded, 0 alignment rows, and that got committed as a real (empty) result.
+# A local run should `export HF_HOME=$HOME/.cache/hf_cache_brainalign`
+# before invoking run_new_datasets.sh; this line then leaves it alone.
+export HF_HOME="${HF_HOME:-/root/hf_cache_brainalign}"
 export BACKUP_HF_REPO=BrainAlign/cdl-devai-results
 
 # Token lives in a mode-600 file and is never hardcoded, printed or committed.
