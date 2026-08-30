@@ -57,6 +57,20 @@
 # is scoped by ROI_SET automatically, so the three levels and the
 # whole-brain default never collide -- see the per-dataset loop below.
 set -uo pipefail
+
+# Same guard as prepare_brain_rdms.sh, and for the same reason: this script
+# needs bash >=4 (mapfile, used below for the T1-download subject list) and
+# macOS ships 3.2. Re-exec with Homebrew's bash rather than failing deep
+# inside with a cryptic error partway through a run.
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  if [ -x /opt/homebrew/bin/bash ]; then
+    exec /opt/homebrew/bin/bash "$0" "$@"
+  fi
+  echo "run_new_datasets.sh needs bash >=4 (mapfile) -- this is $BASH_VERSION." >&2
+  echo "Install with: brew install bash coreutils -- see DATASETS.md section 9." >&2
+  exit 1
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$ROOT"
 . "$ROOT/env_brainalign.sh"
 
@@ -80,7 +94,10 @@ IFS=',' read -ra GPU_ARR <<< "$GPUS"; NGPU=${#GPU_ARR[@]}
 
 mkdir -p logs paper_results
 log() { echo "[newds${LOGTAG:-} $(date -u +%FT%TZ)] $*" | tee -a logs/new_datasets.log; }
-free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+# See prepare_brain_rdms.sh's copy of this function for why -- GNU-only
+# flags silently returned "" on macOS, disabling every disk-floor check
+# that reads this, not just the log line here.
+free_gb() { df -Pk / | awk 'NR==2 {print int($4/1024/1024)}'; }
 
 # ds003604 is ~575 subject-sessions vs. ~90 for each of the other three --
 # see the header comment for why this is a warning, not a block: whole-brain
@@ -199,8 +216,29 @@ for DS in $DATASETS; do
   # one (batch_download_bold.py only touches func/). Skipped for whole-brain
   # runs, which don't register anything and don't need this.
   if [ -n "${ROI_SET:-}" ]; then
-    log "$DS ($ROI_LABEL): downloading T1 anatomicals"
-    "$PY" scripts/download_anat.py --dataset "$DS" >>"logs/newds_stage1_${DS}${ROI_TAG}.log" 2>&1 \
+    # Bound the download to (approximately) the subjects prepare_brain_rdms.sh
+    # will actually use when MAX_SUBJECTS is set. Without this, download_anat.py
+    # (no --subjects passed) fetches T1s for EVERY subject in the dataset,
+    # completely ignoring MAX_SUBJECTS -- exactly backwards for a small first
+    # look. Caught 2026-08-30: a MAX_SUBJECTS=3 ds003604 run downloaded T1s for
+    # all 322 subjects (827 files, 7GB, ~1hr) before prepare_brain_rdms.sh ever
+    # looked at MAX_SUBJECTS at all. This is the same "first N sorted subject
+    # IDs" heuristic prepare_brain_rdms.sh's own SUBS uses, not a guaranteed
+    # match to its per-task, BOLD-driven selection (that's discovered later,
+    # per task/session, and T1 download has to happen before any of that runs)
+    # -- close enough to bound the cost, and a subject prepare_brain_rdms.sh
+    # picks that wasn't pre-downloaded here just falls back to whole-brain
+    # masking for that one subject (logged, not raised; see roi_mask_status.csv).
+    ANAT_SUBJECTS_ARGS=()
+    if [ "${MAX_SUBJECTS:-0}" -gt 0 ]; then
+      mapfile -t ANAT_SUBS < <(ls -d "data/brain/$DS"/sub-* 2>/dev/null \
+          | xargs -n1 basename | sort -u | head -n "$MAX_SUBJECTS")
+      [ "${#ANAT_SUBS[@]}" -gt 0 ] && ANAT_SUBJECTS_ARGS=(--subjects "${ANAT_SUBS[@]}")
+    fi
+    ANAT_SCOPE_MSG=""
+    [ ${#ANAT_SUBJECTS_ARGS[@]} -gt 0 ] && ANAT_SCOPE_MSG=" (bounded to MAX_SUBJECTS=$MAX_SUBJECTS)"
+    log "$DS ($ROI_LABEL): downloading T1 anatomicals$ANAT_SCOPE_MSG"
+    "$PY" scripts/download_anat.py --dataset "$DS" "${ANAT_SUBJECTS_ARGS[@]}" >>"logs/newds_stage1_${DS}${ROI_TAG}.log" 2>&1 \
       && log "$DS ($ROI_LABEL): T1 anatomicals present" \
       || log "$DS ($ROI_LABEL): WARNING -- T1 download had failures (see log); affected subjects will fall back to whole-brain masking (see roi_mask_status.csv)"
   fi

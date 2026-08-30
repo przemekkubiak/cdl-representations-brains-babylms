@@ -1,0 +1,10 @@
+{
+  "group_rdm_effective_rank_median": 5,
+  "n_stim_median": 66,
+  "pattern_effective_rank_median": 3,
+  "pattern_n_voxels_median": 8909,
+  "frac_voxels_near_constant_median": 0.0,
+  "pc1_vs_global_signal_median": 0.9173108287664593,
+  "rdm_vs_amplitude_rsa_median": 0.48492761636671344,
+  "verdict": "the leading component of these whole-brain patterns tracks the global signal, and the RDMs are near-degenerate; they largely encode whole-brain signal level, not representational geometry"
+}

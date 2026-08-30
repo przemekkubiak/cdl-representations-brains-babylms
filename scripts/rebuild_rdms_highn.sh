@@ -40,7 +40,10 @@ if [ ! -d "$DATA_DIR" ]; then
 fi
 
 for T in "${@:-Sem Phon Gram Plaus}"; do
-  free=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
+  # -BG --output=avail is GNU-only; BSD/macOS df returns "" for it, which
+  # silently disables the disk-floor check below (see prepare_brain_rdms.sh's
+  # copy of this fix, 2026-08-30).
+  free=$(df -Pk / | awk 'NR==2 {print int($4/1024/1024)}')
   if [ "$free" -lt "$((DISK_FLOOR_GB + 60))" ]; then
     echo "[rebuild] STOP before $T: ${free}GB free, too close to the ${DISK_FLOOR_GB}GB floor"
     exit 3

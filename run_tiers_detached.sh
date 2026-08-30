@@ -44,7 +44,10 @@ except Exception: d={}
 print(d.get('$1',{}).get('$2',''))"; }
 
 # ---- guards ------------------------------------------------------------- #
-free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+# -BG --output=avail is GNU-only; BSD/macOS df returns "" for it, which
+# silently disables every disk-floor check that reads this (see
+# prepare_brain_rdms.sh's copy of this fix, 2026-08-30).
+free_gb() { df -Pk / | awk 'NR==2 {print int($4/1024/1024)}'; }
 
 check_disk() { # check_disk <label>
   local f; f=$(free_gb)

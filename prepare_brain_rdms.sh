@@ -21,6 +21,24 @@
 # Cost, measured on this box: ~154 MiB/BOLD file, ~60 s/run to preprocess. Sequentially that
 # is ~64 hours; at JOBS=24 it is a few hours. Set MAX_SUBJECTS to build a smaller cohort.
 set -uo pipefail
+
+# mapfile (used throughout below) needs bash >=4; macOS ships 3.2 and this
+# script is invoked as `bash prepare_brain_rdms.sh` (not ./prepare_brain_rdms.sh),
+# so its own #!/bin/bash shebang is never consulted -- whatever `bash` is
+# first on the caller's PATH runs it. Re-exec with Homebrew's bash instead
+# of failing deep inside with a cryptic "mapfile: command not found"
+# cascading into "REAL_TASKS: unbound variable" from set -u. Caught
+# 2026-08-30: exactly this, on a supposedly-small MAX_SUBJECTS=3 local run
+# that silently produced 0 session RDMs instead of erroring clearly.
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  if [ -x /opt/homebrew/bin/bash ]; then
+    exec /opt/homebrew/bin/bash "$0" "$@"
+  fi
+  echo "prepare_brain_rdms.sh needs bash >=4 (mapfile) -- this is $BASH_VERSION." >&2
+  echo "Install with: brew install bash coreutils -- see DATASETS.md section 9." >&2
+  exit 1
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$ROOT"
 . "$ROOT/env_brainalign.sh"
 
@@ -74,7 +92,15 @@ LOCALIZE_MAP_ARGS=()
 [ "$SAVE_NATIVE_MAPS" = "1" ] && LOCALIZE_MAP_ARGS=(--mask-cache-dir "$MASK_CACHE_DIR" --mni-maps-dir "$MNI_MAPS_DIR" --data-dir "$DATA_DIR")
 PY="$ROOT/venv/bin/python"
 
-free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+# `-BG --output=avail` is GNU-only; BSD/macOS df rejects both flags and
+# prints nothing to stdout, so this silently returned "" there -- and every
+# `[ "$(free_gb)" -lt ... ]` disk-floor abort check below then failed with
+# an integer-expression error that `test` treats as false, meaning the
+# 350GB safety floor (this box is shared; the abort exists so a run never
+# fills the disk) was silently DISABLED on any local macOS run, not just
+# blank in the log. Caught 2026-08-30. `-Pk` is POSIX (both GNU and BSD
+# df support it); field 4 of the one data line is available space in KiB.
+free_gb() { df -Pk / | awk 'NR==2 {print int($4/1024/1024)}'; }
 log() { echo "[brainprep $(date -u +%FT%TZ)] $*"; }
 
 if [ ! -d "$DATA_DIR" ] || [ -z "$(ls -d "$DATA_DIR"/sub-* 2>/dev/null | head -1)" ]; then
