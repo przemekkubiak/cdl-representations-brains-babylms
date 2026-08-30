@@ -29,6 +29,22 @@ sys.path.insert(0, str(ROOT))
 ORG = "BrainAlign"
 
 DATASET_BLURB = {
+    "ds003604": (
+        "The flagship dataset of this project — auditory sentence/word-pair "
+        "listening in children aged 5, 7 and 9, four phenomena (semantic, "
+        "phonological, grammatical, plausibility).",
+        "https://openneuro.org/datasets/ds003604",
+        "https://openneuro.org/datasets/ds003604",
+        "The only dataset with a longitudinal DEVELOPMENTAL axis across three "
+        "discrete ages rather than a continuous one (ses-5/ses-7/ses-9). Each "
+        "stimulus is presented in exactly one scanner run, which is the source "
+        "of the run confound the within-run normalisation in this pipeline "
+        "corrects (see the HF repo README for BrainAlign/ds003604-session-rdms "
+        "for the measured before/after). Every other dataset here was added to "
+        "generalise past this one, not to replace it — treat its numbers as "
+        "the reference point the others are compared against, not as one "
+        "dataset among four.",
+    ),
     "ds001894": (
         "Lytle et al. 2019 — longitudinal word-level phonological processing in "
         "children scanned twice, at roughly 10 and 12 years old.",

@@ -50,6 +50,18 @@ def _api():
 # Paths are therefore namespaced by dataset and variant. Legacy flat paths are
 # still READ (so nothing already cached is orphaned) but never WRITTEN, which
 # keeps the existing entries intact rather than overwriting them.
+#
+# ROI_SUBDIR (added 2026-08-30) namespaces by masking level too, for the same
+# reason: without it, an ROI_SET=phonology pull for a dataset that already has
+# a WHOLE-BRAIN RDM cached under the same dataset/variant/task/session (true
+# today for ds002236 and ds003604) would silently HIT that whole-brain entry
+# and place it under the phonology-labeled output path -- corrupting the run
+# with no error, since `pull` succeeding is exactly what the caller wants to
+# see. Caught before it ever ran for real: prepare_brain_rdms.sh's own
+# ROI_SUBDIR ("roi-<set>", e.g. "roi-phonology") is passed straight through
+# here rather than re-deriving it from ROI_SET, so there is one place that
+# turns "phonology" into "roi-phonology" (prepare_brain_rdms.sh), not two
+# that could drift apart.
 VARIANT_RAW = "raw"
 VARIANT_WRN = "within-run-normalised"
 
@@ -59,7 +71,9 @@ def variant_name(within_run_normalized: bool) -> str:
 
 
 def remote_path(task: str, session: str, dataset: str = "ds003604",
-                variant: str = VARIANT_RAW) -> str:
+                variant: str = VARIANT_RAW, roi_subdir: str | None = None) -> str:
+    if roi_subdir:
+        return f"{dataset}/{variant}/{roi_subdir}/{task}/session_rdm_{session}.npz"
     return f"{dataset}/{variant}/{task}/session_rdm_{session}.npz"
 
 
@@ -95,11 +109,14 @@ def cmd_pull(a) -> int:
     from huggingface_hub import hf_hub_download
     variant = getattr(a, "variant", None) or VARIANT_RAW
     dataset = getattr(a, "dataset", None) or "ds003604"
+    roi_subdir = getattr(a, "roi_subdir", None) or None
 
-    candidates = [remote_path(a.task, a.session, dataset, variant)]
+    candidates = [remote_path(a.task, a.session, dataset, variant, roi_subdir)]
     # Only the raw ds003604 variant has a legacy flat equivalent; never serve a
-    # legacy (uncorrected) file into a request for the corrected variant.
-    if dataset == "ds003604" and variant == VARIANT_RAW:
+    # legacy (uncorrected) file into a request for the corrected variant, AND
+    # never into an ROI-restricted request -- the legacy path predates ROI
+    # masking entirely and is definitionally whole-brain.
+    if dataset == "ds003604" and variant == VARIANT_RAW and not roi_subdir:
         candidates.append(legacy_remote_path(a.task, a.session))
 
     got = None
@@ -110,7 +127,7 @@ def cmd_pull(a) -> int:
         except Exception:
             continue
     if got is None:
-        print(f"[rdm-cache] miss {dataset}/{variant}/{a.task}/{a.session}")
+        print(f"[rdm-cache] miss {dataset}/{variant}/{roi_subdir or 'whole-brain'}/{a.task}/{a.session}")
         return 1
     got = Path(got)
     # hf_hub_download preserves the remote subdirectory; the pipeline wants the file flat.
@@ -135,12 +152,13 @@ def cmd_push(a) -> int:
         return 0
     dataset = getattr(a, "dataset", None) or "ds003604"
     variant = variant_name(rdm_is_normalized(src))     # read off the file, not the CLI
-    rp = remote_path(a.task, a.session, dataset, variant)
+    roi_subdir = getattr(a, "roi_subdir", None) or None
+    rp = remote_path(a.task, a.session, dataset, variant, roi_subdir)
     try:
         api.create_repo(REPO, repo_type="dataset", exist_ok=True)
         api.upload_file(path_or_fileobj=str(src), path_in_repo=rp,
                         repo_id=REPO, repo_type="dataset",
-                        commit_message=f"session RDM: {dataset}/{variant}/{a.task}/{a.session}")
+                        commit_message=f"session RDM: {dataset}/{variant}/{roi_subdir or 'whole-brain'}/{a.task}/{a.session}")
     except Exception as e:
         print(f"[rdm-cache] push failed for {rp}: {e}")
         return 0
@@ -180,6 +198,16 @@ def cmd_sync(a) -> int:
         print(f"[rdm-cache] no session RDMs under {root}")
         return 0
 
+    # ROI_SUBDIR, inferred from the root itself rather than a separate CLI
+    # flag: prepare_brain_rdms.sh always calls this with --root "$RDM_ROOT",
+    # and $RDM_ROOT already ends in ".../roi-<set>" whenever ROI_SET is set
+    # (run_new_datasets.sh's own RDM_ROOT does too) -- one source of truth
+    # for "which masking level is this", not a second one that could
+    # disagree with where the files actually live.
+    roi_subdir = root.name if root.name.startswith("roi-") else None
+    if roi_subdir:
+        print(f"[rdm-cache] syncing ROI-restricted RDMs under roi_subdir={roi_subdir!r}")
+
     try:
         api.create_repo(REPO, repo_type="dataset", exist_ok=True)
         remote = set(api.list_repo_files(REPO, repo_type="dataset"))
@@ -192,7 +220,7 @@ def cmd_sync(a) -> int:
         task = f.parent.name
         session = f.name.replace("session_rdm_", "").replace(".npz", "")
         variant = variant_name(rdm_is_normalized(f))
-        rp = remote_path(task, session, a.dataset, variant)
+        rp = remote_path(task, session, a.dataset, variant, roi_subdir)
         if rp in remote:
             print(f"[rdm-cache] have  {rp}")
             skipped += 1
@@ -200,7 +228,7 @@ def cmd_sync(a) -> int:
         try:
             api.upload_file(path_or_fileobj=str(f), path_in_repo=rp,
                             repo_id=REPO, repo_type="dataset",
-                            commit_message=f"session RDM: {a.dataset}/{variant}/{task}/{session}")
+                            commit_message=f"session RDM: {a.dataset}/{variant}/{roi_subdir or 'whole-brain'}/{task}/{session}")
             print(f"[rdm-cache] PUSH  {rp} ({f.stat().st_size/2**20:.1f} MB)")
             pushed += 1
         except Exception as e:
@@ -222,6 +250,11 @@ def main() -> int:
         s.add_argument("--variant", default=None,
                        choices=[VARIANT_RAW, VARIANT_WRN],
                        help="pull only: which variant to fetch (push reads it off the file)")
+        s.add_argument("--roi-subdir", default=None,
+                       help="e.g. 'roi-phonology' -- prepare_brain_rdms.sh's own ROI_SUBDIR value, "
+                            "passed through as-is (not re-derived from ROI_SET here). Omit for "
+                            "whole-brain, the default. A pull with this set NEVER falls back to "
+                            "an unscoped (whole-brain) cache entry -- see the module docstring.")
     sy = sub.add_parser("sync", help="upload every local RDM not already cached")
     sy.add_argument("--root", required=True, help="tree to scan, e.g. data/processed/fmri_wrn/ds003604")
     sy.add_argument("--dataset", default="ds003604")

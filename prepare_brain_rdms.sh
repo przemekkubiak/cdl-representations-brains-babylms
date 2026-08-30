@@ -128,6 +128,13 @@ RESOLVE
   ROI_SUBDIR=""
   [ -n "${ROI_SET:-}" ] && ROI_SUBDIR="roi-${ROI_SET//,/+}/"
   export OUT="$RDM_ROOT/${ROI_SUBDIR}$T"
+  # Bare form (no trailing slash) for rdm_cache_hf.py's --roi-subdir -- see
+  # that script's module docstring for why the Hub cache MUST be namespaced
+  # by masking level too, not just dataset+variant: without this, an
+  # ROI_SET run for any dataset that already has a whole-brain RDM cached
+  # (true today for ds002236 and ds003604) would silently pull that
+  # whole-brain RDM and mislabel it as ROI-restricted.
+  ROI_CACHE_ARGS=(); [ -n "$ROI_SUBDIR" ] && ROI_CACHE_ARGS=(--roi-subdir "${ROI_SUBDIR%/}")
   # Cross-sectional datasets (everything except ds003604) need patterns
   # relabeled by real per-subject age-group bin before an RDM is built --
   # see scripts/regroup_patterns_by_age.py and configs/age_groups.yaml for
@@ -237,7 +244,7 @@ RESOLVE
       [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
       if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
            pull --task "$T" --session "$S" --dir "$OUT" \
-           --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
         if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
           log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
         fi
@@ -363,7 +370,7 @@ RESOLVE
       # be filed under the wrong variant.
       [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
           push --task "$T" --session "$S" --dir "$OUT" \
-          --dataset "$DATASET" 2>&1 | sed "s/^/  /"
+          --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
       log "$T/$S: done, $(free_gb)GB free"
     else
       log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"
@@ -397,7 +404,7 @@ RESOLVE
       [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
       if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
            pull --task "$T" --session "$AS" --dir "$OUT" \
-           --dataset "$DATASET" --variant "$CACHE_VARIANT" 2>&1 | sed "s/^/  /"; then
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
         if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then
           log "$T/$AS: pulled from Hub cache -- skipping"; continue
         fi
@@ -424,7 +431,7 @@ RESOLVE
             || log "$T/$AS: brain localization failed (non-fatal, continuing)"
         [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
             push --task "$T" --session "$AS" --dir "$OUT" \
-            --dataset "$DATASET" 2>&1 | sed "s/^/  /"
+            --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
         log "$T/$AS: done, $(free_gb)GB free"
       else
         log "$T/$AS: NO session RDM produced -- keeping patterns for diagnosis"
