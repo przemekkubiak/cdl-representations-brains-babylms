@@ -1,0 +1,140 @@
+[stages 2026-08-29T15:57:38Z] in-flight sweep finished; starting chained stages
+[stages 2026-08-29T15:57:38Z] >>> parc: parc-pythia-seed0 parc-pythia-seed1 parc-pythia-seed2 parc-mamba-seed0 parc-mamba-seed1 parc-mamba-seed2 parc-rwkv-seed0 parc-rwkv-seed1 parc-rwkv-seed2
+[stages 2026-08-29T15:59:36Z] starting from stage 1
+[stages 2026-08-29T15:59:36Z] in-flight sweep finished; starting chained stages
+[stages 2026-08-29T15:59:36Z] >>> ladder: pythia-70m-full pythia-160m-full pythia-410m-full pythia-1b-full pythia-1.4b-full
+[stages 2026-08-29T16:54:57Z] <<< ladder rc=0 free=403GB
+alignment_rows.csv: 1430 rows, 5 families, 26 cells
+scaling_curve.csv: 130 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p      best_family  best_rsa_mean
+ds002236           5             -0.3       0.623838 pythia-160m-full       0.019643
+ds003604           5             -0.1       0.872889   pythia-1b-full       0.001715
+ds006239           5             -0.4       0.504632  pythia-70m-full      -0.001148
+
+[null] no PARC rows yet -- skipping null-referenced table. Run the PARC families to populate it.
+[stages 2026-08-29T16:54:58Z] >>> parc: parc-pythia-seed0 parc-pythia-seed1 parc-pythia-seed2 parc-mamba-seed0 parc-mamba-seed1 parc-mamba-seed2 parc-rwkv-seed0 parc-rwkv-seed1 parc-rwkv-seed2
+[stages 2026-08-29T17:49:52Z] <<< parc rc=0 free=402GB
+alignment_rows.csv: 4004 rows, 14 families, 26 cells
+scaling_curve.csv: 364 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p      best_family  best_rsa_mean
+ds002236           5             -0.3       0.623838 pythia-160m-full       0.019643
+ds003604           5             -0.1       0.872889   pythia-1b-full       0.001715
+ds006239           5             -0.4       0.504632  pythia-70m-full      -0.001148
+
+null_referenced.csv: 130 family x cell rows against 9 noise seeds
+          family  n_cells    mean_z    max_z  cells_beating_null
+pythia-410m-full       26  0.208896 2.874108                   4
+  pythia-1b-full       26 -0.178407 2.080298                   2
+ pythia-70m-full       26 -0.206502 2.317705                   3
+pythia-160m-full       26 -0.804713 1.066111                   0
+pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8630 (p = 1.41e-08, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[stages 2026-08-29T17:49:53Z] >>> polypythia: polypythia-70m-seed1 polypythia-70m-seed2 polypythia-70m-seed3 polypythia-160m-seed1 polypythia-160m-seed2 polypythia-160m-seed3 polypythia-410m-seed1 polypythia-410m-seed2 polypythia-410m-seed3
+[stages 2026-08-29T18:34:49Z] <<< polypythia rc=0 free=399GB
+alignment_rows.csv: 6578 rows, 23 families, 26 cells
+scaling_curve.csv: 598 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p      best_family  best_rsa_mean
+ds002236           5             -0.3       0.623838 pythia-160m-full       0.019643
+ds003604           5             -0.1       0.872889   pythia-1b-full       0.001715
+ds006239           5             -0.4       0.504632  pythia-70m-full      -0.001148
+
+null_referenced.csv: 364 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8965 (p = 5.81e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[stages 2026-08-29T18:34:50Z] >>> babylm: babylm-gpt2-3 babylm-gpt2-5 babylm-gpt2-7 babylm-gpt2
+[stages 2026-08-29T18:48:32Z] <<< babylm rc=0 free=402GB
+alignment_rows.csv: 7514 rows, 27 families, 26 cells
+scaling_curve.csv: 702 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 468 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.9032 (p = 2.72e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[stages 2026-08-29T18:48:34Z] >>> ladder_top: pythia-2.8b-full pythia-6.9b-full
+[stages 2026-08-29T19:23:54Z] <<< ladder_top rc=0 free=402GB
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[stages 2026-08-29T19:23:55Z] >>> precision A/B: pythia-410m in bf16
+[precision] pythia-410m fp32 vs bf16, 286 matched (cell x checkpoint) rows
+  mean |delta rsa| : 0.00095
+  max  |delta rsa| : 0.00999
+  corr(fp32, bf16) : 0.996560
+  between-family sd of mean rsa : 0.00297
+  => bf16 error is 31.9% of the between-family spread
+[stages 2026-08-29T19:30:03Z] ALL STAGES BEFORE 12B COMPLETE

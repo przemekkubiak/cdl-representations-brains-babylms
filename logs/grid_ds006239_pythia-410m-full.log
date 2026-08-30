@@ -1,0 +1,336 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3961.54it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4856.39it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4642.28it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5544.93it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5264.27it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3168.59it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4875.45it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4695.30it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5222.38it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4584.87it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3587.50it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:40,  2.89it/s]Loading weights:  44%|████▍     | 128/292 [00:00<00:00, 371.11it/s]Loading weights:  69%|██████▉   | 202/292 [00:00<00:00, 412.41it/s]Loading weights:  90%|█████████ | 264/292 [00:00<00:00, 415.66it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 365.67it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:48,  2.68it/s]Loading weights:  41%|████      | 120/292 [00:00<00:00, 328.74it/s]Loading weights:  64%|██████▍   | 188/292 [00:00<00:00, 357.87it/s]Loading weights:  84%|████████▎ | 244/292 [00:00<00:00, 371.14it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 322.25it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:45,  2.75it/s]Loading weights:  41%|████      | 120/292 [00:00<00:00, 319.64it/s]Loading weights:  61%|██████▏   | 179/292 [00:00<00:00, 358.94it/s]Loading weights:  79%|███████▉  | 231/292 [00:00<00:00, 360.54it/s]Loading weights:  95%|█████████▍| 277/292 [00:00<00:00, 372.91it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 323.88it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:50,  2.64it/s]Loading weights:  41%|████      | 120/292 [00:00<00:00, 320.69it/s]Loading weights:  63%|██████▎   | 185/292 [00:00<00:00, 362.33it/s]Loading weights:  83%|████████▎ | 241/292 [00:00<00:00, 373.77it/s]Loading weights:  99%|█████████▉| 290/292 [00:00<00:00, 391.39it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 328.38it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:52,  2.58it/s]Loading weights:  44%|████▍     | 128/292 [00:00<00:00, 340.87it/s]Loading weights:  69%|██████▉   | 201/292 [00:00<00:00, 375.05it/s]Loading weights:  89%|████████▉ | 260/292 [00:00<00:00, 379.54it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 331.37it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:50,  2.64it/s]Loading weights:  42%|████▏     | 122/292 [00:00<00:00, 329.69it/s]Loading weights:  65%|██████▌   | 191/292 [00:00<00:00, 371.11it/s]Loading weights:  85%|████████▌ | 249/292 [00:00<00:00, 375.12it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 326.71it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:41,  2.87it/s]Loading weights:  42%|████▏     | 122/292 [00:00<00:00, 351.99it/s]Loading weights:  66%|██████▌   | 193/292 [00:00<00:00, 389.21it/s]Loading weights:  86%|████████▋ | 252/292 [00:00<00:00, 403.41it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 354.46it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<02:45,  1.76it/s]Loading weights:  41%|████      | 120/292 [00:00<00:00, 229.53it/s]Loading weights:  61%|██████    | 178/292 [00:00<00:00, 265.15it/s]Loading weights:  77%|███████▋  | 225/292 [00:01<00:00, 276.11it/s]Loading weights:  91%|█████████ | 266/292 [00:01<00:00, 276.69it/s]Loading weights: 100%|██████████| 292/292 [00:01<00:00, 237.18it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:51,  2.60it/s]Loading weights:  44%|████▍     | 128/292 [00:00<00:00, 337.79it/s]Loading weights:  67%|██████▋   | 197/292 [00:00<00:00, 365.53it/s]Loading weights:  87%|████████▋ | 254/292 [00:00<00:00, 371.72it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 328.99it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:49,  2.66it/s]Loading weights:  44%|████▍     | 128/292 [00:00<00:00, 348.86it/s]Loading weights:  69%|██████▉   | 201/292 [00:00<00:00, 386.69it/s]Loading weights:  89%|████████▉ | 261/292 [00:00<00:00, 396.99it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 343.58it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:53,  2.57it/s]Loading weights:  44%|████▍     | 128/292 [00:00<00:00, 333.82it/s]Loading weights:  67%|██████▋   | 196/292 [00:00<00:00, 367.07it/s]Loading weights:  87%|████████▋ | 253/292 [00:00<00:00, 375.48it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 325.95it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid_bf16/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_bf16/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_bf16/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_bf16/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_bf16/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3286.27it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 284/292 [00:00<00:00, 2822.51it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2857.33it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  98%|█████████▊| 285/292 [00:00<00:00, 2849.72it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2870.52it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3015.53it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  95%|█████████▌| 278/292 [00:00<00:00, 2767.51it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2797.66it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2990.98it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2927.05it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3081.35it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3047.22it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3000.61it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  98%|█████████▊| 285/292 [00:00<00:00, 2845.19it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2886.83it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_a_batch16/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_a_batch16/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_a_batch16/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_a_batch16/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_a_batch16/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 284/292 [00:00<00:00, 2839.62it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2872.64it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|█████████▉| 291/292 [00:00<00:00, 2908.04it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2905.04it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|█████████▉| 291/292 [00:00<00:00, 2908.10it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2905.70it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3004.01it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 282/292 [00:00<00:00, 2801.35it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2832.29it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  95%|█████████▌| 278/292 [00:00<00:00, 2777.53it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2809.18it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  91%|█████████ | 265/292 [00:00<00:00, 2648.62it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2692.14it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3099.37it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2945.88it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 284/292 [00:00<00:00, 2825.42it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2869.41it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  95%|█████████▍| 276/292 [00:00<00:00, 2728.36it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2770.47it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_b_batch4/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_b_batch4/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_b_batch4/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_b_batch4/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_b_batch4/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3217.83it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 284/292 [00:00<00:00, 2838.43it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2889.14it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  96%|█████████▌| 281/292 [00:00<00:00, 2748.28it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2807.97it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  98%|█████████▊| 285/292 [00:00<00:00, 2830.94it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2872.13it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  95%|█████████▌| 278/292 [00:00<00:00, 2758.46it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2771.93it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3039.61it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3029.68it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 282/292 [00:00<00:00, 2797.37it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2860.09it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3212.26it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3145.76it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3435.59it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_c_batch32/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_c_batch32/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_c_batch32/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_c_batch32/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_c_batch32/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-410m-full: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  98%|█████████▊| 286/292 [00:00<00:00, 2859.76it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2894.24it/s]
+  [cache] evicted EleutherAI/pythia-410m@step0 (1.6G)
+
+=== EleutherAI/pythia-410m@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  98%|█████████▊| 286/292 [00:00<00:00, 2836.90it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2869.83it/s]
+  [cache] evicted EleutherAI/pythia-410m@step1 (1.6G)
+
+=== EleutherAI/pythia-410m@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2944.91it/s]
+  [cache] evicted EleutherAI/pythia-410m@step4 (1.6G)
+
+=== EleutherAI/pythia-410m@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3032.83it/s]
+  [cache] evicted EleutherAI/pythia-410m@step16 (1.6G)
+
+=== EleutherAI/pythia-410m@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  96%|█████████▌| 281/292 [00:00<00:00, 2808.21it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2883.29it/s]
+  [cache] evicted EleutherAI/pythia-410m@step256 (1.6G)
+
+=== EleutherAI/pythia-410m@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2958.19it/s]
+  [cache] evicted EleutherAI/pythia-410m@step5000 (1.6G)
+
+=== EleutherAI/pythia-410m@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3964.10it/s]
+  [cache] evicted EleutherAI/pythia-410m@step14000 (1.6G)
+
+=== EleutherAI/pythia-410m@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3048.06it/s]
+  [cache] evicted EleutherAI/pythia-410m@step28000 (1.6G)
+
+=== EleutherAI/pythia-410m@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3021.46it/s]
+  [cache] evicted EleutherAI/pythia-410m@step51000 (1.6G)
+
+=== EleutherAI/pythia-410m@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3879.67it/s]
+  [cache] evicted EleutherAI/pythia-410m@step86000 (1.6G)
+
+=== EleutherAI/pythia-410m@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2958.41it/s]
+  [cache] evicted EleutherAI/pythia-410m@step143000 (1.6G)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_d_gpu2/ds006239/alignment_pythia-410m-full.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_d_gpu2/ds006239/isolation_pythia-410m-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_d_gpu2/ds006239/mechanistic_pythia-410m-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_d_gpu2/ds006239/mechanistic_layer_pythia-410m-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_retest_d_gpu2/ds006239/behaviour_pythia-410m-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

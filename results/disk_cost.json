@@ -1,0 +1,714 @@
+[
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-70m",
+  "gb_per_ckpt": 0.332,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-70m-deduped",
+  "gb_per_ckpt": 0.332,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-160m",
+  "gb_per_ckpt": 0.75,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-160m-deduped",
+  "gb_per_ckpt": 0.75,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-410m",
+  "gb_per_ckpt": 1.823,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-410m-deduped",
+  "gb_per_ckpt": 1.823,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-1b",
+  "gb_per_ckpt": 4.181,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-1b-deduped",
+  "gb_per_ckpt": 4.181,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-1.4b",
+  "gb_per_ckpt": 5.86,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-1.4b-deduped",
+  "gb_per_ckpt": 8.589,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-2.8b",
+  "gb_per_ckpt": 11.369,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-2.8b-deduped",
+  "gb_per_ckpt": 11.369,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-6.9b",
+  "gb_per_ckpt": 27.698,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-6.9b-deduped",
+  "gb_per_ckpt": 13.849,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-12b",
+  "gb_per_ckpt": 47.687,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "pythia",
+  "repo": "EleutherAI/pythia-12b-deduped",
+  "gb_per_ckpt": 23.843,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed1",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed2",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed3",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed4",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed5",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed6",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed7",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed8",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-14m-seed9",
+  "gb_per_ckpt": 0.053,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed1",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed2",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed3",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed4",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed5",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed6",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed7",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed8",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-31m-seed9",
+  "gb_per_ckpt": 0.086,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed1",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed2",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed3",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed4",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed5",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed6",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed7",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed8",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-70m-seed9",
+  "gb_per_ckpt": 0.166,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed1",
+  "gb_per_ckpt": 0.75,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed2",
+  "gb_per_ckpt": 0.75,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed3",
+  "gb_per_ckpt": 0.75,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed4",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed5",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed6",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 155,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed7",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed8",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-160m-seed9",
+  "gb_per_ckpt": 0.375,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed1",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed2",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed3",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed4",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed5",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed6",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed7",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed8",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "polypythia",
+  "repo": "EleutherAI/pythia-410m-seed9",
+  "gb_per_ckpt": 0.911,
+  "n_step_branches": 154,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed0",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed1",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed2",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed3",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed4",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-pythia-seed5",
+  "gb_per_ckpt": 0.649,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed0",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed1",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed2",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed3",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed4",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-mamba-seed5",
+  "gb_per_ckpt": 0.517,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed0",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed1",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed2",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed3",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed4",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "parc",
+  "repo": "jmichaelov/parc-rwkv-seed5",
+  "gb_per_ckpt": 0.677,
+  "n_step_branches": 73,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "BrainAlign/gpt2-babylm-3",
+  "gb_per_ckpt": 0.269,
+  "n_step_branches": 9,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "BrainAlign/gpt2-babylm-5",
+  "gb_per_ckpt": 0.269,
+  "n_step_branches": 9,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "BrainAlign/gpt2-babylm-7",
+  "gb_per_ckpt": 0.269,
+  "n_step_branches": 9,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "BrainAlign/gpt2-babylm-9",
+  "gb_per_ckpt": 0.269,
+  "n_step_branches": 9,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "pico-lm/pico-decoder-tiny",
+  "gb_per_ckpt": 0.045,
+  "n_step_branches": 0,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "pico-lm/pico-decoder-small",
+  "gb_per_ckpt": 0.258,
+  "n_step_branches": 0,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "pico-lm/pico-decoder-medium",
+  "gb_per_ckpt": 0.724,
+  "n_step_branches": 0,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "pico-lm/pico-decoder-large",
+  "gb_per_ckpt": 2.279,
+  "n_step_branches": 0,
+  "cached": false,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "Beetle-HumanScale/beetle-monolingual-humanscale-eng",
+  "gb_per_ckpt": 0.775,
+  "n_step_branches": 35,
+  "cached": true,
+  "error": null
+ },
+ {
+  "group": "zoo_other",
+  "repo": "Beetle-FineWeb3-24B/beetle-monolingual-fineweb3-eng",
+  "gb_per_ckpt": 0.775,
+  "n_step_branches": 19,
+  "cached": false,
+  "error": null
+ }
+]

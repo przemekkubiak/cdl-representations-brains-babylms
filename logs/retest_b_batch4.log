@@ -1,0 +1,16 @@
+[sweep 2026-08-29T20:02:46Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=402GB
+[sweep 2026-08-29T20:02:46Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T20:02:47Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T20:02:47Z]   run pythia-410m-full on ds006239 (free=402GB)
+[sweep 2026-08-29T20:05:45Z]   ok   pythia-410m-full/ds006239 rc=0 rows=88 free=400GB
+[sweep 2026-08-29T20:05:46Z] === ds006239 done
+[sweep 2026-08-29T20:05:46Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T20:05:46Z]   run pythia-410m-full on ds003604 (free=400GB)
+[sweep 2026-08-29T20:08:37Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T20:08:37Z] === ds003604 done
+[sweep 2026-08-29T20:08:37Z] === ds002236 | tasks: Phon Sem  | sessions: ses-11 ses-11+ ses-9 
+[sweep 2026-08-29T20:08:37Z]   run pythia-410m-full on ds002236 (free=402GB)
+[sweep 2026-08-29T20:11:27Z]   ok   pythia-410m-full/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T20:11:27Z] === ds002236 done
+[sweep 2026-08-29T20:11:29Z] collected -> results/
+[sweep 2026-08-29T20:11:29Z] SWEEP COMPLETE | free=402GB

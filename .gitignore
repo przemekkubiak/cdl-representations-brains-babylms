@@ -1,0 +1,22 @@
+# The upstream pipeline is its own repository (suchirsalhan/cdl-representations-brains-babylms),
+# checked out here as a working copy. 6.5 GB, and tracking it would nest one repo inside another.
+pipeline/
+
+# Caches and re-fetchable inputs
+hf_home/
+hf_cache/
+__pycache__/
+*.pyc
+
+# RDM inputs: 24 MB, re-fetchable with scripts/fetch_meta.py from the BrainAlign Hub repos.
+data/
+
+# Built packages: regenerable by scripts/build_devai_package.py, and already published
+# to BrainAlign/cdl-devai-results-ds002236 and -ds006239 on the Hub.
+hf_package/
+
+# Model weights / large binaries should never land here
+*.npz
+*.npy
+*.pt
+*.safetensors

@@ -1,0 +1,64 @@
+[sweep 2026-08-29T17:49:53Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=402GB
+[sweep 2026-08-29T17:49:53Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T17:49:53Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T17:49:53Z]   run polypythia-70m-seed1 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:51:29Z]   ok   polypythia-70m-seed1/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:51:29Z]   run polypythia-70m-seed2 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:53:08Z]   ok   polypythia-70m-seed2/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:53:08Z]   run polypythia-70m-seed3 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:54:52Z]   ok   polypythia-70m-seed3/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:54:52Z]   run polypythia-160m-seed1 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:56:37Z]   ok   polypythia-160m-seed1/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:56:37Z]   run polypythia-160m-seed2 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:58:23Z]   ok   polypythia-160m-seed2/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:58:23Z]   run polypythia-160m-seed3 on ds006239 (free=402GB)
+[sweep 2026-08-29T18:00:09Z]   ok   polypythia-160m-seed3/ds006239 rc=0 rows=88 free=401GB
+[sweep 2026-08-29T18:00:10Z]   run polypythia-410m-seed1 on ds006239 (free=401GB)
+[sweep 2026-08-29T18:02:28Z]   ok   polypythia-410m-seed1/ds006239 rc=0 rows=88 free=401GB
+[sweep 2026-08-29T18:02:28Z]   run polypythia-410m-seed2 on ds006239 (free=401GB)
+[sweep 2026-08-29T18:05:07Z]   ok   polypythia-410m-seed2/ds006239 rc=0 rows=88 free=400GB
+[sweep 2026-08-29T18:05:08Z]   run polypythia-410m-seed3 on ds006239 (free=400GB)
+[sweep 2026-08-29T18:07:30Z]   ok   polypythia-410m-seed3/ds006239 rc=0 rows=88 free=398GB
+[sweep 2026-08-29T18:07:31Z] === ds006239 done
+[sweep 2026-08-29T18:07:31Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T18:07:31Z]   run polypythia-70m-seed1 on ds003604 (free=398GB)
+[sweep 2026-08-29T18:08:49Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:08:50Z]   run polypythia-70m-seed2 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:09:58Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:09:58Z]   run polypythia-70m-seed3 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:11:09Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:11:09Z]   run polypythia-160m-seed1 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:12:37Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:12:37Z]   run polypythia-160m-seed2 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:14:15Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:14:15Z]   run polypythia-160m-seed3 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:15:57Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:15:57Z]   run polypythia-410m-seed1 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:17:43Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:17:43Z]   run polypythia-410m-seed2 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:19:38Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:19:38Z]   run polypythia-410m-seed3 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:21:25Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=132 free=399GB
+[sweep 2026-08-29T18:21:25Z] === ds003604 done
+[sweep 2026-08-29T18:21:25Z] === ds002236 | tasks: Phon Sem  | sessions: ses-11 ses-11+ ses-9 
+[sweep 2026-08-29T18:21:25Z]   run polypythia-70m-seed1 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:22:30Z]   ok   polypythia-70m-seed1/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:22:30Z]   run polypythia-70m-seed2 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:23:36Z]   ok   polypythia-70m-seed2/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:23:36Z]   run polypythia-70m-seed3 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:24:43Z]   ok   polypythia-70m-seed3/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:24:43Z]   run polypythia-160m-seed1 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:26:17Z]   ok   polypythia-160m-seed1/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:26:17Z]   run polypythia-160m-seed2 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:27:46Z]   ok   polypythia-160m-seed2/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:27:46Z]   run polypythia-160m-seed3 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:29:10Z]   ok   polypythia-160m-seed3/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:29:11Z]   run polypythia-410m-seed1 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:31:10Z]   ok   polypythia-410m-seed1/ds002236 rc=0 rows=66 free=398GB
+[sweep 2026-08-29T18:31:10Z]   run polypythia-410m-seed2 on ds002236 (free=399GB)
+[sweep 2026-08-29T18:32:55Z]   ok   polypythia-410m-seed2/ds002236 rc=0 rows=66 free=398GB
+[sweep 2026-08-29T18:32:55Z]   run polypythia-410m-seed3 on ds002236 (free=398GB)
+[sweep 2026-08-29T18:34:47Z]   ok   polypythia-410m-seed3/ds002236 rc=0 rows=66 free=399GB
+[sweep 2026-08-29T18:34:47Z] === ds002236 done
+[sweep 2026-08-29T18:34:49Z] collected -> results/
+[sweep 2026-08-29T18:34:49Z] SWEEP COMPLETE | free=399GB

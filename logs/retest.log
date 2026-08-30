@@ -1,0 +1,28 @@
+[retest 2026-08-29T19:55:15Z] start: family=pythia-410m-full
+[retest 2026-08-29T19:55:15Z] >>> arm=a_batch16 gpu=1 batch=16 
+[retest 2026-08-29T20:02:46Z] <<< arm=a_batch16 rc=0
+[retest 2026-08-29T20:02:46Z] >>> arm=b_batch4 gpu=1 batch=4 
+[retest 2026-08-29T20:11:29Z] <<< arm=b_batch4 rc=0
+[retest 2026-08-29T20:11:29Z] >>> arm=c_batch32 gpu=1 batch=32 
+[retest 2026-08-29T20:18:43Z] <<< arm=c_batch32 rc=0
+[retest 2026-08-29T20:18:43Z] >>> arm=d_gpu2 gpu=2 batch=16 
+[retest 2026-08-29T20:26:07Z] <<< arm=d_gpu2 rc=0
+[retest 2026-08-29T20:26:07Z] RETEST ARMS COMPLETE
+ALL CHECKPOINTS:
+                  contrast       mean_j  mean_s_ff  mean_ratio  max_ratio  n_cells  n_uninterpretable  n_matched_only
+       batch16 vs b_batch4 9.683660e-07   0.010195    0.000117   0.000282       26                  0               0
+      batch16 vs c_batch32 8.037529e-07   0.010195    0.000096   0.000265       26                  0               0
+         batch16 vs d_gpu2 0.000000e+00   0.010195    0.000000   0.000000       26                  0               0
+batch16 vs main_sweep_gpu0 0.000000e+00   0.010195    0.000000   0.000000       26                  0               0
+              fp32 vs bf16 9.478705e-04   0.010195    0.097252   0.208544       26                  0               1
+
+FINAL CHECKPOINT:
+                  contrast  mean_ratio  max_ratio  n_cells  n_uninterpretable
+       batch16 vs b_batch4    0.000683   0.002528       26                  0
+      batch16 vs c_batch32    0.000484   0.001884       26                  0
+         batch16 vs d_gpu2    0.000000   0.000000       26                  0
+batch16 vs main_sweep_gpu0    0.000000   0.000000       26                  0
+              fp32 vs bf16    0.315529   0.953609       26                  6
+
+VERDICT: family rankings valid only within an arm matched on: fp32 vs bf16. No effect from: batch16 vs b_batch4, batch16 vs c_batch32, batch16 vs d_gpu2, batch16 vs main_sweep_gpu0
+[retest 2026-08-29T20:26:07Z] RETEST DONE rc=0

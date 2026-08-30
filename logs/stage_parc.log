@@ -1,0 +1,72 @@
+[sweep 2026-08-29T15:57:38Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=404GB
+[sweep 2026-08-29T15:57:38Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T15:57:38Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T15:57:38Z]   run parc-pythia-seed0 on ds006239 (free=404GB)
+[sweep 2026-08-29T15:57:43Z]   FAIL parc-pythia-seed0/ds006239 rc=0 -- see logs/grid_ds006239_parc-pythia-seed0.log
+[sweep 2026-08-29T15:57:43Z]   run parc-pythia-seed1 on ds006239 (free=404GB)
+[sweep 2026-08-29T15:57:49Z]   FAIL parc-pythia-seed1/ds006239 rc=0 -- see logs/grid_ds006239_parc-pythia-seed1.log
+[sweep 2026-08-29T15:57:49Z]   run parc-pythia-seed2 on ds006239 (free=404GB)
+[sweep 2026-08-29T16:54:58Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=403GB
+[sweep 2026-08-29T16:54:58Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T16:54:58Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T16:54:58Z]   run parc-pythia-seed0 on ds006239 (free=403GB)
+[sweep 2026-08-29T16:57:17Z]   ok   parc-pythia-seed0/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T16:57:17Z]   run parc-pythia-seed1 on ds006239 (free=402GB)
+[sweep 2026-08-29T16:59:30Z]   ok   parc-pythia-seed1/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T16:59:31Z]   run parc-pythia-seed2 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:01:50Z]   ok   parc-pythia-seed2/ds006239 rc=0 rows=88 free=403GB
+[sweep 2026-08-29T17:01:50Z]   run parc-mamba-seed0 on ds006239 (free=403GB)
+[sweep 2026-08-29T17:04:25Z]   ok   parc-mamba-seed0/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:04:26Z]   run parc-mamba-seed1 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:06:57Z]   ok   parc-mamba-seed1/ds006239 rc=0 rows=88 free=403GB
+[sweep 2026-08-29T17:06:58Z]   run parc-mamba-seed2 on ds006239 (free=403GB)
+[sweep 2026-08-29T17:09:18Z]   ok   parc-mamba-seed2/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:09:18Z]   run parc-rwkv-seed0 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:11:38Z]   ok   parc-rwkv-seed0/ds006239 rc=0 rows=88 free=403GB
+[sweep 2026-08-29T17:11:39Z]   run parc-rwkv-seed1 on ds006239 (free=403GB)
+[sweep 2026-08-29T17:14:02Z]   ok   parc-rwkv-seed1/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:14:03Z]   run parc-rwkv-seed2 on ds006239 (free=402GB)
+[sweep 2026-08-29T17:16:27Z]   ok   parc-rwkv-seed2/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T17:16:27Z] === ds006239 done
+[sweep 2026-08-29T17:16:27Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T17:16:27Z]   run parc-pythia-seed0 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:18:19Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:18:19Z]   run parc-pythia-seed1 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:20:06Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:20:06Z]   run parc-pythia-seed2 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:21:52Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:21:52Z]   run parc-mamba-seed0 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:23:53Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:23:54Z]   run parc-mamba-seed1 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:25:57Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:25:57Z]   run parc-mamba-seed2 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:27:54Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:27:54Z]   run parc-rwkv-seed0 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:29:52Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:29:53Z]   run parc-rwkv-seed1 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:31:47Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:31:47Z]   run parc-rwkv-seed2 on ds003604 (free=402GB)
+[sweep 2026-08-29T17:33:38Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=132 free=402GB
+[sweep 2026-08-29T17:33:39Z] === ds003604 done
+[sweep 2026-08-29T17:33:39Z] === ds002236 | tasks: Phon Sem  | sessions: ses-11 ses-11+ ses-9 
+[sweep 2026-08-29T17:33:39Z]   run parc-pythia-seed0 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:35:24Z]   ok   parc-pythia-seed0/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:35:25Z]   run parc-pythia-seed1 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:37:03Z]   ok   parc-pythia-seed1/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:37:03Z]   run parc-pythia-seed2 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:38:42Z]   ok   parc-pythia-seed2/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:38:42Z]   run parc-mamba-seed0 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:40:30Z]   ok   parc-mamba-seed0/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:40:31Z]   run parc-mamba-seed1 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:42:28Z]   ok   parc-mamba-seed1/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:42:28Z]   run parc-mamba-seed2 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:44:18Z]   ok   parc-mamba-seed2/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:44:18Z]   run parc-rwkv-seed0 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:46:18Z]   ok   parc-rwkv-seed0/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:46:19Z]   run parc-rwkv-seed1 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:48:05Z]   ok   parc-rwkv-seed1/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:48:05Z]   run parc-rwkv-seed2 on ds002236 (free=402GB)
+[sweep 2026-08-29T17:49:50Z]   ok   parc-rwkv-seed2/ds002236 rc=0 rows=66 free=402GB
+[sweep 2026-08-29T17:49:50Z] === ds002236 done
+[sweep 2026-08-29T17:49:52Z] collected -> results/
+[sweep 2026-08-29T17:49:52Z] SWEEP COMPLETE | free=402GB

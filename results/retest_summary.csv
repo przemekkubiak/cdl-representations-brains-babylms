@@ -1,0 +1,6 @@
+contrast,mean_j,mean_s_ff,mean_ratio,max_ratio,n_cells,n_uninterpretable,n_matched_only
+batch16 vs b_batch4,1e-06,0.010195,0.000117,0.000282,26,0,0
+batch16 vs c_batch32,1e-06,0.010195,9.6e-05,0.000265,26,0,0
+batch16 vs d_gpu2,0.0,0.010195,0.0,0.0,26,0,0
+batch16 vs main_sweep_gpu0,0.0,0.010195,0.0,0.0,26,0,0
+fp32 vs bf16,0.000948,0.010195,0.097252,0.208544,26,0,1

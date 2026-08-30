@@ -1,0 +1,22 @@
+{
+  "n_cells": 26,
+  "cross_session_rsa": {
+    "min": 0.4925,
+    "median": 0.7535,
+    "max": 0.9729
+  },
+  "best_model_rsa_median": 0.03843,
+  "model_to_external_ratio_median": 0.0502,
+  "additive_control": {
+    "n_significant": 24,
+    "n_cells": 26,
+    "max_rsa": 0.362,
+    "median_rsa": 0.0685
+  },
+  "w_star": {
+    "median": 0.02,
+    "n_cells_with_wstar": 26,
+    "n_cells": 26
+  },
+  "verdict": "instrument has real power; the null about models STANDS"
+}

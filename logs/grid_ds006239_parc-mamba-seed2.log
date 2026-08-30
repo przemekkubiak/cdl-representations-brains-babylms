@@ -1,0 +1,57 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5014.51it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3457.29it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5386.62it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5185.43it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3666.31it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4588.39it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4175.62it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5002.20it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5910.08it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4800.31it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4736.08it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/alignment_parc-mamba-seed2.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

@@ -1,0 +1,38 @@
+[sweep 2026-08-29T15:59:36Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=404GB
+[sweep 2026-08-29T15:59:36Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T15:59:36Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T15:59:36Z]   skip pythia-70m-full (done: 89 lines)
+[sweep 2026-08-29T15:59:36Z]   skip pythia-160m-full (done: 89 lines)
+[sweep 2026-08-29T15:59:36Z]   run pythia-410m-full on ds006239 (free=404GB)
+[sweep 2026-08-29T16:02:49Z]   ok   pythia-410m-full/ds006239 rc=0 rows=88 free=402GB
+[sweep 2026-08-29T16:02:49Z]   run pythia-1b-full on ds006239 (free=402GB)
+[sweep 2026-08-29T16:08:50Z]   ok   pythia-1b-full/ds006239 rc=0 rows=88 free=401GB
+[sweep 2026-08-29T16:08:51Z]   run pythia-1.4b-full on ds006239 (free=401GB)
+[sweep 2026-08-29T16:16:57Z]   ok   pythia-1.4b-full/ds006239 rc=0 rows=88 free=398GB
+[sweep 2026-08-29T16:16:57Z] === ds006239 done
+[sweep 2026-08-29T16:16:57Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T16:16:57Z]   run pythia-70m-full on ds003604 (free=398GB)
+[sweep 2026-08-29T16:18:23Z]   ok   pythia-70m-full/ds003604 rc=0 rows=132 free=403GB
+[sweep 2026-08-29T16:18:23Z]   run pythia-160m-full on ds003604 (free=403GB)
+[sweep 2026-08-29T16:20:21Z]   ok   pythia-160m-full/ds003604 rc=0 rows=132 free=403GB
+[sweep 2026-08-29T16:20:21Z]   run pythia-410m-full on ds003604 (free=403GB)
+[sweep 2026-08-29T16:23:21Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=403GB
+[sweep 2026-08-29T16:23:22Z]   run pythia-1b-full on ds003604 (free=403GB)
+[sweep 2026-08-29T16:28:42Z]   ok   pythia-1b-full/ds003604 rc=0 rows=132 free=401GB
+[sweep 2026-08-29T16:28:42Z]   run pythia-1.4b-full on ds003604 (free=401GB)
+[sweep 2026-08-29T16:36:22Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=132 free=403GB
+[sweep 2026-08-29T16:36:22Z] === ds003604 done
+[sweep 2026-08-29T16:36:22Z] === ds002236 | tasks: Phon Sem  | sessions: ses-11 ses-11+ ses-9 
+[sweep 2026-08-29T16:36:22Z]   run pythia-70m-full on ds002236 (free=403GB)
+[sweep 2026-08-29T16:37:43Z]   ok   pythia-70m-full/ds002236 rc=0 rows=66 free=403GB
+[sweep 2026-08-29T16:37:43Z]   run pythia-160m-full on ds002236 (free=403GB)
+[sweep 2026-08-29T16:39:26Z]   ok   pythia-160m-full/ds002236 rc=0 rows=66 free=403GB
+[sweep 2026-08-29T16:39:26Z]   run pythia-410m-full on ds002236 (free=403GB)
+[sweep 2026-08-29T16:42:14Z]   ok   pythia-410m-full/ds002236 rc=0 rows=66 free=403GB
+[sweep 2026-08-29T16:42:14Z]   run pythia-1b-full on ds002236 (free=403GB)
+[sweep 2026-08-29T16:47:35Z]   ok   pythia-1b-full/ds002236 rc=0 rows=66 free=400GB
+[sweep 2026-08-29T16:47:35Z]   run pythia-1.4b-full on ds002236 (free=400GB)
+[sweep 2026-08-29T16:54:56Z]   ok   pythia-1.4b-full/ds002236 rc=0 rows=66 free=403GB
+[sweep 2026-08-29T16:54:56Z] === ds002236 done
+[sweep 2026-08-29T16:54:57Z] collected -> results/
+[sweep 2026-08-29T16:54:57Z] SWEEP COMPLETE | free=403GB

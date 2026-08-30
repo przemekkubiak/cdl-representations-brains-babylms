@@ -1,0 +1,56 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-pythia-seed0: 11 checkpoints | tasks=['Phon', 'Sem'] | probe=176
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4022.35it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-1 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 3823.17it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-2 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4535.11it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-3 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4830.27it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-5 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 3894.12it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-7 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4501.21it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-1 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4656.88it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-3 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4435.97it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-6 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 5056.92it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-1 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4117.11it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-1 (652.7M)
+
+=== jmichaelov/parc-pythia-seed0@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 5823.89it/s]
+  [cache] evicted jmichaelov/parc-pythia-seed0@checkpoint-4 (652.7M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/alignment_parc-pythia-seed0.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/isolation_parc-pythia-seed0.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/mechanistic_parc-pythia-seed0.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/mechanistic_layer_parc-pythia-seed0.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/behaviour_parc-pythia-seed0.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

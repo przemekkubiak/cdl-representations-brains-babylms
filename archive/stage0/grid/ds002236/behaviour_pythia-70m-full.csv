@@ -1,0 +1,13 @@
+family,model_ref,step,tokens,phenomenon,mp_accuracy
+pythia-70m-full,EleutherAI/pythia-70m@step0,0,0,Gram,0.5
+pythia-70m-full,EleutherAI/pythia-70m@step1000,1000,2097152000,Gram,0.75
+pythia-70m-full,EleutherAI/pythia-70m@step143000,143000,299892736000,Gram,0.7
+pythia-70m-full,EleutherAI/pythia-70m@step0,0,0,Phon,0.375
+pythia-70m-full,EleutherAI/pythia-70m@step1000,1000,2097152000,Phon,0.5416666666666666
+pythia-70m-full,EleutherAI/pythia-70m@step143000,143000,299892736000,Phon,0.4583333333333333
+pythia-70m-full,EleutherAI/pythia-70m@step0,0,0,Plaus,0.5
+pythia-70m-full,EleutherAI/pythia-70m@step1000,1000,2097152000,Plaus,0.75
+pythia-70m-full,EleutherAI/pythia-70m@step143000,143000,299892736000,Plaus,0.9
+pythia-70m-full,EleutherAI/pythia-70m@step0,0,0,Sem,0.5
+pythia-70m-full,EleutherAI/pythia-70m@step1000,1000,2097152000,Sem,0.7083333333333334
+pythia-70m-full,EleutherAI/pythia-70m@step143000,143000,299892736000,Sem,0.7083333333333334

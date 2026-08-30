@@ -1,0 +1,24 @@
+[sweep 2026-08-29T15:52:45Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=404GB
+[sweep 2026-08-29T15:52:45Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T15:52:45Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T15:52:45Z]   run pythia-70m-full on ds006239 (free=404GB)
+[sweep 2026-08-29T15:54:33Z]   ok   pythia-70m-full/ds006239 rc=0 rows=88 free=404GB
+[sweep 2026-08-29T15:54:33Z]   run pythia-160m-full on ds006239 (free=404GB)
+[sweep 2026-08-29T15:56:36Z]   ok   pythia-160m-full/ds006239 rc=0 rows=88 free=404GB
+[sweep 2026-08-29T15:56:36Z]   run pythia-410m-full on ds006239 (free=404GB)
+[sweep 2026-08-29T15:56:42Z]   FAIL pythia-410m-full/ds006239 rc=0 -- see logs/grid_ds006239_pythia-410m-full.log
+[sweep 2026-08-29T15:56:42Z]   run pythia-1b-full on ds006239 (free=404GB)
+[sweep 2026-08-29T15:56:48Z]   FAIL pythia-1b-full/ds006239 rc=0 -- see logs/grid_ds006239_pythia-1b-full.log
+[sweep 2026-08-29T15:56:49Z]   run pythia-1.4b-full on ds006239 (free=404GB)
+[sweep 2026-08-29T15:56:54Z]   FAIL pythia-1.4b-full/ds006239 rc=0 -- see logs/grid_ds006239_pythia-1.4b-full.log
+[sweep 2026-08-29T15:56:55Z] === ds006239 done
+[sweep 2026-08-29T15:56:55Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T15:56:55Z]   run pythia-70m-full on ds003604 (free=404GB)
+[sweep 2026-08-29T15:57:01Z]   FAIL pythia-70m-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-70m-full.log
+[sweep 2026-08-29T15:57:01Z]   run pythia-160m-full on ds003604 (free=404GB)
+[sweep 2026-08-29T15:57:07Z]   FAIL pythia-160m-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-160m-full.log
+[sweep 2026-08-29T15:57:07Z]   run pythia-410m-full on ds003604 (free=404GB)
+[sweep 2026-08-29T15:57:13Z]   FAIL pythia-410m-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-410m-full.log
+[sweep 2026-08-29T15:57:14Z]   run pythia-1b-full on ds003604 (free=404GB)
+[sweep 2026-08-29T15:57:20Z]   FAIL pythia-1b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-1b-full.log
+[sweep 2026-08-29T15:57:20Z]   run pythia-1.4b-full on ds003604 (free=404GB)

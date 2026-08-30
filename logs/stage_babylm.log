@@ -1,0 +1,34 @@
+[sweep 2026-08-29T18:34:50Z] START | gpu=0 | HF_HOME=/local/scratch/sas245/brainalign-evals/hf_home | free=399GB
+[sweep 2026-08-29T18:34:50Z] datasets: ds006239 ds003604 ds002236 | max_ckpt=12 | floor=150GB
+[sweep 2026-08-29T18:34:50Z] === ds006239 | tasks: Orth Phon Sem SemLocal  | sessions: ses-11 ses-11+ 
+[sweep 2026-08-29T18:34:50Z]   run babylm-gpt2-3 on ds006239 (free=399GB)
+[sweep 2026-08-29T18:36:16Z]   ok   babylm-gpt2-3/ds006239 rc=0 rows=72 free=399GB
+[sweep 2026-08-29T18:36:16Z]   run babylm-gpt2-5 on ds006239 (free=399GB)
+[sweep 2026-08-29T18:37:43Z]   ok   babylm-gpt2-5/ds006239 rc=0 rows=72 free=399GB
+[sweep 2026-08-29T18:37:43Z]   run babylm-gpt2-7 on ds006239 (free=399GB)
+[sweep 2026-08-29T18:39:06Z]   ok   babylm-gpt2-7/ds006239 rc=0 rows=72 free=399GB
+[sweep 2026-08-29T18:39:07Z]   run babylm-gpt2 on ds006239 (free=399GB)
+[sweep 2026-08-29T18:40:29Z]   ok   babylm-gpt2/ds006239 rc=0 rows=72 free=399GB
+[sweep 2026-08-29T18:40:30Z] === ds006239 done
+[sweep 2026-08-29T18:40:30Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-08-29T18:40:30Z]   run babylm-gpt2-3 on ds003604 (free=399GB)
+[sweep 2026-08-29T18:41:28Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=108 free=402GB
+[sweep 2026-08-29T18:41:29Z]   run babylm-gpt2-5 on ds003604 (free=402GB)
+[sweep 2026-08-29T18:42:28Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=108 free=402GB
+[sweep 2026-08-29T18:42:28Z]   run babylm-gpt2-7 on ds003604 (free=402GB)
+[sweep 2026-08-29T18:43:27Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=108 free=402GB
+[sweep 2026-08-29T18:43:27Z]   run babylm-gpt2 on ds003604 (free=402GB)
+[sweep 2026-08-29T18:44:34Z]   ok   babylm-gpt2/ds003604 rc=0 rows=108 free=402GB
+[sweep 2026-08-29T18:44:34Z] === ds003604 done
+[sweep 2026-08-29T18:44:34Z] === ds002236 | tasks: Phon Sem  | sessions: ses-11 ses-11+ ses-9 
+[sweep 2026-08-29T18:44:34Z]   run babylm-gpt2-3 on ds002236 (free=402GB)
+[sweep 2026-08-29T18:45:32Z]   ok   babylm-gpt2-3/ds002236 rc=0 rows=54 free=402GB
+[sweep 2026-08-29T18:45:32Z]   run babylm-gpt2-5 on ds002236 (free=402GB)
+[sweep 2026-08-29T18:46:33Z]   ok   babylm-gpt2-5/ds002236 rc=0 rows=54 free=402GB
+[sweep 2026-08-29T18:46:33Z]   run babylm-gpt2-7 on ds002236 (free=402GB)
+[sweep 2026-08-29T18:47:31Z]   ok   babylm-gpt2-7/ds002236 rc=0 rows=54 free=402GB
+[sweep 2026-08-29T18:47:31Z]   run babylm-gpt2 on ds002236 (free=402GB)
+[sweep 2026-08-29T18:48:31Z]   ok   babylm-gpt2/ds002236 rc=0 rows=54 free=402GB
+[sweep 2026-08-29T18:48:31Z] === ds002236 done
+[sweep 2026-08-29T18:48:32Z] collected -> results/
+[sweep 2026-08-29T18:48:32Z] SWEEP COMPLETE | free=402GB
