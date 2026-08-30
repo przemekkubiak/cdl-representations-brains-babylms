@@ -17,7 +17,47 @@ syllable counts, an acoustic model of the audio where the stimuli are
 audio, and the study's own condition contrast — each tested by a
 permutation test that shuffles stimulus identity.
 
-**GATE: NOT RUN.** Treat everything below as provisional.
+**GATE: FAILED. 0/108 stimulus tests are significant** after Holm
+correction — not the acoustic model of the audio the children actually
+heard, not the study's own experimental contrast.
+
+**The alignment numbers below are therefore uninterpretable as
+evidence about language models.** They measure a representational
+geometry that does not demonstrably encode the stimuli. They are
+published for completeness and for whoever fixes the estimator, not as
+a result. Do not cite them as evidence that models fail to align with
+the developing brain.
+
+Measured cause, from `control/`:
+
+- RDM effective rank: **5** of 66 stimuli
+- voxels per pattern: 188,036
+- leading component vs the pattern's global signal: |ρ| = 0.79
+
+This reproduces what was found on ds003604: the per-stimulus GLM
+betas are near-degenerate, so the RDM cannot express stimulus-level
+structure regardless of what it is compared against. The estimator
+is shared across datasets, which is why the failure repeats.
+
+## Scope of this run: brain-side only, no language-model numbers exist here
+
+This was a local (macOS) smoke test of `run_new_datasets.sh`, not a
+completed replication. It validated the brain-side pipeline for real --
+the 12 session RDMs and the gate result above are genuine, computed from
+real ds003604 BOLD data -- but it never reached the language-model
+alignment grid. Every checkpoint load failed on this machine for
+environment reasons unrelated to the science: first an `HF_HOME=/root/...`
+path that isn't writable off the shared GPU box this pipeline is normally
+run on (fixed in `env_brainalign.sh`), then underneath that, this local
+venv's Python 3.9 is incompatible with the pinned `transformers` release's
+use of `X | None` type unions, which need Python 3.10+ (not yet fixed).
+
+Consequently **`alignment_by_checkpoint.csv`, `alignment_by_family.csv`,
+`alignment_by_cell.csv`, `scale_ladder.csv`, and every figure listed below
+do not exist in this results directory.** The real replication run happens
+on the GPU cluster `env_brainalign.sh` is written for; this smoke test's
+only job was to confirm ds003604 flows through the pipeline's mechanics
+(masking, RDM-building, the gate) correctly, which it did.
 
 ## What was built
 

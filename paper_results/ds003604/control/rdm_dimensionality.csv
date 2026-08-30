@@ -1,0 +1,13 @@
+task,session,n_stim,group_rdm_effective_rank,subject_rdm_rank_median,subject_rdm_rank_min,subject_rdm_rank_max,ceiling
+Gram,ses-5,60,7,7,6,7,0.61881426250281
+Gram,ses-7,60,7,6,6,7,
+Gram,ses-9,60,7,7,7,7,0.829904356215638
+Phon,ses-5,72,4,4,4,4,0.7492213218751145
+Phon,ses-7,72,4,4,4,4,0.8927448277799531
+Phon,ses-9,72,4,4,4,4,0.7739011160673432
+Plaus,ses-5,60,7,7,7,7,0.7389629020032769
+Plaus,ses-7,60,7,7,7,7,0.8234960438250292
+Plaus,ses-9,60,7,7,6,7,0.8290809377123126
+Sem,ses-5,72,4,4,4,4,0.8398308589546589
+Sem,ses-7,72,4,4,4,4,0.9343540658504683
+Sem,ses-9,72,4,4,4,4,0.8256569945001432

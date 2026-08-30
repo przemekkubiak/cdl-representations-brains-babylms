@@ -1,6 +1,6 @@
 {
-  "group_rdm_effective_rank_median": null,
-  "n_stim_median": null,
+  "group_rdm_effective_rank_median": 5,
+  "n_stim_median": 66,
   "pattern_effective_rank_median": 3,
   "pattern_n_voxels_median": 188036,
   "frac_voxels_near_constant_median": 0.0,
