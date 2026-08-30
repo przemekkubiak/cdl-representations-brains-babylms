@@ -1,0 +1,13 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Gram,ses-5,data/processed/fmri_wrn/ds003604/Gram/session_rdm_ses-5.npz,True,60,3,0.6188149341917762,0.7949048795228841,0.052108627769547874,3.0
+Gram,ses-7,data/processed/fmri_wrn/ds003604/Gram/session_rdm_ses-7.npz,True,60,2,,,,
+Gram,ses-9,data/processed/fmri_wrn/ds003604/Gram/session_rdm_ses-9.npz,True,60,3,0.8299041828402615,0.913249569122025,0.009661461689339568,3.0
+Phon,ses-5,data/processed/fmri_wrn/ds003604/Phon/session_rdm_ses-5.npz,True,72,3,0.7492212470805221,0.8616765079805665,0.0502316697415892,3.0
+Phon,ses-7,data/processed/fmri_wrn/ds003604/Phon/session_rdm_ses-7.npz,True,72,3,0.8927447784245571,0.9352511214248698,0.014280911122800602,3.0
+Phon,ses-9,data/processed/fmri_wrn/ds003604/Phon/session_rdm_ses-9.npz,True,72,3,0.773901101329208,0.8908685843155966,0.015923086408697645,3.0
+Plaus,ses-5,data/processed/fmri_wrn/ds003604/Plaus/session_rdm_ses-5.npz,True,60,3,0.7389626187105196,0.8627226785412826,0.03492677996136853,3.0
+Plaus,ses-7,data/processed/fmri_wrn/ds003604/Plaus/session_rdm_ses-7.npz,True,60,4,0.8234964179986246,0.8908210771979447,0.03000473143840327,4.0
+Plaus,ses-9,data/processed/fmri_wrn/ds003604/Plaus/session_rdm_ses-9.npz,True,60,4,0.8290806854003427,0.8978252836521176,0.02715469334606283,4.0
+Sem,ses-5,data/processed/fmri_wrn/ds003604/Sem/session_rdm_ses-5.npz,True,72,3,0.8398309588276837,0.917687828360565,0.034721509839748046,3.0
+Sem,ses-7,data/processed/fmri_wrn/ds003604/Sem/session_rdm_ses-7.npz,True,72,4,0.9343539239060924,0.9575136684126655,0.01580065652124096,4.0
+Sem,ses-9,data/processed/fmri_wrn/ds003604/Sem/session_rdm_ses-9.npz,True,72,3,0.8256568128913989,0.9142166469558806,0.013619512514243632,3.0
