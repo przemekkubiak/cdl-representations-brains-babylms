@@ -32,7 +32,20 @@ commit_push() {   # commit_push <dir> <message>
     git -C "$d" -c user.name=suchirsalhan -c user.email=suchirsalhan@gmail.com \
       commit -q -m "$m" >/dev/null 2>&1 && log "committed in $(basename "$d")"
   fi
-  git -C "$d" push origin HEAD >/dev/null 2>&1 && log "pushed $(basename "$d")" \
+  # brainalign-evals and brainalign-evals/pipeline are two checkouts of the SAME
+  # remote branch tracking different file sets, so they race each other. Rebase
+  # onto the remote before pushing rather than forcing: a force here would drop
+  # whichever checkout pushed last, which is exactly the information loss this
+  # loop exists to prevent. If the rebase cannot proceed, abort it and keep the
+  # local commit -- the work stays safe on disk and in local history, and the
+  # next cycle tries again.
+  git -C "$d" fetch origin >/dev/null 2>&1
+  if ! git -C "$d" rebase origin/main >/dev/null 2>&1; then
+    git -C "$d" rebase --abort >/dev/null 2>&1
+    log "rebase conflict in $(basename "$d") -- commit kept locally, not pushed"
+    return
+  fi
+  git -C "$d" push origin HEAD:main >/dev/null 2>&1 && log "pushed $(basename "$d")" \
     || log "push failed for $(basename "$d") (will retry next cycle)"
 }
 
