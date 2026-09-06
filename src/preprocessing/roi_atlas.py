@@ -53,17 +53,42 @@ ROI_SETS: Dict[str, List[str]] = {
     # region -- a useful comparison/control area (TODO.md SS3: is any residual
     # alignment specific to language regions, or generic to any cortex?).
     "motor": ["Precentral_L", "Precentral_R"],
-    # Reproduces run_analysis.py's DEFAULT_LANGUAGE_ROIS = [7, 8, 9, 10, 11, 12,
-    # 67, 68, 69, 70, 85, 86] as the AAL(SPM12) region NAMES those numbers
-    # actually resolve to today (via the position fallback described above),
-    # so callers asking for "language" get an unchanged region set, addressed
-    # by name so it cannot silently drift if the atlas's internal ordering
-    # ever changes.
+    # THE CANONICAL LEFT-LATERALISED LANGUAGE NETWORK. Left inferior frontal
+    # gyrus (Broca: pars opercularis, triangularis, orbitalis), lateral and
+    # anterior temporal cortex, and the inferior parietal language areas.
+    # This is what a reader means by "language ROI" and what the masking
+    # standard in DATASETS.md section 10 is for.
+    #
+    # It deliberately REPLACES the previous definition, which was derived from
+    # run_analysis.py's DEFAULT_LANGUAGE_ROIS = [7,8,9,10,11,12,67,68,69,70,
+    # 85,86] and had two defects. First, those numbers are POSITIONS in the AAL
+    # label list, whose entry 0 is 'Background', so resolving them with
+    # labels[i-1] returned each region's predecessor -- Angular_R for 67 where
+    # the atlas has Precuneus_L, Temporal_Pole_Sup_R for 85 where it has
+    # Temporal_Mid_L, and so on for all twelve. Second, and more seriously, even
+    # resolved correctly those indices are not a language network: they include
+    # Precuneus_L/R (default-mode) and Paracentral_Lobule_L/R (sensorimotor),
+    # they are bilateral rather than left-lateralised, and they omit Broca's
+    # pars triangularis and orbitalis, superior temporal cortex, the angular
+    # gyrus and the supramarginal gyrus entirely. Masking to it and calling the
+    # result "language" would have mislabelled the result, not merely narrowed
+    # it. No results had been produced under the old definition when this was
+    # corrected (roi-language was 'not run' in results/coverage_matrix.csv), so
+    # nothing published is affected.
     "language": [
-        "Frontal_Sup_Orb_R", "Frontal_Mid_L", "Frontal_Mid_R",
-        "Frontal_Mid_Orb_L", "Frontal_Mid_Orb_R", "Frontal_Inf_Oper_L",
-        "Angular_R", "Precuneus_L", "Precuneus_R", "Paracentral_Lobule_L",
-        "Temporal_Pole_Sup_R", "Temporal_Mid_L",
+        "Frontal_Inf_Oper_L", "Frontal_Inf_Tri_L", "Frontal_Inf_Orb_L",
+        "Temporal_Sup_L", "Temporal_Pole_Sup_L", "Temporal_Mid_L",
+        "Temporal_Pole_Mid_L", "Angular_L", "SupraMarginal_L",
+    ],
+    # The old set, with the off-by-one corrected, kept ONLY so the earlier
+    # whole-brain analyses that used DEFAULT_LANGUAGE_ROIS can be reproduced
+    # exactly. Do not use it for new work -- see the note above for why it is
+    # not a language network.
+    "language_aal_legacy": [
+        "Frontal_Mid_L", "Frontal_Mid_R", "Frontal_Mid_Orb_L",
+        "Frontal_Mid_Orb_R", "Frontal_Inf_Oper_L", "Frontal_Inf_Oper_R",
+        "Precuneus_L", "Precuneus_R", "Paracentral_Lobule_L",
+        "Paracentral_Lobule_R", "Temporal_Mid_L", "Temporal_Mid_R",
     ],
 }
 # "phonology" and "all" are convenience UNIONS of the sets above, not
