@@ -1,10 +1,10 @@
-# Brain–language-model alignment: ds002236
+# Brain–language-model alignment: ds002236 (whole-brain)
 
 Lytle et al. 2020 — orthographic, phonological and semantic word processing in school-aged children (8.7–15.5), auditory and visual.
 
 - Paper: https://pubmed.ncbi.nlm.nih.gov/31956678/
 - Data: https://openneuro.org/datasets/ds002236/versions/1.0.1
-- Generated: 2026-08-28
+- Generated: 2026-09-06
 - Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms
 
 ## Read this first: does the measurement work?
@@ -17,7 +17,7 @@ syllable counts, an acoustic model of the audio where the stimuli are
 audio, and the study's own condition contrast — each tested by a
 permutation test that shuffles stimulus identity.
 
-**GATE: FAILED. 0/6 stimulus tests are significant** after Holm
+**GATE: FAILED. 0/30 stimulus tests are significant** after Holm
 correction — not the acoustic model of the audio the children actually
 heard, not the study's own experimental contrast.
 
@@ -30,7 +30,7 @@ the developing brain.
 
 Measured cause, from `control/`:
 
-- RDM effective rank: **54** of 72 stimuli
+- RDM effective rank: **56** of 84 stimuli
 
 
 Note that this is NOT ds003604's failure mode. There, the RDM
@@ -45,49 +45,51 @@ stimulus files present, and reports zero features if they are not.
 
 ## What was built
 
-6 task × session cells, each an RDM over the stimuli
+12 task × session cells, each an RDM over the stimuli
 shared by that cell's subjects, with voxel patterns z-scored **within
 run** before aggregation (without that, the RDM measures scanner drift
 rather than language) and an inter-subject noise ceiling.
 
 | task   | session   |   n_stim |   ceiling_lower |   ceiling_upper |   ceiling_n |
 |:-------|:----------|---------:|----------------:|----------------:|------------:|
-| Phon   | ses-11+   |       96 |        0.302747 |        0.40391  |          20 |
-| Phon   | ses-11    |       96 |        0.234711 |        0.411819 |          10 |
-| Phon   | ses-9     |       96 |        0.255574 |        0.441516 |           9 |
-| Sem    | ses-11+   |       48 |        0.436333 |        0.506525 |          21 |
-| Sem    | ses-11    |       48 |        0.390186 |        0.542448 |           8 |
-| Sem    | ses-9     |       48 |        0.344433 |        0.482067 |          11 |
+| Phon   | ses-11+   |       96 |        0.303548 |        0.529183 |           6 |
+| Phon   | ses-11    |       96 |      nan        |      nan        |         nan |
+| Phon   | ses-9     |       96 |        0.202277 |        0.532127 |           4 |
+| Sem    | ses-11+   |       72 |        0.391394 |        0.560581 |           7 |
+| Sem    | ses-11    |       72 |      nan        |      nan        |         nan |
+| Sem    | ses-9     |       72 |        0.276255 |        0.633923 |           3 |
+| Phon   | ses-11+   |       96 |        0.282138 |        0.668909 |           3 |
+| Phon   | ses-11    |       96 |      nan        |      nan        |         nan |
+| Phon   | ses-9     |       96 |      nan        |      nan        |         nan |
+| Sem    | ses-11+   |       72 |        0.273181 |        0.661182 |           3 |
+| Sem    | ses-11    |       72 |      nan        |      nan        |         nan |
+| Sem    | ses-9     |       72 |      nan        |      nan        |         nan |
 
-Model grid: **15 families**, 524 alignment rows across 2 cells.
+Model grid: **11 families**, 712 alignment rows across 2 cells.
 
 | | |
 |---|---|
-| mean noise ceiling | 0.327 |
-| best alignment anywhere | 0.1139 |
-| as a fraction of ceiling | 44.5% |
-| families equivalent to zero (TOST ±0.05) | 0/15 |
-| Pythia scale trend | ρ = +0.148, p = 0.68 |
+| mean noise ceiling | 0.288 |
+| best alignment anywhere | 0.1060 |
+| as a fraction of ceiling | 52.4% |
+| families equivalent to zero (TOST ±0.05) | 0/11 |
+| Pythia scale trend | ρ = -0.025, p = 0.95 |
 
 ### Per family
 
 | family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
 |:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
-| babylm-gpt2           |               9 |     0.0287 |   0.0059 |        0.0534 |                    0.1689 |                  nan |
-| pico-decoder-medium   |              21 |     0.0276 |   0.0346 |        0.1139 |                    0.4455 |                  nan |
-| pythia-1b-full        |              21 |     0.0217 |   0.0268 |        0.0762 |                    0.298  |                  nan |
-| pico-decoder-small    |              21 |     0.0213 |   0.0167 |        0.1044 |                    0.4086 |                  nan |
-| babylm-gpt2-7         |               9 |     0.0207 |   0.0065 |        0.0445 |                    0.1292 |                  nan |
-| pythia-410m-full      |              21 |     0.0188 |   0.0139 |        0.0741 |                    0.2901 |                  nan |
-| babylm-gpt2-5         |               9 |     0.0186 |   0.0034 |        0.0368 |                    0.116  |                  nan |
-| babylm-gpt2-3         |               9 |     0.018  |   0.007  |        0.0432 |                    0.1346 |                  nan |
-| pico-decoder-large    |              21 |     0.0179 |   0.0334 |        0.0796 |                    0.3116 |                  nan |
-| beetle-fineweb3-eng   |              19 |     0.0177 |   0.0213 |        0.0778 |                    0.3044 |                  nan |
-| pythia-160m-full      |              21 |     0.0155 |   0.012  |        0.0716 |                    0.2801 |                  nan |
-| pico-decoder-tiny     |              21 |     0.014  |   0.0121 |        0.0758 |                    0.2967 |                  nan |
-| pythia-1.4b-full      |              21 |     0.0125 |   0.0271 |        0.0946 |                    0.37   |                  nan |
-| pythia-70m-full       |              21 |     0.0121 |   0.0155 |        0.0753 |                    0.2947 |                  nan |
-| beetle-humanscale-eng |              18 |     0.0101 |   0.006  |        0.0477 |                    0.1865 |                  nan |
+| babylm-gpt2-7         |               9 |     0.0335 |   0.0223 |        0.0548 |                    0.2708 |                  nan |
+| babylm-gpt2-3         |               9 |     0.0325 |   0.0213 |        0.0612 |                    0.3025 |                  nan |
+| babylm-gpt2           |               9 |     0.0301 |   0.0176 |        0.0498 |                    0.2464 |                  nan |
+| babylm-gpt2-5         |               9 |     0.0294 |   0.0204 |        0.0575 |                    0.284  |                  nan |
+| pythia-1b-full        |              21 |     0.0259 |   0.027  |        0.0821 |                    0.4059 |                  nan |
+| pythia-1.4b-full      |              21 |     0.0205 |   0.025  |        0.106  |                    0.524  |                  nan |
+| pythia-410m-full      |              21 |     0.0203 |   0.0179 |        0.0715 |                    0.3537 |                  nan |
+| pythia-70m-full       |              21 |     0.0164 |   0.0105 |        0.075  |                    0.3709 |                  nan |
+| pythia-160m-full      |              21 |     0.0133 |   0.0092 |        0.0759 |                    0.3753 |                  nan |
+| beetle-humanscale-eng |              18 |     0.0131 |   0.0131 |        0.0479 |                    0.2367 |                  nan |
+| beetle-fineweb3-eng   |              19 |    -0.0008 |   0.0017 |        0.0556 |                    0.2747 |                  nan |
 
 ## Dataset-specific notes
 

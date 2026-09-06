@@ -58,6 +58,32 @@ rather than language) and an inter-subject noise ceiling.
 | Phon   | ses-7     |       96 |      nan        |      nan        |         nan |
 | Phon   | ses-9     |       96 |        0.183971 |        0.58974  |           3 |
 
+Model grid: **11 families**, 356 alignment rows across 2 cells.
+
+| | |
+|---|---|
+| mean noise ceiling | 0.260 |
+| best alignment anywhere | 0.0431 |
+| as a fraction of ceiling | 23.4% |
+| families equivalent to zero (TOST ±0.05) | 0/11 |
+| Pythia scale trend | ρ = +0.222, p = 0.54 |
+
+### Per family
+
+| family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
+|:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
+| pythia-1b-full        |              21 |     0.004  |   0.0096 |        0.0257 |                    0.096  |                  nan |
+| pythia-160m-full      |              21 |     0.0021 |   0.009  |        0.033  |                    0.1547 |                  nan |
+| pythia-1.4b-full      |              21 |     0.0002 |   0.0078 |        0.0262 |                    0.1423 |                  nan |
+| pythia-410m-full      |              21 |    -0.0007 |   0.013  |        0.0265 |                    0.1376 |                  nan |
+| beetle-humanscale-eng |              18 |    -0.003  |   0.0092 |        0.0347 |                    0.1884 |                  nan |
+| beetle-fineweb3-eng   |              19 |    -0.0035 |   0.0012 |        0.0202 |                    0.1    |                  nan |
+| pythia-70m-full       |              21 |    -0.0035 |   0.0107 |        0.0339 |                    0.1842 |                  nan |
+| babylm-gpt2           |               9 |    -0.0057 |   0.0019 |        0.0185 |                    0.1004 |                  nan |
+| babylm-gpt2-3         |               9 |    -0.0342 |   0.0021 |        0.0413 |                    0.2247 |                  nan |
+| babylm-gpt2-5         |               9 |    -0.0348 |   0.0035 |        0.0418 |                    0.2271 |                  nan |
+| babylm-gpt2-7         |               9 |    -0.0359 |   0.0034 |        0.0431 |                    0.2344 |                  nan |
+
 ## Dataset-specific notes
 
 The only longitudinal dataset here: the same children at two timepoints (ses-T1, ses-T2), which is the closest real analogue to a language model's checkpoint trajectory. Per-subject age at scan is available. Trial types cross orthographic with phonological similarity (O+P+/O+P-/O-P+/O-P-), so Phon and Orth contrasts are decorrelated by design. ses-T2 has only the VV tasks.
