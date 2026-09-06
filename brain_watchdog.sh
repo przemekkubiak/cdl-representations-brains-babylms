@@ -13,9 +13,9 @@ newest_min() { local d="$1"; [ -e "$d" ] || { echo 99999; return; }
   [ -n "$t" ] && echo 0 || echo "$STALL_MIN"; }
 
 say "started; stall threshold ${STALL_MIN}m"
-while tmux has-session -t brainall 2>/dev/null; do
-  cur=$(grep -c "^\[brainall.*START" logs/brain_all.log 2>/dev/null || echo 0)
-  last=$(grep -E "^\[brainall.*(START|OK|FAIL|SKIP)" logs/brain_all.log 2>/dev/null | tail -1)
+while tmux has-session -t brainwaves 2>/dev/null; do
+  cur=$(grep -c "^\[waves.*START" logs/brain_waves.log 2>/dev/null || echo 0)
+  last=$(grep -E "^\[waves.*(START|OK|FAIL|SKIP)" logs/brain_waves.log 2>/dev/null | tail -1)
   proc=$(find data/processed/fmri -type f -newermt "-${STALL_MIN} minutes" 2>/dev/null | wc -l)
   logs_moved=$(find logs -name "brain_all_*.log" -newermt "-${STALL_MIN} minutes" 2>/dev/null | wc -l)
   if [ "$proc" -eq 0 ] && [ "$logs_moved" -eq 0 ]; then
