@@ -54,3 +54,280 @@ Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/behaviour_parc-rwkv-s
   (no rows for ablation_behaviour)
 
 Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-rwkv-seed1: 11 checkpoints | tasks=['Phon'] | probe=176
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3974.83it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3942.78it/s]
+  tokenizer: AutoTokenizer failed (ReadTimeout); built PreTrainedTokenizerFast from tokenizer.json
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-2 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4910.61it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2789.37it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-5 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3283.48it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-7 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5429.42it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4302.57it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4851.08it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-6 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5851.27it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4497.59it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4107.27it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-4 (681.0M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_parc-rwkv-seed1.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_parc-rwkv-seed1.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_parc-rwkv-seed1.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_parc-rwkv-seed1.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-rwkv-seed1: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4181.59it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4289.41it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-2 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4068.30it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5628.92it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-5 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3324.11it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-7 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4020.46it/s]
+Could not set the permissions on the file '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-rwkv-seed1/blobs/23a866d1a6a344f989f6c5521ec5110d0a70ac1410ee9f0476d9b5112b9f89b0.c7efc9e2.incomplete'. Error: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-rwkv-seed1/blobs/tmp_4898f691-7652-46c7-9a15-ebd71c5c249f'.
+Continuing without setting permissions.
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-300 (step=300) ===
+  ! failed to load jmichaelov/parc-rwkv-seed1@checkpoint-300: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-rwkv-seed1/blobs/23a866d1a6a344f989f6c5521ec5110d0a70ac1410ee9f0476d9b5112b9f89b0.c7efc9e2.incomplete'
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4974.20it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-6 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5814.87it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3162.43it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3753.13it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-4 (681.0M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_parc-rwkv-seed1.csv  (120 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_parc-rwkv-seed1.csv  (40 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_parc-rwkv-seed1.csv  (10 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_parc-rwkv-seed1.csv  (120 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_parc-rwkv-seed1.csv  (40 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-rwkv-seed1: 11 checkpoints | tasks=['Sem'] | probe=176
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 6847.19it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4954.96it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-2 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5156.27it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4439.90it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-5 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4308.96it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-7 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4070.29it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5702.55it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4691.90it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-6 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4657.61it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 5167.23it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4263.09it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-4 (681.0M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_parc-rwkv-seed1.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_parc-rwkv-seed1.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_parc-rwkv-seed1.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_parc-rwkv-seed1.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-rwkv-seed1: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4300.02it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3193.63it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-2 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2794.97it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 6225.62it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-5 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4378.29it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-7 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2866.69it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4542.81it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4050.67it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-6 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4624.94it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2992.22it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3582.48it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-4 (681.0M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/alignment_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/isolation_parc-rwkv-seed1.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_parc-rwkv-seed1.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_layer_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/behaviour_parc-rwkv-seed1.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> parc-rwkv-seed1: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3459.80it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3773.23it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-2 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2814.65it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4228.92it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-5 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2773.54it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-7 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4660.57it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2701.37it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-3 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3084.24it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-6 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 2762.51it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 4427.27it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-1 (681.0M)
+
+=== jmichaelov/parc-rwkv-seed1@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/222 [00:00<?, ?it/s]Loading weights: 100%|██████████| 222/222 [00:00<00:00, 3963.81it/s]
+  [cache] evicted jmichaelov/parc-rwkv-seed1@checkpoint-4 (681.0M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_parc-rwkv-seed1.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_parc-rwkv-seed1.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_parc-rwkv-seed1.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_parc-rwkv-seed1.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

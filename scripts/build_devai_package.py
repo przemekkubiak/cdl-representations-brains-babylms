@@ -410,6 +410,42 @@ def build(dataset: str, out: Path, variant: str = "within-run-normalised",
             per_cell.round(6).to_csv(out / "overall" / "parc_reference.csv", index=False)
             null_rows = per_cell.to_dict("records")
 
+            # ---- the PARC arm in its own right: architecture x seed --------
+            # The same aggregate-first rule: mean over the 11 checkpoints per
+            # (family, cell), then the spread ACROSS THE THREE SEEDS within an
+            # architecture. Pooling raw checkpoint rows would shrink that sd.
+            pc = parc.copy()
+            pc["arch"] = pc.family.str.extract(r"parc-([a-z]+)-seed")
+            pc["seed"] = pc.family.str.extract(r"seed(\d)").astype(int)
+            pcell = (pc.groupby(["arch", "seed", "task", "session"]).rsa
+                       .agg(rsa_mean="mean", n_checkpoints="size").reset_index()
+                       .merge(ceil[["task", "session", "ceiling_lower"]],
+                              on=["task", "session"], how="left"))
+            pcell["frac_of_ceiling"] = pcell.rsa_mean / pcell.ceiling_lower
+            pcell.round(6).to_csv(out / "overall" / "parc_by_seed_cell.csv", index=False)
+
+            seed_lvl = pcell.groupby(["arch", "seed"]).agg(
+                n_cells=("rsa_mean", "size"), rsa_mean=("rsa_mean", "mean"),
+                frac_of_ceiling_mean=("frac_of_ceiling", "mean")).reset_index()
+            srows = []
+            for arch, sub in seed_lvl.groupby("arch"):
+                sd = float(sub.rsa_mean.std(ddof=1))
+                n = len(sub)
+                srows.append(dict(
+                    arch=arch, n_seeds=n, n_cells=int(sub.n_cells.iloc[0]),
+                    rsa_mean=float(sub.rsa_mean.mean()),
+                    rsa_sd_across_seeds=sd,
+                    rsa_sem_across_seeds=sd / (n ** 0.5),
+                    # t(2) = 4.303 for a 95% interval on three seeds
+                    rsa_ci95_lo=float(sub.rsa_mean.mean()) - 4.303 * sd / (n ** 0.5),
+                    rsa_ci95_hi=float(sub.rsa_mean.mean()) + 4.303 * sd / (n ** 0.5),
+                    frac_of_ceiling_mean=float(sub.frac_of_ceiling_mean.mean()),
+                    frac_of_ceiling_sd_across_seeds=float(
+                        sub.frac_of_ceiling_mean.std(ddof=1)),
+                ))
+            pd.DataFrame(srows).round(6).to_csv(
+                out / "overall" / "parc_seed_summary.csv", index=False)
+
     # ---- the random-init reference: step-0 checkpoints ----------------------
     # These ARE untrained networks -- Pythia/PolyPythia publish step0 as the
     # initialisation before any optimiser step, and the sweep measured 15 of
@@ -535,6 +571,30 @@ def build(dataset: str, out: Path, variant: str = "within-run-normalised",
 # --------------------------------------------------------------------------- #
 def readme(dataset: str, stats: dict) -> str:
     s = STUDY[dataset]
+    # The positive-control story differs by dataset and must not be shared:
+    # ds003604 has its own twelve-control battery (`corrected-sweep/control/` in
+    # BrainAlign/cdl-devai-results); the other two have a single edit-distance
+    # control with empty gate labels. Emitting the latter text on the ds003604
+    # card asserts a defect that dataset does not have.
+    if dataset == "ds003604":
+        control_par = (
+            "**1b. The positive control on THIS dataset is a full twelve-control battery, and it is\n"
+            "near-null on stimulus properties.** `control/control_by_cell.csv` in\n"
+            "[`BrainAlign/cdl-devai-results`](https://huggingface.co/datasets/BrainAlign/cdl-devai-results)\n"
+            "runs 12 controls over these cells in both RDM variants. In the within-run-normalised\n"
+            "(corrected) variant used here, the ten stimulus-property controls \u2014 acoustic spectrum and\n"
+            "envelope, duration, intensity, word length, syllables, phonemes, log frequency, edit\n"
+            "distance, and the study's own condition contrast \u2014 are significant in **9 of 108** control\n"
+            "\u00d7 cell permutation tests at an uncorrected p < 0.05, and in **0** after the\n"
+            "multiple-comparison correction reported in `control/control_summary.csv`. The two\n"
+            "acquisition controls behave in the opposite way, and are the reason the corrected RDMs\n"
+            "exist: run identity scores rsa = **+0.666** (12/12 cells significant) on the uncorrected\n"
+            "RDMs and **\u22120.119** after within-run normalisation; presentation order goes +0.468 to\n"
+            "\u22120.092. The scanner-run confound is therefore removed, and what remains is an instrument\n"
+            "in which no stimulus property is reliably recoverable either. Read every alignment number\n"
+            "on this card against that.")
+    else:
+        control_par = '**1b. The positive control on THIS dataset is one control, and its gate plumbing was\nfaulty.** The card previously said "the positive control failed", carried over from the\nds003604 battery. That is an over-read here twice over. First, `control/control_summary.csv`\nin the predecessor repo contains exactly **one** control — `text_edit_distance` — against\nthe eight-control battery (duration, intensity, word length, syllables, phonemes, log\nfrequency, run identity, presentation order) used on ds003604; the stimulus-characteristics\ntables needed for the rest were not on the machine that ran it. A single non-significant\nedit-distance control does not establish that no stimulus property is recoverable. Second,\nthe control labels feeding those gates were empty, so the gate outcomes are not\ninterpretable at all and are being re-plumbed. **No claim on this card depends on the\npositive control, and none should be read as supported by it.**'
     exceed = stats["n_exceeding_parc"]
     below = stats.get("n_below_parc", 0)
     u = stats.get("untrained", {}) or {}
@@ -594,6 +654,10 @@ configs:
     data_files: "overall/summary_by_family.csv"
   - config_name: parc_reference
     data_files: "overall/parc_reference.csv"
+  - config_name: parc_seed_summary
+    data_files: "overall/parc_seed_summary.csv"
+  - config_name: parc_by_seed_cell
+    data_files: "overall/parc_by_seed_cell.csv"
   - config_name: untrained_reference
     data_files: "overall/untrained_reference.csv"
   - config_name: untrained_vs_trained
@@ -662,17 +726,7 @@ versions are being rebuilt** (`ROI_SET=language`, `ROI_SET=phonology`, `ROI_SET=
 will be published as separate `-roi*` datasets. Until then, treat every alignment number
 here as a whole-brain measurement and do not read it as a claim about the language network.
 
-**1b. The positive control on THIS dataset is one control, and its gate plumbing was
-faulty.** The card previously said "the positive control failed", carried over from the
-ds003604 battery. That is an over-read here twice over. First, `control/control_summary.csv`
-in the predecessor repo contains exactly **one** control — `text_edit_distance` — against
-the eight-control battery (duration, intensity, word length, syllables, phonemes, log
-frequency, run identity, presentation order) used on ds003604; the stimulus-characteristics
-tables needed for the rest were not on the machine that ran it. A single non-significant
-edit-distance control does not establish that no stimulus property is recoverable. Second,
-the control labels feeding those gates were empty, so the gate outcomes are not
-interpretable at all and are being re-plumbed. **No claim on this card depends on the
-positive control, and none should be read as supported by it.**
+{control_par}
 
 **2. The reference that matters is the untrained one, and it is now measured.** An earlier version of
 this card said no random-initialisation baseline existed in this collection. That was wrong: the
@@ -697,6 +751,12 @@ reference. Both this collection's upstream notes and the
 family x cell combinations exceed the PARC band by 2 SD and {below} fall below it**. Where those two
 counts are comparable, the excursions are a variance artifact rather than evidence of alignment, and the
 cell contributes nothing either way.
+
+`parc_seed_summary` reports that reference as a measurement in its own right: per architecture, the
+mean rsa over this dataset's cells with the SD and a t(2) 95% interval taken **across the three seeds**,
+plus the same in units of the noise ceiling. `parc_by_seed_cell` is the per (architecture x seed x cell)
+table it is built from. Three seeds is a very small sample for an interval; read the SD, not the CI
+width, as the error bar.
 
 **2c. The instrument was tested, and it works --- which is what makes the null mean something.**
 A null is only interpretable with a detection floor attached, so we measured one (`diagnostics/`).

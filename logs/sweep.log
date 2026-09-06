@@ -749,3 +749,857 @@ polypythia-410m-seed3       26 -0.441193 1.715170                   0
        (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
 [sweep 2026-08-29T20:26:07Z] collected -> results/
 [sweep 2026-08-29T20:26:07Z] SWEEP COMPLETE | free=402GB
+[sweep 2026-09-05T05:19:53Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5876GB
+[sweep 2026-09-05T05:19:53Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T05:19:53Z] === ds003604 | tasks: Phon  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T05:19:53Z]   run pythia-70m-full on ds003604 (free=5876GB)
+[sweep 2026-09-05T05:21:39Z]   ok   pythia-70m-full/ds003604 rc=0 rows=33 free=5853GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:21:39Z]   run pythia-160m-full on ds003604 (free=5853GB)
+[sweep 2026-09-05T05:23:58Z]   ok   pythia-160m-full/ds003604 rc=0 rows=33 free=5852GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:23:58Z]   run pythia-410m-full on ds003604 (free=5852GB)
+[sweep 2026-09-05T05:27:36Z]   ok   pythia-410m-full/ds003604 rc=0 rows=33 free=5852GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:27:36Z]   run pythia-1b-full on ds003604 (free=5852GB)
+[sweep 2026-09-05T05:35:25Z]   ok   pythia-1b-full/ds003604 rc=0 rows=33 free=5872GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:35:25Z]   run pythia-1.4b-full on ds003604 (free=5872GB)
+[sweep 2026-09-05T05:45:13Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=33 free=5848GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:45:13Z]   run pythia-2.8b-full on ds003604 (free=5848GB)
+[sweep 2026-09-05T05:52:09Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=12 free=5854GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T05:52:09Z]   run pythia-6.9b-full on ds003604 (free=5854GB)
+[sweep 2026-09-05T05:59:55Z]   ok   pythia-6.9b-full/ds003604 rc=0 rows=3 free=5739GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 138.5G across 10 revisions (all named in the manifest)
+[sweep 2026-09-05T06:00:07Z]   run pythia-12b-full on ds003604 (free=5817GB)
+[sweep 2026-09-05T06:10:30Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 262.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T06:10:56Z]   run babylm-gpt2-3 on ds003604 (free=5834GB)
+[sweep 2026-09-05T06:12:19Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=27 free=5879GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:12:20Z]   run babylm-gpt2-5 on ds003604 (free=5879GB)
+[sweep 2026-09-05T06:13:39Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=27 free=5880GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:13:39Z]   run babylm-gpt2-7 on ds003604 (free=5880GB)
+[sweep 2026-09-05T06:15:02Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=27 free=5881GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:15:02Z]   run babylm-gpt2 on ds003604 (free=5881GB)
+[sweep 2026-09-05T06:16:23Z]   ok   babylm-gpt2/ds003604 rc=0 rows=27 free=5871GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:16:24Z]   run polypythia-70m-seed1 on ds003604 (free=5871GB)
+[sweep 2026-09-05T06:19:21Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=33 free=5831GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:19:21Z]   run polypythia-70m-seed2 on ds003604 (free=5831GB)
+[sweep 2026-09-05T06:21:09Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=33 free=5829GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:21:09Z]   run polypythia-70m-seed3 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:22:49Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=33 free=5829GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:22:50Z]   run polypythia-160m-seed1 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:24:48Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=33 free=5829GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:24:48Z]   run polypythia-160m-seed2 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:26:53Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=33 free=5827GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:26:53Z]   run polypythia-160m-seed3 on ds003604 (free=5827GB)
+[sweep 2026-09-05T06:28:51Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=33 free=5827GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:28:52Z]   run polypythia-410m-seed1 on ds003604 (free=5828GB)
+[sweep 2026-09-05T06:31:28Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=33 free=5832GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:31:28Z]   run polypythia-410m-seed2 on ds003604 (free=5832GB)
+[sweep 2026-09-05T06:33:49Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=33 free=5834GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:33:50Z]   run polypythia-410m-seed3 on ds003604 (free=5834GB)
+[sweep 2026-09-05T06:36:17Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=33 free=5839GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:36:18Z]   run parc-pythia-seed0 on ds003604 (free=5839GB)
+[sweep 2026-09-05T06:38:44Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=33 free=5841GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:38:44Z]   run parc-pythia-seed1 on ds003604 (free=5841GB)
+[sweep 2026-09-05T06:43:36Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=33 free=5846GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:43:36Z]   run parc-pythia-seed2 on ds003604 (free=5846GB)
+[sweep 2026-09-05T06:46:04Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=33 free=5849GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:46:04Z]   run parc-mamba-seed0 on ds003604 (free=5849GB)
+[sweep 2026-09-05T06:48:45Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=33 free=5856GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:48:45Z]   run parc-mamba-seed1 on ds003604 (free=5856GB)
+[sweep 2026-09-05T06:51:22Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=33 free=5877GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:51:22Z]   run parc-mamba-seed2 on ds003604 (free=5877GB)
+[sweep 2026-09-05T06:54:01Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=33 free=5880GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:54:01Z]   run parc-rwkv-seed0 on ds003604 (free=5880GB)
+[sweep 2026-09-05T06:57:03Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=33 free=5880GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T06:57:03Z]   run parc-rwkv-seed1 on ds003604 (free=5880GB)
+[sweep 2026-09-05T07:03:32Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=33 free=5855GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T07:03:32Z]   run parc-rwkv-seed2 on ds003604 (free=5855GB)
+[sweep 2026-09-05T07:06:39Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=33 free=5854GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T07:06:39Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T07:06:41Z] collected -> results/
+[sweep 2026-09-05T07:06:41Z] SWEEP COMPLETE | free=5854GB
+[sweep 2026-09-05T08:47:26Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5882GB
+[sweep 2026-09-05T08:47:26Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T08:47:26Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T08:47:26Z]   skip pythia-70m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-160m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-410m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-1b-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-1.4b-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-2.8b-full (done: 13 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-6.9b-full (done: 4 lines)
+[sweep 2026-09-05T08:47:26Z]   run pythia-12b-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T09:00:11Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 262.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-3 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-5 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-7 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T09:00:47Z] collected -> results/
+[sweep 2026-09-05T09:00:47Z] SWEEP COMPLETE | free=5882GB
+[sweep 2026-09-05T13:58:53Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5882GB
+[sweep 2026-09-05T13:58:53Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T13:58:53Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T13:58:53Z]   run pythia-70m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:00:42Z]   ok   pythia-70m-full/ds003604 rc=0 rows=132 free=5882GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T14:00:42Z]   run pythia-160m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:03:14Z]   ok   pythia-160m-full/ds003604 rc=0 rows=132 free=5882GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T14:03:14Z]   run pythia-410m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:07:32Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=5847GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T14:07:32Z]   run pythia-1b-full on ds003604 (free=5847GB)
+[sweep 2026-09-05T14:17:41Z]   ok   pythia-1b-full/ds003604 rc=0 rows=132 free=5846GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T14:17:41Z]   run pythia-1.4b-full on ds003604 (free=5846GB)
+[sweep 2026-09-05T14:59:14Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=132 free=5824GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T14:59:15Z]   run pythia-2.8b-full on ds003604 (free=5824GB)
+[sweep 2026-09-05T15:31:19Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=48 free=5817GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T15:31:19Z]   run pythia-6.9b-full on ds003604 (free=5817GB)
+[sweep 2026-09-05T15:33:23Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5791GB
+[sweep 2026-09-05T15:33:23Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T15:33:23Z] === ds003604 | tasks: Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T15:33:23Z]   run pythia-70m-full on ds003604 (free=5791GB)
+[sweep 2026-09-05T15:34:56Z]   ok   pythia-70m-full/ds003604 rc=0 rows=33 free=5740GB
+Couldn't delete repo: file not found (/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--EleutherAI--pythia-6.9b)
+Traceback (most recent call last):
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 886, in _try_delete_path
+    shutil.rmtree(path)
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 658, in _rmtree_safe_fd
+    _rmtree_safe_fd(dirfd, fullname, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 681, in _rmtree_safe_fd
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "/usr/lib/python3.10/shutil.py", line 679, in _rmtree_safe_fd
+    os.unlink(entry.name, dir_fd=topfd)
+FileNotFoundError: [Errno 2] No such file or directory: '6ae2aa5f138d8bece05bc657184ea778faa0f50a2068e38773cf867d6d440d1e.a6f93c0e.incomplete'
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 45.5G across 4 revisions (all named in the manifest)
+[sweep 2026-09-05T15:34:59Z]   run pythia-160m-full on ds003604 (free=5746GB)
+[sweep 2026-09-05T15:37:31Z]   ok   pythia-160m-full/ds003604 rc=0 rows=33 free=5713GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T15:37:31Z]   run pythia-410m-full on ds003604 (free=5713GB)
+[sweep 2026-09-05T15:41:35Z]   ok   pythia-410m-full/ds003604 rc=0 rows=33 free=5659GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T15:41:35Z]   run pythia-1b-full on ds003604 (free=5659GB)
+[sweep 2026-09-05T15:43:35Z]   FAIL pythia-6.9b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-6.9b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 4.0G across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T15:43:36Z]   run pythia-12b-full on ds003604 (free=5638GB)
+[sweep 2026-09-05T15:55:37Z]   ok   pythia-1b-full/ds003604 rc=0 rows=33 free=5469GB
+Traceback (most recent call last):
+  File "/local/scratch/sas245/brainalign-evals/scripts/prune_cache.py", line 84, in <module>
+    strat.execute()
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 312, in execute
+    _try_delete_path(path, path_type="repo")
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 886, in _try_delete_path
+    shutil.rmtree(path)
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 664, in _rmtree_safe_fd
+    onerror(os.rmdir, fullname, sys.exc_info())
+  File "/usr/lib/python3.10/shutil.py", line 662, in _rmtree_safe_fd
+    os.rmdir(entry.name, dir_fd=topfd)
+OSError: [Errno 39] Directory not empty: 'blobs'
+[sweep 2026-09-05T15:55:53Z]   run pythia-1.4b-full on ds003604 (free=5589GB)
+[sweep 2026-09-05T16:02:00Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 101.0G across 5 revisions (all named in the manifest)
+[sweep 2026-09-05T16:02:18Z]   run babylm-gpt2-3 on ds003604 (free=5604GB)
+[sweep 2026-09-05T16:03:51Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=108 free=5612GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 5.7G across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:03:52Z]   run babylm-gpt2-5 on ds003604 (free=5612GB)
+[sweep 2026-09-05T16:05:26Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=108 free=5626GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 673.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:05:26Z]   run babylm-gpt2-7 on ds003604 (free=5626GB)
+[sweep 2026-09-05T16:06:50Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=108 free=5599GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 5.7G across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:06:51Z]   run babylm-gpt2 on ds003604 (free=5599GB)
+[sweep 2026-09-05T16:08:04Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=30 free=5601GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.2M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:08:05Z]   run pythia-2.8b-full on ds003604 (free=5601GB)
+[sweep 2026-09-05T16:08:28Z]   ok   babylm-gpt2/ds003604 rc=0 rows=96 free=5599GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:08:28Z]   run polypythia-70m-seed1 on ds003604 (free=5599GB)
+[sweep 2026-09-05T16:10:11Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=132 free=5594GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:10:11Z]   run polypythia-70m-seed2 on ds003604 (free=5594GB)
+[sweep 2026-09-05T16:11:54Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=132 free=5588GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 5.7G across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:11:56Z]   run polypythia-70m-seed3 on ds003604 (free=5588GB)
+[sweep 2026-09-05T16:13:29Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=132 free=5586GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:13:29Z]   run polypythia-160m-seed1 on ds003604 (free=5586GB)
+[sweep 2026-09-05T16:15:36Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=9 free=5582GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 377.2M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:15:37Z]   run pythia-6.9b-full on ds003604 (free=5586GB)
+[sweep 2026-09-05T16:15:41Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=132 free=5586GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:15:41Z]   run polypythia-160m-seed2 on ds003604 (free=5586GB)
+[sweep 2026-09-05T16:17:51Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=132 free=5566GB
+Traceback (most recent call last):
+  File "/local/scratch/sas245/brainalign-evals/scripts/prune_cache.py", line 84, in <module>
+    strat.execute()
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 312, in execute
+    _try_delete_path(path, path_type="repo")
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 886, in _try_delete_path
+    shutil.rmtree(path)
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 664, in _rmtree_safe_fd
+    onerror(os.rmdir, fullname, sys.exc_info())
+  File "/usr/lib/python3.10/shutil.py", line 662, in _rmtree_safe_fd
+    os.rmdir(entry.name, dir_fd=topfd)
+OSError: [Errno 39] Directory not empty: 'blobs'
+[sweep 2026-09-05T16:18:04Z]   run polypythia-160m-seed3 on ds003604 (free=5694GB)
+[sweep 2026-09-05T16:20:15Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=132 free=5676GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:20:15Z]   run polypythia-410m-seed1 on ds003604 (free=5676GB)
+[sweep 2026-09-05T16:23:16Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=132 free=5631GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:23:17Z]   run polypythia-410m-seed2 on ds003604 (free=5631GB)
+[sweep 2026-09-05T16:25:16Z]   FAIL pythia-6.9b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-6.9b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 913.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:25:16Z]   run pythia-12b-full on ds003604 (free=5602GB)
+[sweep 2026-09-05T16:26:41Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=132 free=5580GB
+Traceback (most recent call last):
+  File "/local/scratch/sas245/brainalign-evals/scripts/prune_cache.py", line 84, in <module>
+    strat.execute()
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 312, in execute
+    _try_delete_path(path, path_type="repo")
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 886, in _try_delete_path
+    shutil.rmtree(path)
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 664, in _rmtree_safe_fd
+    onerror(os.rmdir, fullname, sys.exc_info())
+  File "/usr/lib/python3.10/shutil.py", line 662, in _rmtree_safe_fd
+    os.rmdir(entry.name, dir_fd=topfd)
+OSError: [Errno 39] Directory not empty: 'blobs'
+[sweep 2026-09-05T16:26:45Z]   run polypythia-410m-seed3 on ds003604 (free=5581GB)
+[sweep 2026-09-05T16:29:53Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=132 free=5552GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 47.7G across 4 revisions (all named in the manifest)
+[sweep 2026-09-05T16:29:59Z]   run parc-pythia-seed0 on ds003604 (free=5568GB)
+[sweep 2026-09-05T16:32:37Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=132 free=5565GB
+Couldn't delete repo: file not found (/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--EleutherAI--pythia-12b)
+Traceback (most recent call last):
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/huggingface_hub/utils/_cache_manager.py", line 886, in _try_delete_path
+    shutil.rmtree(path)
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 658, in _rmtree_safe_fd
+    _rmtree_safe_fd(dirfd, fullname, onerror)
+  File "/usr/lib/python3.10/shutil.py", line 681, in _rmtree_safe_fd
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "/usr/lib/python3.10/shutil.py", line 679, in _rmtree_safe_fd
+    os.unlink(entry.name, dir_fd=topfd)
+FileNotFoundError: [Errno 2] No such file or directory: 'e32d29e58e79974a7f69c2f21345a29488f49bfb806d80a31cb8316534648dad.c27fbb87.incomplete'
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 23.8G across 2 revisions (all named in the manifest)
+[sweep 2026-09-05T16:32:42Z]   run parc-pythia-seed1 on ds003604 (free=5566GB)
+[sweep 2026-09-05T16:35:09Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=132 free=5556GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:35:10Z]   run parc-pythia-seed2 on ds003604 (free=5556GB)
+[sweep 2026-09-05T16:37:34Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=132 free=5503GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:37:34Z]   run parc-mamba-seed0 on ds003604 (free=5503GB)
+[sweep 2026-09-05T16:39:22Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 520.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:39:22Z]   run babylm-gpt2-3 on ds003604 (free=5442GB)
+[sweep 2026-09-05T16:40:23Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=132 free=5425GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.2M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:40:23Z]   run parc-mamba-seed1 on ds003604 (free=5425GB)
+[sweep 2026-09-05T16:40:44Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=24 free=5422GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 520.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:40:44Z]   run babylm-gpt2-5 on ds003604 (free=5422GB)
+[sweep 2026-09-05T16:42:18Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=27 free=5419GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 520.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:42:19Z]   run babylm-gpt2-7 on ds003604 (free=5419GB)
+[sweep 2026-09-05T16:43:27Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=132 free=5418GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.2M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:43:27Z]   run parc-mamba-seed2 on ds003604 (free=5418GB)
+[sweep 2026-09-05T16:43:43Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=24 free=5417GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 3.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:43:44Z]   run babylm-gpt2 on ds003604 (free=5417GB)
+[sweep 2026-09-05T16:45:11Z]   ok   babylm-gpt2/ds003604 rc=0 rows=27 free=5413GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 3.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:45:11Z]   run polypythia-70m-seed1 on ds003604 (free=5413GB)
+[sweep 2026-09-05T16:46:01Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=108 free=5410GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:46:02Z]   run parc-rwkv-seed0 on ds003604 (free=5410GB)
+[sweep 2026-09-05T16:46:56Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=33 free=5409GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 3.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:46:56Z]   run polypythia-70m-seed2 on ds003604 (free=5409GB)
+[sweep 2026-09-05T16:48:27Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=33 free=5406GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 681.0M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:48:27Z]   run polypythia-70m-seed3 on ds003604 (free=5406GB)
+[sweep 2026-09-05T16:48:44Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=120 free=5405GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 168.2M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:48:45Z]   run parc-rwkv-seed1 on ds003604 (free=5405GB)
+[sweep 2026-09-05T16:50:53Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=33 free=5399GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 3.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:50:54Z]   run polypythia-160m-seed1 on ds003604 (free=5399GB)
+[sweep 2026-09-05T16:51:56Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=120 free=5394GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:51:57Z]   run parc-rwkv-seed2 on ds003604 (free=5394GB)
+[sweep 2026-09-05T16:53:03Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=30 free=5398GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 3.6M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:53:03Z]   run polypythia-160m-seed2 on ds003604 (free=5398GB)
+[sweep 2026-09-05T16:54:46Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=120 free=5397GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 2.1M across 1 revisions (all named in the manifest)
+[sweep 2026-09-05T16:54:46Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T16:54:47Z] collected -> results/
+[sweep 2026-09-05T16:54:47Z] SWEEP COMPLETE | free=5397GB
+[sweep 2026-09-05T16:55:11Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=30 free=5397GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:55:11Z]   run polypythia-160m-seed3 on ds003604 (free=5397GB)
+[sweep 2026-09-05T16:58:27Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=33 free=5398GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T16:58:27Z]   run polypythia-410m-seed1 on ds003604 (free=5398GB)
+[sweep 2026-09-05T17:01:18Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=33 free=5396GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:01:18Z]   run polypythia-410m-seed2 on ds003604 (free=5396GB)
+[sweep 2026-09-05T17:04:23Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=33 free=5395GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:04:24Z]   run polypythia-410m-seed3 on ds003604 (free=5395GB)
+[sweep 2026-09-05T17:07:12Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=33 free=5399GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:07:13Z]   run parc-pythia-seed0 on ds003604 (free=5399GB)
+[sweep 2026-09-05T17:09:45Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=33 free=5405GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:09:46Z]   run parc-pythia-seed1 on ds003604 (free=5405GB)
+[sweep 2026-09-05T17:12:15Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=33 free=5390GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:12:16Z]   run parc-pythia-seed2 on ds003604 (free=5390GB)
+[sweep 2026-09-05T17:15:21Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=33 free=5382GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:15:21Z]   run parc-mamba-seed0 on ds003604 (free=5382GB)
+[sweep 2026-09-05T17:18:16Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=33 free=5376GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:18:17Z]   run parc-mamba-seed1 on ds003604 (free=5376GB)
+[sweep 2026-09-05T17:20:52Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=33 free=5373GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:20:52Z]   run parc-mamba-seed2 on ds003604 (free=5373GB)
+[sweep 2026-09-05T17:24:00Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=33 free=5369GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:24:01Z]   run parc-rwkv-seed0 on ds003604 (free=5369GB)
+[sweep 2026-09-05T17:27:10Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=33 free=5369GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:27:10Z]   run parc-rwkv-seed1 on ds003604 (free=5369GB)
+[sweep 2026-09-05T17:31:08Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=33 free=5369GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:31:08Z]   run parc-rwkv-seed2 on ds003604 (free=5369GB)
+[sweep 2026-09-05T17:33:48Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=33 free=5368GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T17:33:48Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T17:33:50Z] collected -> results/
+[sweep 2026-09-05T17:33:50Z] SWEEP COMPLETE | free=5369GB
+[sweep 2026-09-05T18:34:13Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5282GB
+[sweep 2026-09-05T18:34:13Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T18:34:13Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T18:34:13Z]   skip pythia-70m-full (done: 34 lines)
+[sweep 2026-09-05T18:34:13Z]   skip pythia-160m-full (done: 34 lines)
+[sweep 2026-09-05T18:34:13Z]   skip pythia-410m-full (done: 34 lines)
+[sweep 2026-09-05T18:34:13Z]   skip pythia-1b-full (done: 34 lines)
+[sweep 2026-09-05T18:34:13Z]   skip pythia-1.4b-full (done: 31 lines)
+[sweep 2026-09-05T18:34:13Z]   skip pythia-2.8b-full (done: 10 lines)
+[sweep 2026-09-05T18:34:13Z]   run pythia-6.9b-full on ds003604 (free=5282GB)
+[sweep 2026-09-05T18:40:14Z]   FAIL pythia-6.9b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-6.9b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 152.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T18:40:30Z]   run pythia-12b-full on ds003604 (free=5327GB)
+[sweep 2026-09-05T18:50:16Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 262.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T18:50:36Z]   skip babylm-gpt2-3 (done: 25 lines)
+[sweep 2026-09-05T18:50:36Z]   skip babylm-gpt2-5 (done: 28 lines)
+[sweep 2026-09-05T18:50:36Z]   skip babylm-gpt2-7 (done: 25 lines)
+[sweep 2026-09-05T18:50:36Z]   skip babylm-gpt2 (done: 28 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-70m-seed1 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-70m-seed2 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-70m-seed3 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-160m-seed1 (done: 31 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-160m-seed2 (done: 31 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-160m-seed3 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-410m-seed1 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-410m-seed2 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip polypythia-410m-seed3 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-pythia-seed0 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-pythia-seed1 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-pythia-seed2 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-mamba-seed0 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-mamba-seed1 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-mamba-seed2 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-rwkv-seed0 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-rwkv-seed1 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z]   skip parc-rwkv-seed2 (done: 34 lines)
+[sweep 2026-09-05T18:50:36Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T18:50:39Z] collected -> results/
+[sweep 2026-09-05T18:50:39Z] SWEEP COMPLETE | free=5441GB
+[sweep 2026-09-05T21:44:59Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5198GB
+[sweep 2026-09-05T21:44:59Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T21:44:59Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T21:44:59Z]   run pythia-70m-full on ds003604 (free=5198GB)
+[sweep 2026-09-05T21:46:31Z]   ok   pythia-70m-full/ds003604 rc=0 rows=132 free=5194GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T21:46:32Z]   run pythia-160m-full on ds003604 (free=5194GB)
+[sweep 2026-09-05T21:48:15Z]   ok   pythia-160m-full/ds003604 rc=0 rows=132 free=5188GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T21:48:16Z]   run pythia-410m-full on ds003604 (free=5188GB)
+[sweep 2026-09-05T21:50:55Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=5177GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T21:50:55Z]   run pythia-1b-full on ds003604 (free=5177GB)
+[sweep 2026-09-05T21:56:41Z]   ok   pythia-1b-full/ds003604 rc=0 rows=132 free=5151GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T21:56:41Z]   run pythia-1.4b-full on ds003604 (free=5151GB)
+[sweep 2026-09-05T22:04:47Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=132 free=5107GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:04:48Z]   run pythia-2.8b-full on ds003604 (free=5107GB)
+[sweep 2026-09-05T22:10:02Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=48 free=5083GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:10:02Z]   run pythia-6.9b-full on ds003604 (free=5083GB)
+[sweep 2026-09-05T22:16:30Z]   FAIL pythia-6.9b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-6.9b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 152.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T22:16:51Z]   run pythia-12b-full on ds003604 (free=5021GB)
+[sweep 2026-09-05T22:26:12Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 262.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-05T22:26:40Z]   run babylm-gpt2-3 on ds003604 (free=4970GB)
+[sweep 2026-09-05T22:27:44Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=108 free=4990GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:27:44Z]   run babylm-gpt2-5 on ds003604 (free=4990GB)
+[sweep 2026-09-05T22:28:45Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=108 free=4985GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:28:45Z]   run babylm-gpt2-7 on ds003604 (free=4985GB)
+[sweep 2026-09-05T22:29:44Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=108 free=4979GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:29:45Z]   run babylm-gpt2 on ds003604 (free=4979GB)
+[sweep 2026-09-05T22:30:45Z]   ok   babylm-gpt2/ds003604 rc=0 rows=108 free=4972GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:30:45Z]   run polypythia-70m-seed1 on ds003604 (free=4972GB)
+[sweep 2026-09-05T22:31:51Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=132 free=4964GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:31:51Z]   run polypythia-70m-seed2 on ds003604 (free=4964GB)
+[sweep 2026-09-05T22:32:53Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=132 free=4954GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:32:53Z]   run polypythia-70m-seed3 on ds003604 (free=4954GB)
+[sweep 2026-09-05T22:34:03Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=132 free=4944GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:34:03Z]   run polypythia-160m-seed1 on ds003604 (free=4944GB)
+[sweep 2026-09-05T22:35:30Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=132 free=4933GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:35:30Z]   run polypythia-160m-seed2 on ds003604 (free=4933GB)
+[sweep 2026-09-05T22:36:55Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=132 free=4922GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:36:55Z]   run polypythia-160m-seed3 on ds003604 (free=4922GB)
+[sweep 2026-09-05T22:38:21Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=132 free=4907GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:38:21Z]   run polypythia-410m-seed1 on ds003604 (free=4907GB)
+[sweep 2026-09-05T22:40:07Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=132 free=4891GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:40:08Z]   run polypythia-410m-seed2 on ds003604 (free=4891GB)
+[sweep 2026-09-05T22:41:54Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=132 free=4880GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:41:54Z]   run polypythia-410m-seed3 on ds003604 (free=4880GB)
+[sweep 2026-09-05T22:43:37Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=132 free=4872GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:43:37Z]   run parc-pythia-seed0 on ds003604 (free=4872GB)
+[sweep 2026-09-05T22:45:13Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=132 free=4865GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:45:13Z]   run parc-pythia-seed1 on ds003604 (free=4865GB)
+[sweep 2026-09-05T22:46:51Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=132 free=4859GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:46:51Z]   run parc-pythia-seed2 on ds003604 (free=4859GB)
+[sweep 2026-09-05T22:48:28Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=132 free=4852GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:48:28Z]   run parc-mamba-seed0 on ds003604 (free=4852GB)
+[sweep 2026-09-05T22:50:20Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=132 free=4845GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:50:20Z]   run parc-mamba-seed1 on ds003604 (free=4845GB)
+[sweep 2026-09-05T22:52:29Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=132 free=4835GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:52:29Z]   run parc-mamba-seed2 on ds003604 (free=4835GB)
+[sweep 2026-09-05T22:54:25Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=132 free=4825GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:54:25Z]   run parc-rwkv-seed0 on ds003604 (free=4825GB)
+[sweep 2026-09-05T22:56:12Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=132 free=4817GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:56:12Z]   run parc-rwkv-seed1 on ds003604 (free=4817GB)
+[sweep 2026-09-05T22:57:55Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=132 free=4806GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:57:55Z]   run parc-rwkv-seed2 on ds003604 (free=4806GB)
+[sweep 2026-09-05T22:59:39Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=132 free=4795GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-05T22:59:39Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-05T22:59:41Z] collected -> results/
+[sweep 2026-09-05T22:59:41Z] SWEEP COMPLETE | free=4795GB
+[sweep 2026-09-06T07:09:41Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=4576GB
+[sweep 2026-09-06T07:09:41Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-06T07:09:41Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-06T07:09:41Z]   run pythia-70m-full on ds003604 (free=4576GB)
+[sweep 2026-09-06T07:11:38Z]   ok   pythia-70m-full/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:11:38Z]   run pythia-160m-full on ds003604 (free=4576GB)
+[sweep 2026-09-06T07:14:11Z]   ok   pythia-160m-full/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:14:11Z]   run pythia-410m-full on ds003604 (free=4576GB)
+[sweep 2026-09-06T07:18:30Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=4575GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:18:30Z]   run pythia-1b-full on ds003604 (free=4575GB)
+[sweep 2026-09-06T07:25:36Z]   ok   pythia-1b-full/ds003604 rc=0 rows=132 free=4574GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:25:36Z]   run pythia-1.4b-full on ds003604 (free=4574GB)
+[sweep 2026-09-06T07:34:56Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:34:56Z]   run pythia-2.8b-full on ds003604 (free=4576GB)
+[sweep 2026-09-06T07:41:57Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=48 free=4571GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T07:41:58Z]   run pythia-6.9b-full on ds003604 (free=4571GB)
+[sweep 2026-09-06T07:52:05Z]   ok   pythia-6.9b-full/ds003604 rc=0 rows=12 free=4448GB
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 138.5G across 10 revisions (all named in the manifest)
+[sweep 2026-09-06T07:52:30Z]   run pythia-12b-full on ds003604 (free=4565GB)
+[sweep 2026-09-06T08:06:01Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[prune] /local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface: freed 262.3G across 11 revisions (all named in the manifest)
+[sweep 2026-09-06T08:06:32Z]   run babylm-gpt2-3 on ds003604 (free=4565GB)
+[sweep 2026-09-06T08:07:58Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=108 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:07:58Z]   run babylm-gpt2-5 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:09:12Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=108 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:09:12Z]   run babylm-gpt2-7 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:10:24Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=108 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:10:24Z]   run babylm-gpt2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:11:32Z]   ok   babylm-gpt2/ds003604 rc=0 rows=108 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:11:32Z]   run polypythia-70m-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:12:48Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:12:48Z]   run polypythia-70m-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:14:06Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:14:06Z]   run polypythia-70m-seed3 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:15:26Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:15:27Z]   run polypythia-160m-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:17:00Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:17:01Z]   run polypythia-160m-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:18:33Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:18:33Z]   run polypythia-160m-seed3 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:20:03Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:20:03Z]   run polypythia-410m-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:22:03Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:22:04Z]   run polypythia-410m-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:24:04Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:24:04Z]   run polypythia-410m-seed3 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:25:56Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:25:56Z]   run parc-pythia-seed0 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:27:47Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:27:47Z]   run parc-pythia-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:29:45Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:29:45Z]   run parc-pythia-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:31:52Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:31:53Z]   run parc-mamba-seed0 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:34:04Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:34:04Z]   run parc-mamba-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:36:12Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:36:13Z]   run parc-mamba-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:38:23Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:38:23Z]   run parc-rwkv-seed0 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:41:43Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:41:43Z]   run parc-rwkv-seed1 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:47:55Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:47:55Z]   run parc-rwkv-seed2 on ds003604 (free=4576GB)
+[sweep 2026-09-06T08:50:14Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=132 free=4576GB
+[prune] nothing resident from this sweep's manifest
+[sweep 2026-09-06T08:50:15Z] === ds003604 done
+alignment_rows.csv: 7644 rows, 29 families, 26 cells
+scaling_curve.csv: 754 family x cell rows
+scale_trend.csv:
+ dataset  n_families  scale_trend_rho  scale_trend_p best_family  best_rsa_mean
+ds002236           9        -0.452602       0.221217 babylm-gpt2       0.032459
+ds003604           9        -0.487417       0.183219 babylm-gpt2       0.003343
+ds006239           9         0.026112       0.946836 babylm-gpt2       0.001176
+
+null_referenced.csv: 520 family x cell rows against 9 noise seeds
+               family  n_cells    mean_z    max_z  cells_beating_null
+     pythia-6.9b-full       26  1.413772 8.256781                  10
+          babylm-gpt2       26  1.005119 5.722833                   9
+ polypythia-70m-seed1       26  0.767640 7.177257                   5
+polypythia-160m-seed2       26  0.425568 6.928164                   3
+ polypythia-70m-seed3       26  0.222326 2.975823                   7
+     pythia-410m-full       26  0.208896 2.874108                   4
+polypythia-160m-seed3       26  0.202867 4.137146                   3
+polypythia-410m-seed1       26  0.118792 2.215629                   3
+polypythia-160m-seed1       26  0.075669 2.442664                   3
+polypythia-410m-seed2       26 -0.014192 3.186322                   5
+       pythia-1b-full       26 -0.178407 2.080298                   2
+      pythia-70m-full       26 -0.206502 2.317705                   3
+polypythia-410m-seed3       26 -0.441193 1.715170                   0
+ polypythia-70m-seed2       26 -0.454968 2.093091                   0
+     pythia-2.8b-full       26 -0.588109 8.041033                   4
+        babylm-gpt2-7       26 -0.675260 3.456741                   6
+        babylm-gpt2-5       26 -0.777473 2.911366                   6
+        babylm-gpt2-3       26 -0.801664 2.829941                   7
+     pythia-160m-full       26 -0.804713 1.066111                   0
+     pythia-1.4b-full       26 -1.352349 1.425381                   0
+
+[null] per-cell means, real families vs noise seeds: r = +0.8932 (p = 8.31e-10, n = 26 cells)
+       (published ds003604 value was r = +0.987 -- if this reproduces, the structure belongs to the cell, not the model)
+[sweep 2026-09-06T08:50:16Z] collected -> results/
+[sweep 2026-09-06T08:50:16Z] SWEEP COMPLETE | free=4576GB

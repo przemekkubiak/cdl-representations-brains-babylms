@@ -1,0 +1,123 @@
+== sentence-transformers/all-mpnet-base-v2
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4223.36it/s]
+   ds002236/Phon/ses-11+ (13 layers)
+   ds002236/Phon/ses-11 (13 layers)
+   ds002236/Phon/ses-9 (13 layers)
+   ds002236/Sem/ses-11+ (13 layers)
+   ds002236/Sem/ses-11 (13 layers)
+   ds002236/Sem/ses-9 (13 layers)
+   ds003604/Gram/ses-5 (13 layers)
+   ds003604/Gram/ses-7 (13 layers)
+   ds003604/Gram/ses-9 (13 layers)
+   ds003604/Phon/ses-5 (13 layers)
+   ds003604/Phon/ses-7 (13 layers)
+   ds003604/Phon/ses-9 (13 layers)
+   ds003604/Plaus/ses-5 (13 layers)
+   ds003604/Plaus/ses-7 (13 layers)
+   ds003604/Plaus/ses-9 (13 layers)
+   ds003604/Sem/ses-5 (13 layers)
+   ds003604/Sem/ses-7 (13 layers)
+   ds003604/Sem/ses-9 (13 layers)
+   ds006239/Orth/ses-11+ (13 layers)
+   ds006239/Orth/ses-11 (13 layers)
+   ds006239/Phon/ses-11+ (13 layers)
+   ds006239/Phon/ses-11 (13 layers)
+   ds006239/Sem/ses-11+ (13 layers)
+   ds006239/Sem/ses-11 (13 layers)
+   ds006239/SemLocal/ses-11+ (13 layers)
+   ds006239/SemLocal/ses-11 (13 layers)
+== gpt2-large
+Loading weights:   0%|          | 0/436 [00:00<?, ?it/s]Loading weights:  86%|████████▌ | 376/436 [00:00<00:00, 3707.91it/s]Loading weights: 100%|██████████| 436/436 [00:00<00:00, 3761.58it/s]
+   ds002236/Phon/ses-11+ (37 layers)
+   ds002236/Phon/ses-11 (37 layers)
+   ds002236/Phon/ses-9 (37 layers)
+   ds002236/Sem/ses-11+ (37 layers)
+   ds002236/Sem/ses-11 (37 layers)
+   ds002236/Sem/ses-9 (37 layers)
+   ds003604/Gram/ses-5 (37 layers)
+   ds003604/Gram/ses-7 (37 layers)
+   ds003604/Gram/ses-9 (37 layers)
+   ds003604/Phon/ses-5 (37 layers)
+   ds003604/Phon/ses-7 (37 layers)
+   ds003604/Phon/ses-9 (37 layers)
+   ds003604/Plaus/ses-5 (37 layers)
+   ds003604/Plaus/ses-7 (37 layers)
+   ds003604/Plaus/ses-9 (37 layers)
+   ds003604/Sem/ses-5 (37 layers)
+   ds003604/Sem/ses-7 (37 layers)
+   ds003604/Sem/ses-9 (37 layers)
+   ds006239/Orth/ses-11+ (37 layers)
+   ds006239/Orth/ses-11 (37 layers)
+   ds006239/Phon/ses-11+ (37 layers)
+   ds006239/Phon/ses-11 (37 layers)
+   ds006239/Sem/ses-11+ (37 layers)
+   ds006239/Sem/ses-11 (37 layers)
+   ds006239/SemLocal/ses-11+ (37 layers)
+   ds006239/SemLocal/ses-11 (37 layers)
+== EleutherAI/pythia-410m
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   9%|▊         | 25/291 [00:00<00:01, 244.05it/s]Loading weights:  25%|██▌       | 73/291 [00:00<00:00, 334.52it/s]Loading weights:  40%|███▉      | 115/291 [00:00<00:00, 367.91it/s]Loading weights:  53%|█████▎    | 155/291 [00:00<00:00, 372.39it/s]Loading weights:  68%|██████▊   | 199/291 [00:00<00:00, 380.30it/s]Loading weights:  82%|████████▏ | 239/291 [00:00<00:00, 383.64it/s]Loading weights:  99%|█████████▊| 287/291 [00:00<00:00, 411.49it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 387.97it/s]
+[transformers] [1mGPTNeoXModel LOAD REPORT[0m from: EleutherAI/pythia-410m
+Key              | Status     |  | 
+-----------------+------------+--+-
+embed_out.weight | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+   ds002236/Phon/ses-11+ (25 layers)
+   ds002236/Phon/ses-11 (25 layers)
+   ds002236/Phon/ses-9 (25 layers)
+   ds002236/Sem/ses-11+ (25 layers)
+   ds002236/Sem/ses-11 (25 layers)
+   ds002236/Sem/ses-9 (25 layers)
+   ds003604/Gram/ses-5 (25 layers)
+   ds003604/Gram/ses-7 (25 layers)
+   ds003604/Gram/ses-9 (25 layers)
+   ds003604/Phon/ses-5 (25 layers)
+   ds003604/Phon/ses-7 (25 layers)
+   ds003604/Phon/ses-9 (25 layers)
+   ds003604/Plaus/ses-5 (25 layers)
+   ds003604/Plaus/ses-7 (25 layers)
+   ds003604/Plaus/ses-9 (25 layers)
+   ds003604/Sem/ses-5 (25 layers)
+   ds003604/Sem/ses-7 (25 layers)
+   ds003604/Sem/ses-9 (25 layers)
+   ds006239/Orth/ses-11+ (25 layers)
+   ds006239/Orth/ses-11 (25 layers)
+   ds006239/Phon/ses-11+ (25 layers)
+   ds006239/Phon/ses-11 (25 layers)
+   ds006239/Sem/ses-11+ (25 layers)
+   ds006239/Sem/ses-11 (25 layers)
+   ds006239/SemLocal/ses-11+ (25 layers)
+   ds006239/SemLocal/ses-11 (25 layers)
+
+best |rsa_full| per model x scheme, over all layers and cells:
+                                                           median    best
+model                                   scheme                           
+EleutherAI/pythia-410m                  pair_absdiff       0.0074  0.0708
+                                        pair_concat       -0.0002  0.0575
+                                        pair_cos1d        -0.0041  0.0559
+                                        pipeline_meanpool -0.0024  0.0585
+gpt2-large                              pair_absdiff       0.0011  0.0735
+                                        pair_concat       -0.0034  0.0569
+                                        pair_cos1d         0.0010  0.0706
+                                        pipeline_meanpool -0.0055  0.0487
+sentence-transformers/all-mpnet-base-v2 pair_absdiff       0.0005  0.0654
+                                        pair_concat        0.0059  0.0740
+                                        pair_cos1d        -0.0015  0.0508
+                                        pipeline_meanpool  0.0063  0.0680
+
+per model x scheme: mean over cells of the BEST layer for that cell
+                                                             mean     max
+model                                   scheme                           
+EleutherAI/pythia-410m                  pair_absdiff       0.0187  0.0675
+                                        pair_concat       -0.0098  0.0475
+                                        pair_cos1d        -0.0057  0.0558
+                                        pipeline_meanpool  0.0110  0.0585
+gpt2-large                              pair_absdiff       0.0039  0.0735
+                                        pair_concat       -0.0100  0.0491
+                                        pair_cos1d        -0.0023  0.0706
+                                        pipeline_meanpool -0.0080  0.0487
+sentence-transformers/all-mpnet-base-v2 pair_absdiff       0.0008  0.0654
+                                        pair_concat        0.0131  0.0740
+                                        pair_cos1d         0.0032  0.0476
+                                        pipeline_meanpool  0.0193  0.0680

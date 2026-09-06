@@ -65,3 +65,331 @@ Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/behaviour_pythia-1.4b
   (no rows for ablation_behaviour)
 
 Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-1.4b-full: 11 checkpoints | tasks=['Phon'] | probe=176
+
+=== EleutherAI/pythia-1.4b@step0 (step=0) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:06<00:06,  6.30s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.15s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.18s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5777.69it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step0 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step1 (step=1) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:02<00:02,  2.98s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  4.97s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  4.67s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5249.37it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step1 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step4 (step=4) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.00s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  3.39s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  3.49s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5233.94it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step4 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step16 (step=16) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.75s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  4.04s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  4.00s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 282/292 [00:00<00:00, 2813.98it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2879.25it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step16 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step256 (step=256) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.65s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.87s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.84s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3160.26it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step256 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step5000 (step=5000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.91s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.70s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.74s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  95%|█████████▍| 277/292 [00:00<00:00, 2769.35it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2864.06it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step5000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step14000 (step=14000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.52s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.21s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.11s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3019.49it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step14000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step28000 (step=28000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.64s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.83s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.80s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5686.06it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step28000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step51000 (step=51000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.93s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.13s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.10s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4746.53it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step51000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step86000 (step=86000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.58s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.73s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.71s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5330.53it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step86000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step143000 (step=143000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:01<00:01,  1.95s/it]Fetching 2 files: 100%|██████████| 2/2 [00:05<00:00,  3.17s/it]Fetching 2 files: 100%|██████████| 2/2 [00:05<00:00,  2.98s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4022.39it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step143000 (5.7G)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_pythia-1.4b-full.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_pythia-1.4b-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_pythia-1.4b-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_pythia-1.4b-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_pythia-1.4b-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-1.4b-full: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-1.4b@step0 (step=0) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:09<00:09,  9.21s/it]Fetching 2 files: 100%|██████████| 2/2 [00:23<00:00, 12.05s/it]Fetching 2 files: 100%|██████████| 2/2 [00:23<00:00, 11.62s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5286.19it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step0 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step1 (step=1) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.02s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.34s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.15s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3075.51it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step1 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step4 (step=4) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:06<00:06,  6.15s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.22s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.21s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3172.07it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step4 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step16 (step=16) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.16s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.72s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.33s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4452.10it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step16 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step256 (step=256) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.33s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.52s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.34s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 7164.72it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step256 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step5000 (step=5000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.64s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.26s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.32s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 7841.83it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step5000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step14000 (step=14000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.04s/it]Fetching 2 files: 100%|██████████| 2/2 [00:18<00:00,  9.77s/it]Fetching 2 files: 100%|██████████| 2/2 [00:18<00:00,  9.36s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 7896.69it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step14000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step28000 (step=28000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.17s/it]Fetching 2 files: 100%|██████████| 2/2 [00:23<00:00, 12.23s/it]Fetching 2 files: 100%|██████████| 2/2 [00:23<00:00, 11.62s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5857.85it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step28000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step51000 (step=51000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.50s/it]Fetching 2 files: 100%|██████████| 2/2 [00:17<00:00,  8.82s/it]Fetching 2 files: 100%|██████████| 2/2 [00:17<00:00,  8.77s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3597.47it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step51000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step86000 (step=86000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.69s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.21s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.43s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 12298.16it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step86000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step143000 (step=143000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.21s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.22s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.22s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 24383.55it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step143000 (5.7G)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_pythia-1.4b-full.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_pythia-1.4b-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_pythia-1.4b-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_pythia-1.4b-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_pythia-1.4b-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-1.4b-full: 11 checkpoints | tasks=['Sem'] | probe=176
+
+=== EleutherAI/pythia-1.4b@step0 (step=0) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:20<00:20, 20.97s/it]Fetching 2 files: 100%|██████████| 2/2 [00:33<00:00, 15.79s/it]Fetching 2 files: 100%|██████████| 2/2 [00:33<00:00, 16.57s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3780.92it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step0 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step1 (step=1) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.32s/it]Fetching 2 files: 100%|██████████| 2/2 [00:11<00:00,  5.59s/it]Fetching 2 files: 100%|██████████| 2/2 [00:11<00:00,  5.55s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4048.11it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step1 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step4 (step=4) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.00s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.35s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.15s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3336.97it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step4 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step16 (step=16) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.59s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00, 10.07s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00,  9.70s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3768.69it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step16 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step256 (step=256) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.57s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.83s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.49s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4454.45it/s]
+
+=== EleutherAI/pythia-1.4b@step5000 (step=5000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.86s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.91s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.45s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5130.54it/s]
+
+=== EleutherAI/pythia-1.4b@step14000 (step=14000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.19s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  8.07s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.49s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4799.82it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step14000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step28000 (step=28000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.44s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00, 10.46s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00,  9.56s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4681.77it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step28000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step51000 (step=51000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.69s/it]Could not set the permissions on the file '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--EleutherAI--pythia-1.4b/blobs/50244546a79a43e2101fdf302940bc03e01f0ab4f92ee9e11f272967746dc6b4.3e2b5c49.incomplete'. Error: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--EleutherAI--pythia-1.4b/blobs/tmp_93263d02-2afb-40c4-9ae8-d9baba687b7c'.
+Continuing without setting permissions.
+Fetching 2 files:  50%|█████     | 1/2 [00:15<00:15, 15.38s/it]
+  ! failed to load EleutherAI/pythia-1.4b@step51000: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--EleutherAI--pythia-1.4b/blobs/50244546a79a43e2101fdf302940bc03e01f0ab4f92ee9e11f272967746dc6b4.3e2b5c49.incomplete'
+
+=== EleutherAI/pythia-1.4b@step86000 (step=86000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.11s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  6.52s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  6.60s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4230.93it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step86000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step143000 (step=143000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.89s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  7.47s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  6.93s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3045.94it/s]
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_pythia-1.4b-full.csv  (30 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_pythia-1.4b-full.csv  (40 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_pythia-1.4b-full.csv  (10 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_pythia-1.4b-full.csv  (240 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_pythia-1.4b-full.csv  (40 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-1.4b-full: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-1.4b@step0 (step=0) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:06<00:06,  6.38s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.68s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.34s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3244.65it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step0 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step1 (step=1) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.27s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  4.92s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  4.82s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 5607.49it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step1 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step4 (step=4) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.97s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.49s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.41s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3028.77it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step4 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step16 (step=16) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:02<00:02,  2.78s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.49s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.24s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2944.17it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step16 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step256 (step=256) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.67s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  5.07s/it]Fetching 2 files: 100%|██████████| 2/2 [00:09<00:00,  4.86s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2987.95it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step256 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step5000 (step=5000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:02<00:02,  2.94s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  4.03s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.87s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4083.10it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step5000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step14000 (step=14000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.14s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  4.03s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.90s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3534.03it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step14000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step28000 (step=28000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.83s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  2.98s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  3.11s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4383.14it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step28000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step51000 (step=51000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.51s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  3.97s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.05s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3503.20it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step51000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step86000 (step=86000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.47s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  3.35s/it]Fetching 2 files: 100%|██████████| 2/2 [00:06<00:00,  3.37s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3938.10it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step86000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step143000 (step=143000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:02<00:02,  2.87s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.89s/it]Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.74s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2940.76it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step143000 (5.7G)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/alignment_pythia-1.4b-full.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/isolation_pythia-1.4b-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_pythia-1.4b-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_layer_pythia-1.4b-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/behaviour_pythia-1.4b-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> pythia-1.4b-full: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-1.4b@step0 (step=0) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.37s/it]Fetching 2 files: 100%|██████████| 2/2 [00:21<00:00, 10.91s/it]Fetching 2 files: 100%|██████████| 2/2 [00:21<00:00, 10.53s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 284/292 [00:00<00:00, 2809.24it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2847.58it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step0 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step1 (step=1) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.31s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.68s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.47s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3031.80it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step1 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step4 (step=4) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.19s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.47s/it]Fetching 2 files: 100%|██████████| 2/2 [00:08<00:00,  4.43s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  97%|█████████▋| 283/292 [00:00<00:00, 2795.16it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2832.38it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step4 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step16 (step=16) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:04<00:04,  4.08s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  7.27s/it]Fetching 2 files: 100%|██████████| 2/2 [00:13<00:00,  6.79s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4067.54it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step16 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step256 (step=256) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:03<00:03,  3.80s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.89s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.43s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3117.34it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step256 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step5000 (step=5000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:06<00:06,  6.33s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.47s/it]Fetching 2 files: 100%|██████████| 2/2 [00:14<00:00,  7.30s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  96%|█████████▌| 281/292 [00:00<00:00, 2772.63it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2843.07it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step5000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step14000 (step=14000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:08<00:08,  8.46s/it]Fetching 2 files: 100%|██████████| 2/2 [00:10<00:00,  4.89s/it]Fetching 2 files: 100%|██████████| 2/2 [00:10<00:00,  5.43s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3128.94it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step14000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step28000 (step=28000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.31s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.43s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.27s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3222.66it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step28000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step51000 (step=51000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:09<00:09,  9.01s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  5.77s/it]Fetching 2 files: 100%|██████████| 2/2 [00:12<00:00,  6.25s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3074.74it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step51000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step86000 (step=86000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.04s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.54s/it]Fetching 2 files: 100%|██████████| 2/2 [00:16<00:00,  8.02s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3268.13it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step86000 (5.7G)
+
+=== EleutherAI/pythia-1.4b@step143000 (step=143000) ===
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:05<00:05,  5.32s/it]Fetching 2 files: 100%|██████████| 2/2 [00:11<00:00,  5.92s/it]Fetching 2 files: 100%|██████████| 2/2 [00:11<00:00,  5.83s/it]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 2921.74it/s]
+  [cache] evicted EleutherAI/pythia-1.4b@step143000 (5.7G)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_pythia-1.4b-full.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_pythia-1.4b-full.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_pythia-1.4b-full.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_pythia-1.4b-full.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_pythia-1.4b-full.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

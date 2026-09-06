@@ -587,3 +587,70 @@ is **"no LM alignment is detectable by this measurement"**, not "LMs do not alig
 with the developing brain". The session-coverage fix (14 -> 26 cells) means this
 is also the first measurement of 12 previously unscored cells, including
 SemLocal.
+
+---
+
+## 14. PARC arm finalised + all three datasets published (2026-09-02)
+
+**Completion.** The PARC sweep is **27/27 complete** — 3 architectures (pythia,
+mamba, rwkv) x seeds 0–2 x 3 datasets, 11 checkpoints each (`checkpoint-10` …
+`checkpoint-4000`; PARC publishes no step-0). Every cell present with the full
+row count (ds003604 132, ds006239 88, ds002236 66), **zero NaN rsa**, zero error
+lines in the 27 `logs/grid_*_parc-*.log`, and `logs/stage_parc.log` shows `ok` for
+all 27 after the two `rc=0`-but-empty ds006239 cells from §11 were re-run.
+`isolation`/`mechanistic`/`mechanistic_layer`/`behaviour` are present for all 9
+PARC families on every dataset. §9's "PARC on the new datasets — never run" is
+**stale and is superseded here**. Nothing was left to run; no cell was re-computed.
+
+**Aggregation.** `scripts/parc_summary.py` (new) writes
+`results/parc_by_cell.csv`, `results/parc_by_seed.csv`, `results/parc_summary.csv`
+and `results/parc_arch_test.csv`, following the package conventions exactly:
+mean over checkpoints per (family, cell) **first**, then the spread **across the
+three seeds** — never over pooled checkpoint rows.
+
+| dataset | arch | mean rsa | sd across seeds | % of ceiling | Wilcoxon vs 0 |
+|---|---|---|---|---|---|
+| ds002236 | mamba | **+0.0237** | 0.0025 | 7.9 | 0.031 (n=6, the floor) |
+| ds002236 | rwkv | +0.0138 | 0.0085 | 4.2 | 0.031 |
+| ds002236 | pythia | +0.0114 | 0.0052 | 3.9 | 0.031 |
+| ds003604 | pythia | +0.0042 | 0.0006 | 0.5 | 0.97 |
+| ds003604 | rwkv | +0.0008 | 0.0023 | 0.1 | 0.91 |
+| ds003604 | mamba | −0.0038 | 0.0023 | −0.4 | 0.23 |
+| ds006239 | pythia | −0.0045 | 0.0015 | −0.3 | 0.53 |
+| ds006239 | mamba | −0.0052 | 0.0004 | +0.3 | 0.45 |
+| ds006239 | rwkv | −0.0095 | 0.0026 | −1.8 | 0.07 |
+
+Architectures are not separable on any dataset (Kruskal over per-cell means:
+ds002236 p = 0.079, ds003604 p = 0.17, ds006239 p = 0.83). Against the 15
+random-init (step-0) band on the same cell, **3 of 234 (arch x seed x cell)
+values exceed +2 SD and 0 fall below** — all three are ds002236/mamba. First
+vs final PARC checkpoint is significant only for ds003604/mamba (p = 0.015,
+a *decline*: +0.0036 → −0.0019). The magnitudes stay at 0.1–8 % of the noise
+ceiling, so this is a statement about sign and consistency, not alignment.
+
+**Two fixes.**
+1. `build_devai_package.py` emitted the ds002236/ds006239 "the positive control
+   here is one control and its gate plumbing was faulty" paragraph on **every**
+   card. On ds003604 that asserts a defect the dataset does not have — it has its
+   own 12-control battery. The paragraph is now dataset-conditional, and the
+   ds003604 version states the measured numbers: 9/108 stimulus-property control x
+   cell tests significant at uncorrected p < 0.05, 0 after correction, while run
+   identity goes +0.666 → −0.119 and presentation order +0.468 → −0.092 under
+   within-run normalisation.
+2. The builder now also writes `overall/parc_seed_summary.csv` and
+   `overall/parc_by_seed_cell.csv` per dataset (same numbers as
+   `results/parc_summary.csv`, sliced to that dataset), registered as HF dataset
+   configs and described on the card.
+
+**Published.** All three datasets are now on the Hub in the same layout, 221
+files each, verified byte-identical to `hf_package/<ds>/` after the push:
+
+| repo | state |
+|---|---|
+| `BrainAlign/cdl-devai-results-ds003604` | **new** — 29 families, 294 checkpoints, 3528 alignment rows, 12/12 cells |
+| `BrainAlign/cdl-devai-results-ds002236` | updated: +2 PARC files, README additive; every other file unchanged |
+| `BrainAlign/cdl-devai-results-ds006239` | updated: +2 PARC files, README additive; every other file unchanged |
+
+All public, pushed with suchirsalhan's write token (org member). No model weights
+were pushed — the models are `jmichaelov/parc-*` and `EleutherAI/*` upstream, and
+this sweep trains nothing.

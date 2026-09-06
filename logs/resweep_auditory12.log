@@ -1,0 +1,4 @@
+[roi 2026-09-06T07:09:41Z] >>> roi-auditory: sweeping [ds003604] on GPU 1
+[roi 2026-09-06T08:50:16Z] <<< roi-auditory sweep rc=0
+[roi 2026-09-06T08:50:34Z]     packaged+pushed ds003604/roi-auditory rc=0
+[roi 2026-09-06T08:50:35Z] ROI SWEEPS COMPLETE rc=0

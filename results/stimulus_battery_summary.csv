@@ -1,0 +1,13 @@
+candidate,n_cells,median_rsa_full,max_abs_rsa_full,median_rsa_relational,n_sig_uncorrected,median_frac_ceiling
+pair_len_diff,26,0.0008,0.1042,-0.0016,3,-0.0016
+pair_ortho_overlap,26,-0.0016,0.0776,-0.0009,1,-0.0009
+char_bigram_jaccard,26,0.0009,0.0547,-0.0064,1,-0.0091
+pair_first_letter_match,20,-0.0066,0.0533,0.0042,2,0.0108
+design_Tcode_ordinal,6,0.0313,0.0477,0.0094,3,0.0143
+pair_rime_match,16,0.0016,0.0461,0.0132,3,0.0325
+design_Tcode_same,6,0.028,0.0431,0.0244,2,0.029
+surface_length,26,0.0054,0.0412,0.0155,0,0.0192
+design_semantic_category,3,0.0198,0.0364,0.015,0,0.0152
+design_trial_type,12,-0.0012,0.0364,-0.0029,0,-0.0028
+string_edit,26,0.0052,0.031,-0.0055,0,-0.0066
+surface_nwords,6,0.0014,0.0161,-0.0082,0,-0.0082

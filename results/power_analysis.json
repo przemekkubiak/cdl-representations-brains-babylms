@@ -1,0 +1,23 @@
+{
+  "n_cells": 26,
+  "median_perm_null_sd": 0.02174,
+  "median_mde_single_cell": 0.061,
+  "median_mde_frac_of_relational_ceiling": 0.0697,
+  "median_best_observed_model_rsa": 0.0384,
+  "n_cells_where_best_model_exceeds_mde": 4,
+  "mde_across_cells_mean_shift": {
+    "all_26_cells": 0.01216,
+    "ds003604_12_cells": 0.0179,
+    "ds002236_6_cells": 0.02531,
+    "ds006239_8_cells": 0.02192
+  },
+  "empirical_real_effect_anchor": {
+    "what": "pair_len_diff on ds003604/Phon, replicating across 3 sessions",
+    "rsa": [
+      0.1042,
+      0.0611,
+      0.0989
+    ],
+    "note": "a genuine stimulus-locked effect reaches ~0.10, i.e. ~8% of that cell's relational ceiling"
+  }
+}
