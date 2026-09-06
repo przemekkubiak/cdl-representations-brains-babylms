@@ -1,0 +1,25 @@
+dataset,variant,cells,status,masks_ok,masks_failed,suspect_wholebrain,median_roi_voxels
+ds001894,within-run-normalised,0,not run,,,,
+ds001894,roi-phonology,0,not run,,,,
+ds001894,roi-auditory,0,not run,,,,
+ds001894,roi-motor,0,not run,,,,
+ds001894,roi-language,0,not run,,,,
+ds001894,roi-all,0,not run,,,,
+ds002236,within-run-normalised,6,results,,,,
+ds002236,roi-phonology,0,EMPTY DIR (no results),,,,
+ds002236,roi-auditory,0,not run,,,,
+ds002236,roi-motor,0,not run,,,,
+ds002236,roi-language,0,not run,,,,
+ds002236,roi-all,0,not run,,,,
+ds003604,within-run-normalised,12,results,,,,
+ds003604,roi-phonology,12,results,513,4,0,13777.0
+ds003604,roi-auditory,12,results,519,4,0,6754.0
+ds003604,roi-motor,12,results,519,4,0,7041.0
+ds003604,roi-language,0,not run,,,,
+ds003604,roi-all,0,not run,,,,
+ds006239,within-run-normalised,8,results,,,,
+ds006239,roi-phonology,0,not run,,,,
+ds006239,roi-auditory,0,not run,,,,
+ds006239,roi-motor,0,not run,,,,
+ds006239,roi-language,0,not run,,,,
+ds006239,roi-all,0,not run,,,,
