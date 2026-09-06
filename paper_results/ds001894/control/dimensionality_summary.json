@@ -1,0 +1,10 @@
+{
+  "group_rdm_effective_rank_median": 64,
+  "n_stim_median": 96,
+  "pattern_effective_rank_median": 34,
+  "pattern_n_voxels_median": 123043,
+  "frac_voxels_near_constant_median": 0.0,
+  "pc1_vs_global_signal_median": 0.20487483530961792,
+  "rdm_vs_amplitude_rsa_median": 0.13395243591193184,
+  "verdict": "patterns carry multi-dimensional structure"
+}
