@@ -57,7 +57,12 @@ for N in $WAVES; do
     # "grid done -- 0 alignment files" means every model load failed and the
     # stage still exited 0. Treat it as a failure so it is never published or
     # counted as coverage.
-    if grep -q "grid done -- 0 alignment files" "logs/par_${DS}_N${N}_${tag}.log" 2>/dev/null; then
+    # Only the LAST such line matters: stage logs are appended across reruns, so
+    # grepping the whole file finds a zero from an earlier failed attempt and
+    # marks a successful stage as failed. That happened to ds002236 N=6, which
+    # wrote 11 alignment files and was still reported FAILED.
+    if [ "$(grep -o 'grid done -- [0-9]* alignment files' "logs/par_${DS}_N${N}_${tag}.log" 2>/dev/null \
+            | tail -1 | grep -o '[0-9]*' | head -1)" = "0" ]; then
       log "N=$N $tag FAILED: grid produced 0 alignment files (check HF_HOME/token)"
     else
       log "N=$N $tag rc=$rc $(( (SECONDS - t0) / 60 ))m"
