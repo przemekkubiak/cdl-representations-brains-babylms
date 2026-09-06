@@ -39,14 +39,23 @@ commit_push() {   # commit_push <dir> <message>
   # loop exists to prevent. If the rebase cannot proceed, abort it and keep the
   # local commit -- the work stays safe on disk and in local history, and the
   # next cycle tries again.
+  # The two checkouts now push to DIFFERENT branches -- pipeline to main, the
+  # outer results checkout to neuro-results -- so they no longer race. Rebase
+  # onto that checkout's own upstream before pushing, and on conflict abort and
+  # keep the commit locally rather than forcing: a force would drop whichever
+  # side pushed last, which is the loss this loop exists to prevent.
+  local br; br="$(git -C "$d" rev-parse --abbrev-ref HEAD)"
   git -C "$d" fetch origin >/dev/null 2>&1
-  if ! git -C "$d" rebase origin/main >/dev/null 2>&1; then
-    git -C "$d" rebase --abort >/dev/null 2>&1
-    log "rebase conflict in $(basename "$d") -- commit kept locally, not pushed"
-    return
+  if git -C "$d" rev-parse --verify -q "origin/$br" >/dev/null 2>&1; then
+    if ! git -C "$d" rebase "origin/$br" >/dev/null 2>&1; then
+      git -C "$d" rebase --abort >/dev/null 2>&1
+      log "rebase conflict in $(basename "$d") on $br -- commit kept locally"
+      return
+    fi
   fi
-  git -C "$d" push origin HEAD:main >/dev/null 2>&1 && log "pushed $(basename "$d")" \
-    || log "push failed for $(basename "$d") (will retry next cycle)"
+  git -C "$d" push origin "HEAD:$br" >/dev/null 2>&1 \
+    && log "pushed $(basename "$d") -> $br" \
+    || log "push failed for $(basename "$d") -> $br (retries next cycle)"
 }
 
 revive() {        # revive <session> <command>
