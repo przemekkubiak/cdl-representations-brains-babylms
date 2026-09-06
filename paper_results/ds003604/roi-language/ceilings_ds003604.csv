@@ -1,0 +1,2 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Sem,ses-5,data/processed/fmri_wrn/ds003604/roi-language/Sem/session_rdm_ses-5.npz,True,72,70,0.8186414228702774,0.8278317939437225,0.00898810039719903,70

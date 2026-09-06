@@ -150,6 +150,17 @@ try:
     have = set(CONTRAST_SPECS.get(spec.contrast_spec, {}))
     # only phenomena that BOTH the registry declares and a contrast spec defines
     phenomena = [p for p in (spec.phenomena or {}) if p in have]
+    # ...AND for which the contrast CSV has actually been built. build_contrasts.py
+    # is hardwired to CONTRAST_SPEC (the ds003604 task set) and to a stimulus TSV
+    # keyed by those task names, so Orth and SemLocal have a spec but no CSV. The
+    # grid then raises FileNotFoundError on contrasts/<task>.csv for every model
+    # family, prints "grid done -- 0 alignment files", and exits 0. Filtering here
+    # runs the tasks that can actually be scored instead of failing all of them.
+    built = {q.stem for q in __import__("pathlib").Path("contrasts").glob("*.csv")}
+    dropped = [p for p in phenomena if p not in built]
+    phenomena = [p for p in phenomena if p in built]
+    if dropped:
+        print(f"# no contrasts/*.csv for: {' '.join(dropped)}", file=sys.stderr)
 except Exception:
     pass
 print(" ".join(phenomena))

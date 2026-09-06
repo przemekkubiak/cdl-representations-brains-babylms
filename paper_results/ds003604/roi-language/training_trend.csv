@@ -1,0 +1,12 @@
+family,n_cells,trend_rho_mean,trend_rho_sd,t,p
+pythia-1.4b-full,1,0.6774927281644394,,,
+beetle-fineweb3-eng,1,0.5940255219528922,,,
+babylm-gpt2-5,1,0.38333333333333336,,,
+pythia-70m-full,1,0.32802859800866907,,,
+beetle-humanscale-eng,1,0.26068518722468803,,,
+pythia-410m-full,1,0.1760311882383155,,,
+babylm-gpt2-7,1,0.13333333333333333,,,
+babylm-gpt2-3,1,0.03333333333333333,,,
+pythia-160m-full,1,-0.2383890999389734,,,
+pythia-1b-full,1,-0.3644040465007195,,,
+babylm-gpt2,1,-0.7,,,
