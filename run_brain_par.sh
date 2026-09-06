@@ -24,6 +24,17 @@
 # always leaves a complete published tier behind.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; cd "$ROOT"
+
+# REQUIRED. env_brainalign.sh defaults HF_HOME to /root/hf_cache_brainalign,
+# which is not writable here, and /home/sas245 is not readable either -- see
+# ENVIRONMENT.md. Leaving HOME unset makes every model load fail with a
+# PermissionError on /root, and the grid then reports "0 alignment files" and
+# exits 0, which is indistinguishable from a real empty result. That has already
+# been committed as a finding once (env_brainalign.sh line 17). Set both.
+export HOME=/local/scratch/sas245
+export HF_HOME="$HOME/hf_cache"
+export HF_DATASETS_CACHE="$HOME/hf_datasets_cache"
+export TOKENIZERS_PARALLELISM=false
 DS="${1:?usage: run_brain_par.sh <dataset> <gpu>}"
 GPU="${2:?usage: run_brain_par.sh <dataset> <gpu>}"
 WAVES="${WAVES:-6 12 25 50 89}"
@@ -43,7 +54,14 @@ for N in $WAVES; do
       JOBS="$JOBS" GPUS="$GPU" \
       timeout 21600 bash run_new_datasets.sh >>"logs/par_${DS}_N${N}_${tag}.log" 2>&1
     rc=$?
-    log "N=$N $tag rc=$rc $(( (SECONDS - t0) / 60 ))m"
+    # "grid done -- 0 alignment files" means every model load failed and the
+    # stage still exited 0. Treat it as a failure so it is never published or
+    # counted as coverage.
+    if grep -q "grid done -- 0 alignment files" "logs/par_${DS}_N${N}_${tag}.log" 2>/dev/null; then
+      log "N=$N $tag FAILED: grid produced 0 alignment files (check HF_HOME/token)"
+    else
+      log "N=$N $tag rc=$rc $(( (SECONDS - t0) / 60 ))m"
+    fi
   done
   log "wave N=$N complete; publishing"
   bash push_brain_to_hf.sh >>"logs/par_${DS}_N${N}_hf.log" 2>&1 \
