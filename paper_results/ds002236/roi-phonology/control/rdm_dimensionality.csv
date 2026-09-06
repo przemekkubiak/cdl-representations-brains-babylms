@@ -1,0 +1,7 @@
+task,session,n_stim,group_rdm_effective_rank,subject_rdm_rank_median,subject_rdm_rank_min,subject_rdm_rank_max,ceiling
+Phon,ses-11,96,49,49,49,49,
+Phon,ses-11+,96,66,59,56,59,0.28213800693893204
+Phon,ses-9,96,59,51,49,54,
+Sem,ses-11,72,44,44,44,44,
+Sem,ses-11+,72,48,42,41,43,0.27318052638066753
+Sem,ses-9,72,46,40,39,41,
