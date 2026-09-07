@@ -4,7 +4,7 @@ Wang et al. 2025 — word-level phonological and semantic reading tasks in child
 
 - Paper: https://www.sciencedirect.com/science/article/pii/S2352340925009692
 - Data: https://openneuro.org/datasets/ds006239/versions/1.0.5
-- Generated: 2026-09-06
+- Generated: 2026-09-07
 - Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms
 
 ## Read this first: does the measurement work?
@@ -45,7 +45,7 @@ stimulus files present, and reports zero features if they are not.
 
 ## What was built
 
-8 task × session cells, each an RDM over the stimuli
+16 task × session cells, each an RDM over the stimuli
 shared by that cell's subjects, with voxel patterns z-scored **within
 run** before aggregation (without that, the RDM measures scanner drift
 rather than language) and an inter-subject noise ceiling.
@@ -60,6 +60,44 @@ rather than language) and an inter-subject noise ceiling.
 | Sem      | ses-11    |       72 |        0.185478 |        0.586945 |           3 |
 | SemLocal | ses-11+   |       48 |        0.208521 |        0.601744 |           3 |
 | SemLocal | ses-11    |       48 |        0.216461 |        0.607091 |           3 |
+| Orth     | ses-11+   |       96 |        0.527509 |        0.760826 |           3 |
+| Orth     | ses-11    |       96 |        0.395701 |        0.694777 |           3 |
+| Phon     | ses-11+   |       96 |        0.527509 |        0.760826 |           3 |
+| Phon     | ses-11    |       96 |        0.395701 |        0.694777 |           3 |
+| Sem      | ses-11+   |       72 |        0.313565 |        0.658019 |           3 |
+| Sem      | ses-11    |       72 |        0.185478 |        0.586945 |           3 |
+| SemLocal | ses-11+   |       48 |        0.208521 |        0.601744 |           3 |
+| SemLocal | ses-11    |       48 |        0.216461 |        0.607091 |           3 |
+
+Model grid: **15 families**, 4192 alignment rows across 8 cells.
+
+| | |
+|---|---|
+| mean noise ceiling | 0.346 |
+| best alignment anywhere | 0.0653 |
+| as a fraction of ceiling | 28.2% |
+| families equivalent to zero (TOST ±0.05) | 15/15 |
+| Pythia scale trend | ρ = -0.129, p = 0.43 |
+
+### Per family
+
+| family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
+|:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
+| pico-decoder-tiny     |              21 |     0.0055 |   0.0039 |        0.0434 |                    0.2038 |               0      |
+| beetle-humanscale-eng |              18 |     0.0008 |   0.0052 |        0.0398 |                    0.1841 |               0      |
+| pico-decoder-large    |              21 |    -0.0013 |   0.0084 |        0.0521 |                    0.2498 |               0      |
+| pico-decoder-small    |              21 |    -0.0028 |   0.0115 |        0.0523 |                    0.2822 |               0      |
+| pythia-70m-full       |              21 |    -0.0036 |   0.0067 |        0.0519 |                    0.2396 |               0      |
+| pico-decoder-medium   |              21 |    -0.0039 |   0.0073 |        0.0351 |                    0.1587 |               0      |
+| pythia-410m-full      |              21 |    -0.0049 |   0.0086 |        0.038  |                    0.1899 |               0      |
+| pythia-1b-full        |              21 |    -0.007  |   0.0106 |        0.0482 |                    0.2179 |               0      |
+| beetle-fineweb3-eng   |              19 |    -0.0074 |   0.0051 |        0.0569 |                    0.2628 |               0      |
+| pythia-1.4b-full      |              21 |    -0.0102 |   0.0073 |        0.0482 |                    0.1831 |               0      |
+| babylm-gpt2           |               9 |    -0.0122 |   0.0124 |        0.042  |                    0.2016 |               0      |
+| pythia-160m-full      |              21 |    -0.0141 |   0.0077 |        0.0568 |                    0.241  |               0      |
+| babylm-gpt2-5         |               9 |    -0.0308 |   0.02   |        0.0644 |                    0.1395 |               0.015  |
+| babylm-gpt2-7         |               9 |    -0.0309 |   0.0201 |        0.0623 |                    0.1217 |               0.0156 |
+| babylm-gpt2-3         |               9 |    -0.0311 |   0.0205 |        0.0653 |                    0.1318 |               0.0176 |
 
 ## Dataset-specific notes
 

@@ -4,7 +4,7 @@ Lytle et al. 2019 — longitudinal word-level phonological processing in childre
 
 - Paper: https://www.nature.com/articles/s41597-019-0338-5
 - Data: https://openneuro.org/datasets/ds001894/versions/1.4.2
-- Generated: 2026-09-06
+- Generated: 2026-09-07
 - Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms
 
 ## Read this first: does the measurement work?
@@ -46,7 +46,7 @@ stimulus files present, and reports zero features if they are not.
 
 ## What was built
 
-4 task × session cells, each an RDM over the stimuli
+12 task × session cells, each an RDM over the stimuli
 shared by that cell's subjects, with voxel patterns z-scored **within
 run** before aggregation (without that, the RDM measures scanner drift
 rather than language) and an inter-subject noise ceiling.
@@ -57,32 +57,44 @@ rather than language) and an inter-subject noise ceiling.
 | Phon   | ses-11    |       96 |        0.33555  |        0.574596 |           5 |
 | Phon   | ses-7     |       96 |      nan        |      nan        |         nan |
 | Phon   | ses-9     |       96 |        0.183971 |        0.58974  |           3 |
+| Orth   | ses-11+   |       96 |        0.174262 |        0.545734 |           4 |
+| Orth   | ses-11    |       96 |        0.213686 |        0.52405  |           5 |
+| Orth   | ses-7     |       96 |      nan        |      nan        |         nan |
+| Orth   | ses-9     |       96 |        0.165076 |        0.607179 |           3 |
+| Phon   | ses-11+   |       96 |        0.174262 |        0.545734 |           4 |
+| Phon   | ses-11    |       96 |        0.213686 |        0.52405  |           5 |
+| Phon   | ses-7     |       96 |      nan        |      nan        |         nan |
+| Phon   | ses-9     |       96 |        0.165076 |        0.607179 |           3 |
 
-Model grid: **11 families**, 356 alignment rows across 2 cells.
+Model grid: **15 families**, 2096 alignment rows across 4 cells.
 
 | | |
 |---|---|
-| mean noise ceiling | 0.260 |
-| best alignment anywhere | 0.0431 |
-| as a fraction of ceiling | 23.4% |
-| families equivalent to zero (TOST ±0.05) | 0/11 |
-| Pythia scale trend | ρ = +0.222, p = 0.54 |
+| mean noise ceiling | 0.210 |
+| best alignment anywhere | 0.0455 |
+| as a fraction of ceiling | 26.1% |
+| families equivalent to zero (TOST ±0.05) | 15/15 |
+| Pythia scale trend | ρ = +0.166, p = 0.49 |
 
 ### Per family
 
 | family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
 |:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
-| pythia-1b-full        |              21 |     0.004  |   0.0096 |        0.0257 |                    0.096  |                  nan |
-| pythia-160m-full      |              21 |     0.0021 |   0.009  |        0.033  |                    0.1547 |                  nan |
-| pythia-1.4b-full      |              21 |     0.0002 |   0.0078 |        0.0262 |                    0.1423 |                  nan |
-| pythia-410m-full      |              21 |    -0.0007 |   0.013  |        0.0265 |                    0.1376 |                  nan |
-| beetle-humanscale-eng |              18 |    -0.003  |   0.0092 |        0.0347 |                    0.1884 |                  nan |
-| beetle-fineweb3-eng   |              19 |    -0.0035 |   0.0012 |        0.0202 |                    0.1    |                  nan |
-| pythia-70m-full       |              21 |    -0.0035 |   0.0107 |        0.0339 |                    0.1842 |                  nan |
-| babylm-gpt2           |               9 |    -0.0057 |   0.0019 |        0.0185 |                    0.1004 |                  nan |
-| babylm-gpt2-3         |               9 |    -0.0342 |   0.0021 |        0.0413 |                    0.2247 |                  nan |
-| babylm-gpt2-5         |               9 |    -0.0348 |   0.0035 |        0.0418 |                    0.2271 |                  nan |
-| babylm-gpt2-7         |               9 |    -0.0359 |   0.0034 |        0.0431 |                    0.2344 |                  nan |
+| pythia-1b-full        |              21 |     0.0106 |   0.0098 |        0.0455 |                    0.2352 |               0.002  |
+| pythia-160m-full      |              21 |     0.0092 |   0.0098 |        0.0405 |                    0.1962 |               0.0018 |
+| pico-decoder-tiny     |              21 |     0.0067 |   0.0089 |        0.0403 |                    0.2315 |               0.0012 |
+| pythia-1.4b-full      |              21 |     0.0067 |   0.0103 |        0.0343 |                    0.1604 |               0.0018 |
+| pythia-410m-full      |              21 |     0.0035 |   0.0093 |        0.0325 |                    0.1535 |               0.0011 |
+| pythia-70m-full       |              21 |     0.0024 |   0.0093 |        0.0339 |                    0.2053 |               0.001  |
+| pico-decoder-small    |              21 |     0.0021 |   0.0112 |        0.0359 |                    0.2175 |               0.0017 |
+| pico-decoder-large    |              21 |     0.0021 |   0.012  |        0.0374 |                    0.2268 |               0.0021 |
+| pico-decoder-medium   |              21 |     0.0014 |   0.0123 |        0.0364 |                    0.2141 |               0.0021 |
+| beetle-fineweb3-eng   |              19 |    -0.0006 |   0.0034 |        0.0298 |                    0.1709 |               0      |
+| beetle-humanscale-eng |              18 |    -0.0034 |   0.0054 |        0.0347 |                    0.21   |               0.0002 |
+| babylm-gpt2           |               9 |    -0.0062 |   0.005  |        0.0235 |                    0.135  |               0.0002 |
+| babylm-gpt2-3         |               9 |    -0.0233 |   0.0128 |        0.0413 |                    0.2504 |               0.0124 |
+| babylm-gpt2-5         |               9 |    -0.0241 |   0.0127 |        0.0418 |                    0.2531 |               0.0131 |
+| babylm-gpt2-7         |               9 |    -0.0249 |   0.013  |        0.0431 |                    0.2612 |               0.0154 |
 
 ## Dataset-specific notes
 
