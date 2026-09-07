@@ -1,0 +1,9 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Orth,ses-11+,data/processed/fmri_wrn/ds006239/roi-phonology/Orth/session_rdm_ses-11+.npz,True,96,3,0.5275085368785408,0.7608259153983431,0.01446088890281944,3
+Orth,ses-11,data/processed/fmri_wrn/ds006239/roi-phonology/Orth/session_rdm_ses-11.npz,True,96,3,0.3957014738594727,0.6947770841127893,0.02958444090913087,3
+Phon,ses-11+,data/processed/fmri_wrn/ds006239/roi-phonology/Phon/session_rdm_ses-11+.npz,True,96,3,0.5275085368785408,0.7608259153983431,0.01446088890281944,3
+Phon,ses-11,data/processed/fmri_wrn/ds006239/roi-phonology/Phon/session_rdm_ses-11.npz,True,96,3,0.3957014738594727,0.6947770841127893,0.02958444090913087,3
+Sem,ses-11+,data/processed/fmri_wrn/ds006239/roi-phonology/Sem/session_rdm_ses-11+.npz,True,72,3,0.31356458330125614,0.6580186206799753,0.012227428602274068,3
+Sem,ses-11,data/processed/fmri_wrn/ds006239/roi-phonology/Sem/session_rdm_ses-11.npz,True,72,3,0.18547788878028074,0.5869451684180786,0.018008433340553454,3
+SemLocal,ses-11+,data/processed/fmri_wrn/ds006239/roi-phonology/SemLocal/session_rdm_ses-11+.npz,True,48,3,0.20852062761238596,0.6017444461698555,0.02696022133496361,3
+SemLocal,ses-11,data/processed/fmri_wrn/ds006239/roi-phonology/SemLocal/session_rdm_ses-11.npz,True,48,3,0.21646099574807945,0.6070911363409572,0.006401932366776422,3
