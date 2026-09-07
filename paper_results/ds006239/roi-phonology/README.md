@@ -1,0 +1,93 @@
+# Brain–language-model alignment: ds006239 (roi-phonology)
+
+Wang et al. 2025 — word-level phonological and semantic reading tasks in children and adolescents aged 10–17.
+
+- Paper: https://www.sciencedirect.com/science/article/pii/S2352340925009692
+- Data: https://openneuro.org/datasets/ds006239/versions/1.0.5
+- Generated: 2026-09-07
+- Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms
+- Masking: **roi-phonology** -- see DATASETS.md section 10 for the three-level standard (phonology/language/all) this is part of, and how it differs from the whole-brain reference.
+
+## Read this first: does the measurement work?
+
+Every alignment number in this dataset is only as meaningful as the brain
+RDMs it was computed against. So before any model result, the same
+pipeline is asked whether *anything* stimulus-driven correlates with those
+RDMs — stimulus duration, intensity, word length, frequency, phoneme and
+syllable counts, an acoustic model of the audio where the stimuli are
+audio, and the study's own condition contrast — each tested by a
+permutation test that shuffles stimulus identity.
+
+**GATE: FAILED. 0/38 stimulus tests are significant** after Holm
+correction — not the acoustic model of the audio the children actually
+heard, not the study's own experimental contrast.
+
+**The alignment numbers below are therefore uninterpretable as
+evidence about language models.** They measure a representational
+geometry that does not demonstrably encode the stimuli. They are
+published for completeness and for whoever fixes the estimator, not as
+a result. Do not cite them as evidence that models fail to align with
+the developing brain.
+
+Measured cause, from `control/`:
+
+- RDM effective rank: **53** of 84 stimuli
+
+
+Note that this is NOT ds003604's failure mode. There, the RDM
+effective rank was ~3 of 40-48 stimuli -- near-degenerate betas
+that could not express stimulus-level structure at all. The rank
+recorded above is a large fraction of the stimulus count, so these
+RDMs do carry stimulus structure and the control failing here means
+the specific controls tested did not reach significance, not that
+the measurement is uninterpretable. Check `control/` for which
+controls ran: an acoustic or visual control needs the dataset's
+stimulus files present, and reports zero features if they are not.
+
+## What was built
+
+8 task × session cells, each an RDM over the stimuli
+shared by that cell's subjects, with voxel patterns z-scored **within
+run** before aggregation (without that, the RDM measures scanner drift
+rather than language) and an inter-subject noise ceiling.
+
+| task     | session   |   n_stim |   ceiling_lower |   ceiling_upper |   ceiling_n |
+|:---------|:----------|---------:|----------------:|----------------:|------------:|
+| Orth     | ses-11+   |       96 |        0.527509 |        0.760826 |           3 |
+| Orth     | ses-11    |       96 |        0.395701 |        0.694777 |           3 |
+| Phon     | ses-11+   |       96 |        0.527509 |        0.760826 |           3 |
+| Phon     | ses-11    |       96 |        0.395701 |        0.694777 |           3 |
+| Sem      | ses-11+   |       72 |        0.313565 |        0.658019 |           3 |
+| Sem      | ses-11    |       72 |        0.185478 |        0.586945 |           3 |
+| SemLocal | ses-11+   |       48 |        0.208521 |        0.601744 |           3 |
+| SemLocal | ses-11    |       48 |        0.216461 |        0.607091 |           3 |
+
+## Dataset-specific notes
+
+Contains **LocalSem**, the only genuinely run/stimulus-CROSSED language cell across all four datasets in this project: its stimuli recur across runs, so run identity and stimulus identity are separable and the scanner-run confound that invalidated the first ds003604 analysis cannot arise. Per-subject age is NOT recoverable from the release — participants.tsv has birthdate but no scan date and there are no *_scans.tsv files — so this dataset is cohort-level only and cannot carry the developmental axis as published.
+
+## Files
+
+| path | what |
+|---|---|
+| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling |
+| `alignment_by_family.csv` | per family, with equivalence tests |
+| `alignment_by_cell.csv` | per task × session |
+| `ceilings_*.csv` | noise ceiling per cell |
+| `control/` | the positive control and RDM dimensionality — the gate |
+| `scale_ladder.csv` | the Pythia 70M→1.4B scale test |
+| `fig_*.pdf`, `fig_*.png` | figures |
+
+## Method
+
+Representational similarity analysis. For each cell, a brain RDM over
+stimuli (correlation distance between per-stimulus GLM beta patterns,
+within-run z-scored, aggregated across subjects) is compared by Spearman
+correlation with a model RDM over the same stimuli, taken from each
+checkpoint's hidden states. Alignment is reported raw and as a fraction of
+the inter-subject noise ceiling, and judged against a null built from the
+PARC suite — 18 models differing only by random seed, which is what 'no
+effect' looks like on this measurement.
+
+Null and fixation trials are excluded from the stimulus set. For paired
+designs the stimulus identity is the pair, not either word alone.
