@@ -48,6 +48,30 @@ SKIP_BRAIN="${SKIP_BRAIN:-0}"
 MAX_CKPT="${MAX_CKPT:-25}"          # log-subsample dense pico trajectories (0 = all 126)
 BATCH_SIZE="${BATCH_SIZE:-16}"
 
+# --- sessions (override via env; auto-discovered from BRAIN_RDM_ROOT) ------ #
+# run_devai_grid.py's --sessions defaults to ds003604's ("ses-5 ses-7 ses-9")
+# and this wrapper never passed the flag, so every OTHER dataset silently lost
+# the cells whose session label is not one of those three -- the brain RDM was
+# never loaded, `bt.get(session)` returned nothing, and the loop appended no
+# row while exiting 0. Measured 2026-09-07: ds002236 (ses-9, ses-11, ses-11+)
+# produced only its 2 ses-9 cells of 6; ds001894 (ses-7/9/11/11+) only 4 of 8;
+# ds006239 (ses-11, ses-11+) intersected nothing at all and reported
+# "(no rows for alignment)" for all 15 families with rc=0 -- which is what the
+# ledger recorded as "grid produced 0 alignment files (check HF_HOME/token)".
+# Same failure shape as the PHENOMENA bug documented in run_new_datasets.sh.
+# Discovery reads the session label straight out of the RDM filenames
+# (session_rdm_<label>.npz), using find -exec basename for BSD portability for
+# the reason spelled out in run_new_datasets.sh's sessions_for().
+SESSIONS_ARR=(${SESSIONS:-})
+SESSIONS_ARR=(${SESSIONS_ARR[*]//,/ })
+if [ ${#SESSIONS_ARR[@]} -eq 0 ]; then
+  SESSIONS_ARR=($(find "$BRAIN_RDM_ROOT" -name 'session_rdm_*.npz' -exec basename {} \; 2>/dev/null \
+                  | sed 's/^session_rdm_//; s/\.npz$//' | sort -u))
+fi
+# Empty only when the RDM root is absent (SKIP_BRAIN with nothing built yet);
+# keep the historical default so a ds003604 run is byte-identical to before.
+[ ${#SESSIONS_ARR[@]} -eq 0 ] && SESSIONS_ARR=(ses-5 ses-7 ses-9)
+
 # SMOKE=1: ~2-min sanity run — one small family, 2 checkpoints, no brain, no RSA.
 # Confirms pico/Beetle actually load + extract on THIS cluster before the full sweep.
 if [ "${SMOKE:-0}" = "1" ]; then
@@ -76,6 +100,7 @@ echo "=========================================="
 echo "DevAI grid | Job ${SLURM_JOB_ID:-local} | Node ${SLURM_NODELIST:-$(hostname)}"
 echo "Families: ${FAMILIES[*]}"
 echo "Tasks: ${PHENOMENA[*]} | max_ckpt=$MAX_CKPT | skip_brain=$SKIP_BRAIN"
+echo "Sessions: ${SESSIONS_ARR[*]}"
 echo "Start: $(date)"
 python -c "import torch;print('CUDA:',torch.cuda.is_available(),'|',torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU')"
 echo "=========================================="
@@ -122,6 +147,7 @@ for FAM in "${FAMILIES[@]}"; do
   python scripts/run_devai_grid.py --model "$FAM" --dataset "$DATASET" \
       --contrast-dir "$CONTRASTS" --phenomena "${PHENOMENA[@]}" \
       --brain-rdm-root "$BRAIN_RDM_ROOT" --max-checkpoints "$MAX_CKPT" \
+      --sessions "${SESSIONS_ARR[@]}" \
       --batch-size "$BATCH_SIZE" --normalize --output-dir "$GRID_DIR" \
       "${ABLATE_FLAG[@]}" "${BOOT_FLAG[@]}" \
       || { echo "  ! grid failed for $FAM"; continue; }

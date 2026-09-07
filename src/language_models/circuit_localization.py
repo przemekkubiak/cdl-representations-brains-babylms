@@ -46,6 +46,96 @@ logger = logging.getLogger(__name__)
 
 
 # --------------------------------------------------------------------------- #
+# transformers 5.x compatibility for trust_remote_code checkpoints
+# --------------------------------------------------------------------------- #
+# transformers 5.x sets `all_tied_weights_keys` in PreTrainedModel.post_init(),
+# and `_move_missing_keys_from_meta_to_device()` reads it unconditionally at the
+# end of every from_pretrained(). A remote-code model whose __init__ never calls
+# post_init() therefore dies with
+#   AttributeError: 'PicoDecoderHF' object has no attribute 'all_tied_weights_keys'
+# AFTER its weights have already loaded. That is every pico-lm/pico-decoder-*
+# and Beetle checkpoint here -- the four pico families and the two Beetle ones
+# were failing on EVERY checkpoint of EVERY dataset, and the grid caught the
+# exception per checkpoint, printed "! failed to load", and exited 0, so the
+# families simply vanished from the results (11 alignment files where 15 were
+# expected) with nothing marking them as missing rather than empty.
+# A class-level default is enough: post_init(), when it does run, ASSIGNS an
+# instance attribute over it (modeling_utils.py:1386) before any update(), so
+# a compliant model never touches this dict.
+try:  # noqa: SIM105 - a transformers without the attribute needs no shim
+    from transformers.modeling_utils import PreTrainedModel as _PTM
+
+    if not hasattr(_PTM, "all_tied_weights_keys"):
+        _PTM.all_tied_weights_keys = {}
+except Exception:  # pragma: no cover - never block loading on the shim itself
+    pass
+
+
+def _repair_non_persistent_buffers(model: "torch.nn.Module", config) -> list[str]:
+    """Rebuild buffers that from_pretrained() left meta or uninitialized.
+
+    Second half of the same transformers-5.x/pico incompatibility. pico's RoPE
+    computes its `_freqs_cis` rotation table ONCE into a class attribute
+    (`RoPE._freqs_cis_tensor`) and registers it on every layer with
+    persistent=False -- shared, and absent from the checkpoint. Under
+    transformers 5.x that table is built inside the meta-device init context,
+    which breaks it in two different ways at once:
+
+      * every layer but the first keeps the shared META tensor, so the first
+        `model.to(device)` raises "Cannot copy out of meta tensor; no data!";
+      * the first layer's copy IS materialized -- with UNINITIALIZED MEMORY.
+        Measured on pico-decoder-tiny@step0: entries of -1.6e+38 where the
+        correct table is unit-modulus (all |z| = 1).
+
+    Only the first is loud. Copying the materialized twin into the meta layers
+    would clear the exception and silently rotate every query and key by
+    garbage, so the table is RECOMPUTED from the module class instead: a fresh
+    module built outside the meta context runs the same __init__ arithmetic the
+    checkpoint's own code specifies. The poisoned class-level cache is dropped
+    first, or the fresh module just hands back the same broken tensor.
+
+    Applies to any remote-code module with non-persistent buffers that takes a
+    config in __init__ (pico's RoPE, and the Beetle checkpoints, which are the
+    same PicoDecoderHF class). Modules that cannot be rebuilt are left exactly
+    as they are and reported: a wrong-but-loud failure downstream beats a
+    plausible number computed from garbage.
+
+    Returns the names of the buffers that were rebuilt.
+    """
+    suspect = [(n, m) for n, m in model.named_modules() if m._non_persistent_buffers_set]
+    if not suspect:
+        return []
+
+    # Drop class-level tensor caches poisoned by the meta init context.
+    for cls in {type(m) for _, m in suspect}:
+        for attr, val in list(vars(cls).items()):
+            if isinstance(val, torch.Tensor) and (val.is_meta or not torch.isfinite(
+                    torch.view_as_real(val) if val.is_complex() else val).all()):
+                setattr(cls, attr, None)
+
+    rebuilt: list[str] = []
+    fresh_cache: Dict[type, Optional[torch.nn.Module]] = {}
+    for mod_name, module in suspect:
+        cls = type(module)
+        if cls not in fresh_cache:
+            try:
+                fresh_cache[cls] = cls(config)
+            except Exception as exc:  # noqa: BLE001 - any signature we cannot call
+                logger.warning(f"  cannot rebuild {cls.__name__} buffers: {exc}")
+                fresh_cache[cls] = None
+        fresh = fresh_cache[cls]
+        if fresh is None:
+            continue
+        for buf_name in sorted(module._non_persistent_buffers_set):
+            src = getattr(fresh, buf_name, None)
+            if src is None or src.is_meta:
+                continue
+            module.register_buffer(buf_name, src.clone(), persistent=False)
+            rebuilt.append(f"{mod_name}.{buf_name}" if mod_name else buf_name)
+    return rebuilt
+
+
+# --------------------------------------------------------------------------- #
 # Phenomenon contrasts (positive = condition, negative = control)
 # --------------------------------------------------------------------------- #
 @dataclass
@@ -325,6 +415,13 @@ class ActivationExtractor:
             trust_remote_code=True,
             torch_dtype=dtype,
         )
+        rebuilt = _repair_non_persistent_buffers(self.model, self.model.config)
+        if rebuilt:
+            logger.warning(
+                f"  rebuilt {len(rebuilt)} non-persistent buffer(s) for "
+                f"{model_name}: {', '.join(rebuilt[:3])}"
+                + (" ..." if len(rebuilt) > 3 else "")
+            )
         self.device = torch.device(
             device or ("cuda" if torch.cuda.is_available() else "cpu")
         )
