@@ -654,3 +654,74 @@ files each, verified byte-identical to `hf_package/<ds>/` after the push:
 All public, pushed with suchirsalhan's write token (org member). No model weights
 were pushed — the models are `jmichaelov/parc-*` and `EleutherAI/*` upstream, and
 this sweep trains nothing.
+
+---
+
+## 15. Three silent failures found and fixed; the new-dataset sweep restarted (2026-09-07)
+
+The wave sweep (`run_brain_par.sh` x 3 datasets, waves N = 6, 12, 25, 50, 89,
+ROI levels whole-brain/phonology/auditory/motor/language) had been running for
+ten hours. It had produced almost nothing usable, and nothing in any log said
+so. Three independent defects, each of which exits 0.
+
+**1. The grid used ds003604's sessions for every dataset.**
+`scripts/run_devai_grid.py --sessions` defaults to `ses-5 ses-7 ses-9`, and
+`slurm/run_devai_grid.sh` never passed the flag. A session whose label is not
+one of those three was never loaded, `bt.get(session)` returned nothing, and the
+loop appended no row. Measured coverage:
+
+| dataset | sessions | cells computed |
+|---|---|---|
+| ds003604 | ses-5, ses-7, ses-9 | 12 of 12 — unaffected |
+| ds001894 | ses-7, ses-9, ses-11, ses-11+ | **4 of 8** |
+| ds002236 | ses-9, ses-11, ses-11+ | **2 of 6** |
+| ds006239 | ses-11, ses-11+ | **0 of 8** |
+
+ds006239 is the one the ledger recorded as `grid produced 0 alignment files
+(check HF_HOME/token)` — the token was fine. Sessions are now discovered from
+the RDM filenames under `BRAIN_RDM_ROOT`; ds003604 discovers exactly the old
+default, so it is byte-identical.
+
+**2. transformers 5.x broke every pico checkpoint, twice.** `PicoDecoderHF`
+never calls `post_init()`, so `from_pretrained()` died on
+`all_tied_weights_keys` *after* the weights loaded; and pico's RoPE table is a
+shared non-persistent buffer built inside the meta-init context, which leaves
+every layer but the first on meta **and materializes the first from
+uninitialized memory** (entries at −1.6e+38 where the table is unit-modulus).
+Copying the surviving twin — the obvious fix — would have cleared the crash and
+rotated every query and key by garbage, so the table is recomputed from the
+module class instead. The four pico families were missing from **every**
+published dataset (11 alignment files where 15 were expected, with nothing
+marking them as absent rather than empty); no published number is wrong because
+of this, they were simply never there. pico-decoder-tiny now runs end to end and
+its minimal-pair accuracy moves with training (Sem 0.58 → 0.71) instead of
+sitting at 0.
+
+**3. The wave ladder could not climb.** `run_new_datasets.sh` skipped brain prep
+whenever any session RDM existed at the root, and the Hub RDM cache path carried
+no cohort, so wave 12 would have found (or re-pulled) wave 6's RDMs, skipped
+prep, re-run the identical grid, and published six subjects' numbers under a
+12-subject label — with ds002236/ses-11 currently built from **one** subject.
+`$RDM_ROOT/.cohort` now records what a root was built with (0 = full), prep is
+skipped only when that cohort covers the request, and capped cohorts cache under
+their own `cohort-<N>` segment. The full cohort keeps the unscoped path, which
+is what all 74 entries in the cache repo are today, so nothing cached is
+orphaned. Existing roots seeded: 6 for the seven new-dataset roots, 0 for
+ds003604's.
+
+**And the sweep was not running at all.** All three wave drivers were in state
+`T` — SIGTTIN-stopped — on `git push -q origin main`, for 90, 40 and 16 minutes,
+because `run_brain_par.sh` never exported `GIT_SSH_COMMAND` and ssh fell through
+to asking a terminal it did not have. The tmux sessions were alive, so the
+supervisor's `revive()` saw three healthy sessions. It now exports the key with
+`BatchMode=yes`, which turns that freeze into a fast non-zero exit on a push
+that is best-effort anyway.
+
+**Restarted 2026-09-07 07:39Z** from wave N=6 on GPUs 0/1/2. Brain prep is
+skipped (cohort 6 covers the request), so wave 6 is a GPU-only re-run of the
+grids; the banner now logs the discovered sessions, and all three are running
+the full 15 families with pico loading.
+
+**Every result published for ds001894, ds002236 and ds006239 before this point
+is incomplete** — wrong session coverage and four missing families — and will be
+overwritten as each level finishes.
