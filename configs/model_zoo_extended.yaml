@@ -1,0 +1,4793 @@
+families:
+  pythia-160m:
+    hf_repo: EleutherAI/pythia-160m
+    arch: gptneox
+    revisions:
+    - name: step0
+      step: 0
+      tokens: 0
+    - name: step1
+      step: 1
+      tokens: 2097152
+    - name: step2
+      step: 2
+      tokens: 4194304
+    - name: step4
+      step: 4
+      tokens: 8388608
+    - name: step8
+      step: 8
+      tokens: 16777216
+    - name: step16
+      step: 16
+      tokens: 33554432
+    - name: step32
+      step: 32
+      tokens: 67108864
+    - name: step64
+      step: 64
+      tokens: 134217728
+    - name: step128
+      step: 128
+      tokens: 268435456
+    - name: step256
+      step: 256
+      tokens: 536870912
+    - name: step512
+      step: 512
+      tokens: 1073741824
+    - name: step1000
+      step: 1000
+      tokens: 2097152000
+    - name: step2000
+      step: 2000
+      tokens: 4194304000
+    - name: step4000
+      step: 4000
+      tokens: 8388608000
+    - name: step8000
+      step: 8000
+      tokens: 16777216000
+    - name: step16000
+      step: 16000
+      tokens: 33554432000
+    - name: step32000
+      step: 32000
+      tokens: 67108864000
+    - name: step64000
+      step: 64000
+      tokens: 134217728000
+    - name: step143000
+      step: 143000
+      tokens: 299892736000
+    notes: step*tokens ~ step * 2^21 (batch 1024 x seq 2048). Use for dense trajectory.
+  pythia-410m:
+    hf_repo: EleutherAI/pythia-410m
+    arch: gptneox
+    revisions:
+    - name: step0
+      step: 0
+    - name: step8
+      step: 8
+    - name: step64
+      step: 64
+    - name: step512
+      step: 512
+    - name: step2000
+      step: 2000
+    - name: step8000
+      step: 8000
+    - name: step32000
+      step: 32000
+    - name: step143000
+      step: 143000
+    notes: Larger Pythia for model-size covariate in the compute-confound analysis.
+  pythia-160m-full:
+    hf_repo: EleutherAI/pythia-160m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: ALL 154 Pythia checkpoints. Full-resolution alignment/localization.
+  pythia-410m-full:
+    hf_repo: EleutherAI/pythia-410m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: ALL 154 Pythia checkpoints (410m size covariate). Full-resolution.
+  pythia-70m-full:
+    hf_repo: EleutherAI/pythia-70m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Smallest Pythia; cheap lower anchor of the scale ladder.
+  pythia-1b-full:
+    hf_repo: EleutherAI/pythia-1b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: 1B scale rung.
+  pythia-1.4b-full:
+    hf_repo: EleutherAI/pythia-1.4b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: 1.4B scale rung (upper anchor for size covariate).
+  babylm-gpt2-3:
+    hf_repo: BrainAlign/gpt2-babylm-3
+    arch: gpt2
+    revisions: &id001
+    - name: checkpoint-01
+      step: 191
+    - name: checkpoint-02
+      step: 382
+    - name: checkpoint-03
+      step: 573
+    - name: checkpoint-04
+      step: 764
+    - name: checkpoint-05
+      step: 1146
+    - name: checkpoint-06
+      step: 1337
+    - name: checkpoint-07
+      step: 1528
+    - name: checkpoint-08
+      step: 1719
+    - name: checkpoint-09
+      step: 1908
+    developmental_map:
+      191: ses-5
+      1146: ses-7
+      1908: ses-9
+    notes: Verified on Hub. smallest data budget. 9 epoch checkpoints.
+  babylm-gpt2-5:
+    hf_repo: BrainAlign/gpt2-babylm-5
+    arch: gpt2
+    revisions: *id001
+    developmental_map:
+      191: ses-5
+      1146: ses-7
+      1908: ses-9
+    notes: Verified on Hub. mid data budget. 9 epoch checkpoints.
+  babylm-gpt2-7:
+    hf_repo: BrainAlign/gpt2-babylm-7
+    arch: gpt2
+    revisions: *id001
+    developmental_map:
+      191: ses-5
+      1146: ses-7
+      1908: ses-9
+    notes: Verified on Hub. larger data budget. 9 epoch checkpoints.
+  babylm-gpt2:
+    hf_repo: BrainAlign/gpt2-babylm-9
+    arch: gpt2
+    revisions:
+    - name: checkpoint-01
+      step: 598
+    - name: checkpoint-02
+      step: 897
+    - name: checkpoint-03
+      step: 1196
+    - name: checkpoint-04
+      step: 1495
+    - name: checkpoint-05
+      step: 1794
+    - name: checkpoint-06
+      step: 2093
+    - name: checkpoint-07
+      step: 2392
+    - name: checkpoint-08
+      step: 2691
+    - name: checkpoint-09
+      step: 2990
+    developmental_map:
+      598: ses-5
+      1794: ses-7
+      2990: ses-9
+    notes: Verified on Hub. child-scale data => dev-honest. 9 epoch checkpoints.
+  babylm-gpt2-local:
+    checkpoint_glob: checkpoints/gpt2-babylm-*/checkpoint-*
+    arch: gpt2
+    notes: Use when training checkpoints live on local disk (auto-discovered, sorted).
+  pico-decoder-tiny:
+    hf_repo: pico-lm/pico-decoder-tiny
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-tiny-1
+    notes: pico scale ladder (smallest). dense commit-history checkpoints.
+  pico-decoder-small:
+    hf_repo: pico-lm/pico-decoder-small
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-small-1
+    notes: pico 65M (12L/384). dense checkpoints + learning_dynamics.
+  pico-decoder-medium:
+    hf_repo: pico-lm/pico-decoder-medium
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-medium-1
+    notes: pico scale ladder (medium).
+  pico-decoder-large:
+    hf_repo: pico-lm/pico-decoder-large
+    arch: pico
+    commit_trajectory: true
+    run_branch: pico-decoder-large-1
+    notes: pico scale ladder (largest, ~500M).
+  beetle-humanscale-eng:
+    hf_repo: Beetle-HumanScale/beetle-monolingual-humanscale-eng
+    arch: pico
+    all_revisions: true
+    notes: Human-scale English (developmentally plausible budget). 35 step branches.
+  beetle-fineweb3-eng:
+    hf_repo: Beetle-FineWeb3-24B/beetle-monolingual-fineweb3-eng
+    arch: pico
+    all_revisions: true
+    notes: FineWeb 24B English (web-scale budget). 19 step branches.
+  parc-pythia-seed0:
+    hf_repo: jmichaelov/parc-pythia-seed0
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 0
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 0. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-pythia-seed1:
+    hf_repo: jmichaelov/parc-pythia-seed1
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 1
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 1. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-pythia-seed2:
+    hf_repo: jmichaelov/parc-pythia-seed2
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 2
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 2. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-pythia-seed3:
+    hf_repo: jmichaelov/parc-pythia-seed3
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 3
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 3. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-pythia-seed4:
+    hf_repo: jmichaelov/parc-pythia-seed4
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 4
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 4. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-pythia-seed5:
+    hf_repo: jmichaelov/parc-pythia-seed5
+    arch: gptneox
+    parc:
+      architecture: pythia
+      seed: 5
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Pythia 160M (transformer), seed 5. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed0:
+    hf_repo: jmichaelov/parc-mamba-seed0
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 0
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 0. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed1:
+    hf_repo: jmichaelov/parc-mamba-seed1
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 1
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 1. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed2:
+    hf_repo: jmichaelov/parc-mamba-seed2
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 2
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 2. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed3:
+    hf_repo: jmichaelov/parc-mamba-seed3
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 3
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 3. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed4:
+    hf_repo: jmichaelov/parc-mamba-seed4
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 4
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 4. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-mamba-seed5:
+    hf_repo: jmichaelov/parc-mamba-seed5
+    arch: mamba
+    parc:
+      architecture: mamba
+      seed: 5
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC Mamba 130M (state-space), seed 5. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed0:
+    hf_repo: jmichaelov/parc-rwkv-seed0
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 0
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 0. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed1:
+    hf_repo: jmichaelov/parc-rwkv-seed1
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 1
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 1. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed2:
+    hf_repo: jmichaelov/parc-rwkv-seed2
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 2
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 2. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed3:
+    hf_repo: jmichaelov/parc-rwkv-seed3
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 3
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 3. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed4:
+    hf_repo: jmichaelov/parc-rwkv-seed4
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 4
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 4. OpenWebText, 4000 steps, 73 checkpoints.
+  parc-rwkv-seed5:
+    hf_repo: jmichaelov/parc-rwkv-seed5
+    arch: rwkv
+    parc:
+      architecture: rwkv
+      seed: 5
+    revisions:
+    - name: checkpoint-10
+      step: 10
+      tokens: 5242880
+    - name: checkpoint-20
+      step: 20
+      tokens: 10485760
+    - name: checkpoint-30
+      step: 30
+      tokens: 15728640
+    - name: checkpoint-40
+      step: 40
+      tokens: 20971520
+    - name: checkpoint-50
+      step: 50
+      tokens: 26214400
+    - name: checkpoint-60
+      step: 60
+      tokens: 31457280
+    - name: checkpoint-70
+      step: 70
+      tokens: 36700160
+    - name: checkpoint-80
+      step: 80
+      tokens: 41943040
+    - name: checkpoint-90
+      step: 90
+      tokens: 47185920
+    - name: checkpoint-100
+      step: 100
+      tokens: 52428800
+    - name: checkpoint-150
+      step: 150
+      tokens: 78643200
+    - name: checkpoint-160
+      step: 160
+      tokens: 83886080
+    - name: checkpoint-200
+      step: 200
+      tokens: 104857600
+    - name: checkpoint-250
+      step: 250
+      tokens: 131072000
+    - name: checkpoint-300
+      step: 300
+      tokens: 157286400
+    - name: checkpoint-320
+      step: 320
+      tokens: 167772160
+    - name: checkpoint-350
+      step: 350
+      tokens: 183500800
+    - name: checkpoint-400
+      step: 400
+      tokens: 209715200
+    - name: checkpoint-450
+      step: 450
+      tokens: 235929600
+    - name: checkpoint-500
+      step: 500
+      tokens: 262144000
+    - name: checkpoint-550
+      step: 550
+      tokens: 288358400
+    - name: checkpoint-600
+      step: 600
+      tokens: 314572800
+    - name: checkpoint-640
+      step: 640
+      tokens: 335544320
+    - name: checkpoint-650
+      step: 650
+      tokens: 340787200
+    - name: checkpoint-700
+      step: 700
+      tokens: 367001600
+    - name: checkpoint-750
+      step: 750
+      tokens: 393216000
+    - name: checkpoint-800
+      step: 800
+      tokens: 419430400
+    - name: checkpoint-850
+      step: 850
+      tokens: 445644800
+    - name: checkpoint-900
+      step: 900
+      tokens: 471859200
+    - name: checkpoint-950
+      step: 950
+      tokens: 498073600
+    - name: checkpoint-1000
+      step: 1000
+      tokens: 524288000
+    - name: checkpoint-1050
+      step: 1050
+      tokens: 550502400
+    - name: checkpoint-1100
+      step: 1100
+      tokens: 576716800
+    - name: checkpoint-1150
+      step: 1150
+      tokens: 602931200
+    - name: checkpoint-1200
+      step: 1200
+      tokens: 629145600
+    - name: checkpoint-1250
+      step: 1250
+      tokens: 655360000
+    - name: checkpoint-1280
+      step: 1280
+      tokens: 671088640
+    - name: checkpoint-1300
+      step: 1300
+      tokens: 681574400
+    - name: checkpoint-1350
+      step: 1350
+      tokens: 707788800
+    - name: checkpoint-1400
+      step: 1400
+      tokens: 734003200
+    - name: checkpoint-1450
+      step: 1450
+      tokens: 760217600
+    - name: checkpoint-1500
+      step: 1500
+      tokens: 786432000
+    - name: checkpoint-1550
+      step: 1550
+      tokens: 812646400
+    - name: checkpoint-1600
+      step: 1600
+      tokens: 838860800
+    - name: checkpoint-1650
+      step: 1650
+      tokens: 865075200
+    - name: checkpoint-1700
+      step: 1700
+      tokens: 891289600
+    - name: checkpoint-1750
+      step: 1750
+      tokens: 917504000
+    - name: checkpoint-1800
+      step: 1800
+      tokens: 943718400
+    - name: checkpoint-1850
+      step: 1850
+      tokens: 969932800
+    - name: checkpoint-1900
+      step: 1900
+      tokens: 996147200
+    - name: checkpoint-1950
+      step: 1950
+      tokens: 1022361600
+    - name: checkpoint-2000
+      step: 2000
+      tokens: 1048576000
+    - name: checkpoint-2100
+      step: 2100
+      tokens: 1101004800
+    - name: checkpoint-2200
+      step: 2200
+      tokens: 1153433600
+    - name: checkpoint-2300
+      step: 2300
+      tokens: 1205862400
+    - name: checkpoint-2400
+      step: 2400
+      tokens: 1258291200
+    - name: checkpoint-2500
+      step: 2500
+      tokens: 1310720000
+    - name: checkpoint-2560
+      step: 2560
+      tokens: 1342177280
+    - name: checkpoint-2600
+      step: 2600
+      tokens: 1363148800
+    - name: checkpoint-2700
+      step: 2700
+      tokens: 1415577600
+    - name: checkpoint-2800
+      step: 2800
+      tokens: 1468006400
+    - name: checkpoint-2900
+      step: 2900
+      tokens: 1520435200
+    - name: checkpoint-3000
+      step: 3000
+      tokens: 1572864000
+    - name: checkpoint-3100
+      step: 3100
+      tokens: 1625292800
+    - name: checkpoint-3200
+      step: 3200
+      tokens: 1677721600
+    - name: checkpoint-3300
+      step: 3300
+      tokens: 1730150400
+    - name: checkpoint-3400
+      step: 3400
+      tokens: 1782579200
+    - name: checkpoint-3500
+      step: 3500
+      tokens: 1835008000
+    - name: checkpoint-3600
+      step: 3600
+      tokens: 1887436800
+    - name: checkpoint-3700
+      step: 3700
+      tokens: 1939865600
+    - name: checkpoint-3800
+      step: 3800
+      tokens: 1992294400
+    - name: checkpoint-3900
+      step: 3900
+      tokens: 2044723200
+    - name: checkpoint-4000
+      step: 4000
+      tokens: 2097152000
+    notes: PARC RWKV 169M (linear-attention / RNN-like), seed 5. OpenWebText, 4000 steps, 73 checkpoints.
+  pythia-2.8b-full:
+    hf_repo: EleutherAI/pythia-2.8b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: 2.8b rung -- extends the ladder past 1.4b.
+  pythia-6.9b-full:
+    hf_repo: EleutherAI/pythia-6.9b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: 6.9b rung -- extends the ladder past 1.4b.
+  pythia-12b-full:
+    hf_repo: EleutherAI/pythia-12b
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: 12b rung -- extends the ladder past 1.4b.
+  pythia-70m-deduped-full:
+    hf_repo: EleutherAI/pythia-70m-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-160m-deduped-full:
+    hf_repo: EleutherAI/pythia-160m-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-410m-deduped-full:
+    hf_repo: EleutherAI/pythia-410m-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-1b-deduped-full:
+    hf_repo: EleutherAI/pythia-1b-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-1.4b-deduped-full:
+    hf_repo: EleutherAI/pythia-1.4b-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-2.8b-deduped-full:
+    hf_repo: EleutherAI/pythia-2.8b-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-6.9b-deduped-full:
+    hf_repo: EleutherAI/pythia-6.9b-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  pythia-12b-deduped-full:
+    hf_repo: EleutherAI/pythia-12b-deduped
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Deduped-Pile counterpart at matched scale.
+  polypythia-14m-seed1:
+    hf_repo: EleutherAI/pythia-14m-seed1
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 1
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed2:
+    hf_repo: EleutherAI/pythia-14m-seed2
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 2
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed3:
+    hf_repo: EleutherAI/pythia-14m-seed3
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 3
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed4:
+    hf_repo: EleutherAI/pythia-14m-seed4
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 4
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed5:
+    hf_repo: EleutherAI/pythia-14m-seed5
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 5
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed6:
+    hf_repo: EleutherAI/pythia-14m-seed6
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 6
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed7:
+    hf_repo: EleutherAI/pythia-14m-seed7
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 7
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed8:
+    hf_repo: EleutherAI/pythia-14m-seed8
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 8
+    notes: PolyPythias seed replicate.
+  polypythia-14m-seed9:
+    hf_repo: EleutherAI/pythia-14m-seed9
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 14m
+      seed: 9
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed1:
+    hf_repo: EleutherAI/pythia-31m-seed1
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 1
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed2:
+    hf_repo: EleutherAI/pythia-31m-seed2
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 2
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed3:
+    hf_repo: EleutherAI/pythia-31m-seed3
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 3
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed4:
+    hf_repo: EleutherAI/pythia-31m-seed4
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 4
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed5:
+    hf_repo: EleutherAI/pythia-31m-seed5
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 5
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed6:
+    hf_repo: EleutherAI/pythia-31m-seed6
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 6
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed7:
+    hf_repo: EleutherAI/pythia-31m-seed7
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 7
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed8:
+    hf_repo: EleutherAI/pythia-31m-seed8
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 8
+    notes: PolyPythias seed replicate.
+  polypythia-31m-seed9:
+    hf_repo: EleutherAI/pythia-31m-seed9
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 31m
+      seed: 9
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed1:
+    hf_repo: EleutherAI/pythia-70m-seed1
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 1
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed2:
+    hf_repo: EleutherAI/pythia-70m-seed2
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 2
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed3:
+    hf_repo: EleutherAI/pythia-70m-seed3
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 3
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed4:
+    hf_repo: EleutherAI/pythia-70m-seed4
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 4
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed5:
+    hf_repo: EleutherAI/pythia-70m-seed5
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 5
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed6:
+    hf_repo: EleutherAI/pythia-70m-seed6
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 6
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed7:
+    hf_repo: EleutherAI/pythia-70m-seed7
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 7
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed8:
+    hf_repo: EleutherAI/pythia-70m-seed8
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 8
+    notes: PolyPythias seed replicate.
+  polypythia-70m-seed9:
+    hf_repo: EleutherAI/pythia-70m-seed9
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 70m
+      seed: 9
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed1:
+    hf_repo: EleutherAI/pythia-160m-seed1
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 1
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed2:
+    hf_repo: EleutherAI/pythia-160m-seed2
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 2
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed3:
+    hf_repo: EleutherAI/pythia-160m-seed3
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 3
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed4:
+    hf_repo: EleutherAI/pythia-160m-seed4
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 4
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed5:
+    hf_repo: EleutherAI/pythia-160m-seed5
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 5
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed6:
+    hf_repo: EleutherAI/pythia-160m-seed6
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 6
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed7:
+    hf_repo: EleutherAI/pythia-160m-seed7
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 7
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed8:
+    hf_repo: EleutherAI/pythia-160m-seed8
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 8
+    notes: PolyPythias seed replicate.
+  polypythia-160m-seed9:
+    hf_repo: EleutherAI/pythia-160m-seed9
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 160m
+      seed: 9
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed1:
+    hf_repo: EleutherAI/pythia-410m-seed1
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 1
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed2:
+    hf_repo: EleutherAI/pythia-410m-seed2
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 2
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed3:
+    hf_repo: EleutherAI/pythia-410m-seed3
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 3
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed4:
+    hf_repo: EleutherAI/pythia-410m-seed4
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 4
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed5:
+    hf_repo: EleutherAI/pythia-410m-seed5
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 5
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed6:
+    hf_repo: EleutherAI/pythia-410m-seed6
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 6
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed7:
+    hf_repo: EleutherAI/pythia-410m-seed7
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 7
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed8:
+    hf_repo: EleutherAI/pythia-410m-seed8
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 8
+    notes: PolyPythias seed replicate.
+  polypythia-410m-seed9:
+    hf_repo: EleutherAI/pythia-410m-seed9
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    polypythia:
+      size: 410m
+      seed: 9
+    notes: PolyPythias seed replicate.
+  pythia-14m-full:
+    hf_repo: EleutherAI/pythia-14m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Below the published ladder's floor.
+  pythia-31m-full:
+    hf_repo: EleutherAI/pythia-31m
+    arch: gptneox
+    all_revisions: true
+    tokens_per_step: 2097152
+    notes: Below the published ladder's floor.

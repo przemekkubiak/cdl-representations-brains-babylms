@@ -1,0 +1,169 @@
+[sweep 2026-09-05T05:19:53Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5876GB
+[sweep 2026-09-05T05:19:53Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T05:19:53Z] === ds003604 | tasks: Phon  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T05:19:53Z]   run pythia-70m-full on ds003604 (free=5876GB)
+[sweep 2026-09-05T05:21:39Z]   ok   pythia-70m-full/ds003604 rc=0 rows=33 free=5853GB
+[sweep 2026-09-05T05:21:39Z]   run pythia-160m-full on ds003604 (free=5853GB)
+[sweep 2026-09-05T05:23:58Z]   ok   pythia-160m-full/ds003604 rc=0 rows=33 free=5852GB
+[sweep 2026-09-05T05:23:58Z]   run pythia-410m-full on ds003604 (free=5852GB)
+[sweep 2026-09-05T05:27:36Z]   ok   pythia-410m-full/ds003604 rc=0 rows=33 free=5852GB
+[sweep 2026-09-05T05:27:36Z]   run pythia-1b-full on ds003604 (free=5852GB)
+[sweep 2026-09-05T05:35:25Z]   ok   pythia-1b-full/ds003604 rc=0 rows=33 free=5872GB
+[sweep 2026-09-05T05:35:25Z]   run pythia-1.4b-full on ds003604 (free=5872GB)
+[sweep 2026-09-05T05:45:13Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=33 free=5848GB
+[sweep 2026-09-05T05:45:13Z]   run pythia-2.8b-full on ds003604 (free=5848GB)
+[sweep 2026-09-05T05:52:09Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=12 free=5854GB
+[sweep 2026-09-05T05:52:09Z]   run pythia-6.9b-full on ds003604 (free=5854GB)
+[sweep 2026-09-05T05:59:55Z]   ok   pythia-6.9b-full/ds003604 rc=0 rows=3 free=5739GB
+[sweep 2026-09-05T06:00:07Z]   run pythia-12b-full on ds003604 (free=5817GB)
+[sweep 2026-09-05T06:10:30Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[sweep 2026-09-05T06:10:56Z]   run babylm-gpt2-3 on ds003604 (free=5834GB)
+[sweep 2026-09-05T06:12:19Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=27 free=5879GB
+[sweep 2026-09-05T06:12:20Z]   run babylm-gpt2-5 on ds003604 (free=5879GB)
+[sweep 2026-09-05T06:13:39Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=27 free=5880GB
+[sweep 2026-09-05T06:13:39Z]   run babylm-gpt2-7 on ds003604 (free=5880GB)
+[sweep 2026-09-05T06:15:02Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=27 free=5881GB
+[sweep 2026-09-05T06:15:02Z]   run babylm-gpt2 on ds003604 (free=5881GB)
+[sweep 2026-09-05T06:16:23Z]   ok   babylm-gpt2/ds003604 rc=0 rows=27 free=5871GB
+[sweep 2026-09-05T06:16:24Z]   run polypythia-70m-seed1 on ds003604 (free=5871GB)
+[sweep 2026-09-05T06:19:21Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=33 free=5831GB
+[sweep 2026-09-05T06:19:21Z]   run polypythia-70m-seed2 on ds003604 (free=5831GB)
+[sweep 2026-09-05T06:21:09Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=33 free=5829GB
+[sweep 2026-09-05T06:21:09Z]   run polypythia-70m-seed3 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:22:49Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=33 free=5829GB
+[sweep 2026-09-05T06:22:50Z]   run polypythia-160m-seed1 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:24:48Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=33 free=5829GB
+[sweep 2026-09-05T06:24:48Z]   run polypythia-160m-seed2 on ds003604 (free=5829GB)
+[sweep 2026-09-05T06:26:53Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=33 free=5827GB
+[sweep 2026-09-05T06:26:53Z]   run polypythia-160m-seed3 on ds003604 (free=5827GB)
+[sweep 2026-09-05T06:28:51Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=33 free=5827GB
+[sweep 2026-09-05T06:28:52Z]   run polypythia-410m-seed1 on ds003604 (free=5828GB)
+[sweep 2026-09-05T06:31:28Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=33 free=5832GB
+[sweep 2026-09-05T06:31:28Z]   run polypythia-410m-seed2 on ds003604 (free=5832GB)
+[sweep 2026-09-05T06:33:49Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=33 free=5834GB
+[sweep 2026-09-05T06:33:50Z]   run polypythia-410m-seed3 on ds003604 (free=5834GB)
+[sweep 2026-09-05T06:36:17Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=33 free=5839GB
+[sweep 2026-09-05T06:36:18Z]   run parc-pythia-seed0 on ds003604 (free=5839GB)
+[sweep 2026-09-05T06:38:44Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=33 free=5841GB
+[sweep 2026-09-05T06:38:44Z]   run parc-pythia-seed1 on ds003604 (free=5841GB)
+[sweep 2026-09-05T06:43:36Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=33 free=5846GB
+[sweep 2026-09-05T06:43:36Z]   run parc-pythia-seed2 on ds003604 (free=5846GB)
+[sweep 2026-09-05T06:46:04Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=33 free=5849GB
+[sweep 2026-09-05T06:46:04Z]   run parc-mamba-seed0 on ds003604 (free=5849GB)
+[sweep 2026-09-05T06:48:45Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=33 free=5856GB
+[sweep 2026-09-05T06:48:45Z]   run parc-mamba-seed1 on ds003604 (free=5856GB)
+[sweep 2026-09-05T06:51:22Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=33 free=5877GB
+[sweep 2026-09-05T06:51:22Z]   run parc-mamba-seed2 on ds003604 (free=5877GB)
+[sweep 2026-09-05T06:54:01Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=33 free=5880GB
+[sweep 2026-09-05T06:54:01Z]   run parc-rwkv-seed0 on ds003604 (free=5880GB)
+[sweep 2026-09-05T06:57:03Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=33 free=5880GB
+[sweep 2026-09-05T06:57:03Z]   run parc-rwkv-seed1 on ds003604 (free=5880GB)
+[sweep 2026-09-05T07:03:32Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=33 free=5855GB
+[sweep 2026-09-05T07:03:32Z]   run parc-rwkv-seed2 on ds003604 (free=5855GB)
+[sweep 2026-09-05T07:06:39Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=33 free=5854GB
+[sweep 2026-09-05T07:06:39Z] === ds003604 done
+[sweep 2026-09-05T07:06:41Z] collected -> results/
+[sweep 2026-09-05T07:06:41Z] SWEEP COMPLETE | free=5854GB
+[sweep 2026-09-05T08:47:26Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5882GB
+[sweep 2026-09-05T08:47:26Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T08:47:26Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T08:47:26Z]   skip pythia-70m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-160m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-410m-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-1b-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-1.4b-full (done: 34 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-2.8b-full (done: 13 lines)
+[sweep 2026-09-05T08:47:26Z]   skip pythia-6.9b-full (done: 4 lines)
+[sweep 2026-09-05T08:47:26Z]   run pythia-12b-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T09:00:11Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-3 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-5 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2-7 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip babylm-gpt2 (done: 28 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-70m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-160m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip polypythia-410m-seed3 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-pythia-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-mamba-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed0 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed1 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z]   skip parc-rwkv-seed2 (done: 34 lines)
+[sweep 2026-09-05T09:00:45Z] === ds003604 done
+[sweep 2026-09-05T09:00:47Z] collected -> results/
+[sweep 2026-09-05T09:00:47Z] SWEEP COMPLETE | free=5882GB
+[sweep 2026-09-05T13:58:53Z] START | gpu=1 | HF_HOME=/local/scratch/sas245/hf_cache_brainalign | free=5882GB
+[sweep 2026-09-05T13:58:53Z] datasets: ds003604 | max_ckpt=12 | floor=150GB
+[sweep 2026-09-05T13:58:53Z] === ds003604 | tasks: Gram Phon Plaus Sem  | sessions: ses-5 ses-7 ses-9 
+[sweep 2026-09-05T13:58:53Z]   run pythia-70m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:00:42Z]   ok   pythia-70m-full/ds003604 rc=0 rows=132 free=5882GB
+[sweep 2026-09-05T14:00:42Z]   run pythia-160m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:03:14Z]   ok   pythia-160m-full/ds003604 rc=0 rows=132 free=5882GB
+[sweep 2026-09-05T14:03:14Z]   run pythia-410m-full on ds003604 (free=5882GB)
+[sweep 2026-09-05T14:07:32Z]   ok   pythia-410m-full/ds003604 rc=0 rows=132 free=5847GB
+[sweep 2026-09-05T14:07:32Z]   run pythia-1b-full on ds003604 (free=5847GB)
+[sweep 2026-09-05T14:17:41Z]   ok   pythia-1b-full/ds003604 rc=0 rows=132 free=5846GB
+[sweep 2026-09-05T14:17:41Z]   run pythia-1.4b-full on ds003604 (free=5846GB)
+[sweep 2026-09-05T14:59:14Z]   ok   pythia-1.4b-full/ds003604 rc=0 rows=132 free=5824GB
+[sweep 2026-09-05T14:59:15Z]   run pythia-2.8b-full on ds003604 (free=5824GB)
+[sweep 2026-09-05T15:31:19Z]   ok   pythia-2.8b-full/ds003604 rc=0 rows=48 free=5817GB
+[sweep 2026-09-05T15:31:19Z]   run pythia-6.9b-full on ds003604 (free=5817GB)
+[sweep 2026-09-05T15:43:35Z]   FAIL pythia-6.9b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-6.9b-full.log
+[sweep 2026-09-05T15:43:36Z]   run pythia-12b-full on ds003604 (free=5638GB)
+[sweep 2026-09-05T16:02:00Z]   FAIL pythia-12b-full/ds003604 rc=0 -- see logs/grid_ds003604_pythia-12b-full.log
+[sweep 2026-09-05T16:02:18Z]   run babylm-gpt2-3 on ds003604 (free=5604GB)
+[sweep 2026-09-05T16:03:51Z]   ok   babylm-gpt2-3/ds003604 rc=0 rows=108 free=5612GB
+[sweep 2026-09-05T16:03:52Z]   run babylm-gpt2-5 on ds003604 (free=5612GB)
+[sweep 2026-09-05T16:05:26Z]   ok   babylm-gpt2-5/ds003604 rc=0 rows=108 free=5626GB
+[sweep 2026-09-05T16:05:26Z]   run babylm-gpt2-7 on ds003604 (free=5626GB)
+[sweep 2026-09-05T16:06:50Z]   ok   babylm-gpt2-7/ds003604 rc=0 rows=108 free=5599GB
+[sweep 2026-09-05T16:06:51Z]   run babylm-gpt2 on ds003604 (free=5599GB)
+[sweep 2026-09-05T16:08:28Z]   ok   babylm-gpt2/ds003604 rc=0 rows=96 free=5599GB
+[sweep 2026-09-05T16:08:28Z]   run polypythia-70m-seed1 on ds003604 (free=5599GB)
+[sweep 2026-09-05T16:10:11Z]   ok   polypythia-70m-seed1/ds003604 rc=0 rows=132 free=5594GB
+[sweep 2026-09-05T16:10:11Z]   run polypythia-70m-seed2 on ds003604 (free=5594GB)
+[sweep 2026-09-05T16:11:54Z]   ok   polypythia-70m-seed2/ds003604 rc=0 rows=132 free=5588GB
+[sweep 2026-09-05T16:11:56Z]   run polypythia-70m-seed3 on ds003604 (free=5588GB)
+[sweep 2026-09-05T16:13:29Z]   ok   polypythia-70m-seed3/ds003604 rc=0 rows=132 free=5586GB
+[sweep 2026-09-05T16:13:29Z]   run polypythia-160m-seed1 on ds003604 (free=5586GB)
+[sweep 2026-09-05T16:15:41Z]   ok   polypythia-160m-seed1/ds003604 rc=0 rows=132 free=5586GB
+[sweep 2026-09-05T16:15:41Z]   run polypythia-160m-seed2 on ds003604 (free=5586GB)
+[sweep 2026-09-05T16:17:51Z]   ok   polypythia-160m-seed2/ds003604 rc=0 rows=132 free=5566GB
+[sweep 2026-09-05T16:18:04Z]   run polypythia-160m-seed3 on ds003604 (free=5694GB)
+[sweep 2026-09-05T16:20:15Z]   ok   polypythia-160m-seed3/ds003604 rc=0 rows=132 free=5676GB
+[sweep 2026-09-05T16:20:15Z]   run polypythia-410m-seed1 on ds003604 (free=5676GB)
+[sweep 2026-09-05T16:23:16Z]   ok   polypythia-410m-seed1/ds003604 rc=0 rows=132 free=5631GB
+[sweep 2026-09-05T16:23:17Z]   run polypythia-410m-seed2 on ds003604 (free=5631GB)
+[sweep 2026-09-05T16:26:41Z]   ok   polypythia-410m-seed2/ds003604 rc=0 rows=132 free=5580GB
+[sweep 2026-09-05T16:26:45Z]   run polypythia-410m-seed3 on ds003604 (free=5581GB)
+[sweep 2026-09-05T16:29:53Z]   ok   polypythia-410m-seed3/ds003604 rc=0 rows=132 free=5552GB
+[sweep 2026-09-05T16:29:59Z]   run parc-pythia-seed0 on ds003604 (free=5568GB)
+[sweep 2026-09-05T16:32:37Z]   ok   parc-pythia-seed0/ds003604 rc=0 rows=132 free=5565GB
+[sweep 2026-09-05T16:32:42Z]   run parc-pythia-seed1 on ds003604 (free=5566GB)
+[sweep 2026-09-05T16:35:09Z]   ok   parc-pythia-seed1/ds003604 rc=0 rows=132 free=5556GB
+[sweep 2026-09-05T16:35:10Z]   run parc-pythia-seed2 on ds003604 (free=5556GB)
+[sweep 2026-09-05T16:37:34Z]   ok   parc-pythia-seed2/ds003604 rc=0 rows=132 free=5503GB
+[sweep 2026-09-05T16:37:34Z]   run parc-mamba-seed0 on ds003604 (free=5503GB)
+[sweep 2026-09-05T16:40:23Z]   ok   parc-mamba-seed0/ds003604 rc=0 rows=132 free=5425GB
+[sweep 2026-09-05T16:40:23Z]   run parc-mamba-seed1 on ds003604 (free=5425GB)
+[sweep 2026-09-05T16:43:27Z]   ok   parc-mamba-seed1/ds003604 rc=0 rows=132 free=5418GB
+[sweep 2026-09-05T16:43:27Z]   run parc-mamba-seed2 on ds003604 (free=5418GB)
+[sweep 2026-09-05T16:46:01Z]   ok   parc-mamba-seed2/ds003604 rc=0 rows=108 free=5410GB
+[sweep 2026-09-05T16:46:02Z]   run parc-rwkv-seed0 on ds003604 (free=5410GB)
+[sweep 2026-09-05T16:48:44Z]   ok   parc-rwkv-seed0/ds003604 rc=0 rows=120 free=5405GB
+[sweep 2026-09-05T16:48:45Z]   run parc-rwkv-seed1 on ds003604 (free=5405GB)
+[sweep 2026-09-05T16:51:56Z]   ok   parc-rwkv-seed1/ds003604 rc=0 rows=120 free=5394GB
+[sweep 2026-09-05T16:51:57Z]   run parc-rwkv-seed2 on ds003604 (free=5394GB)
+[sweep 2026-09-05T16:54:46Z]   ok   parc-rwkv-seed2/ds003604 rc=0 rows=120 free=5397GB
+[sweep 2026-09-05T16:54:46Z] === ds003604 done
+[sweep 2026-09-05T16:54:47Z] collected -> results/
+[sweep 2026-09-05T16:54:47Z] SWEEP COMPLETE | free=5397GB

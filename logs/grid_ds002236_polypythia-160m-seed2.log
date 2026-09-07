@@ -1,0 +1,56 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-160m-seed2: 11 checkpoints | tasks=['Phon', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-160m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:16,  8.92it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 936.24it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step0 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:15,  9.50it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 934.73it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step1 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:16,  9.03it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1040.13it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step4 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:19,  7.47it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 907.31it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step16 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|▏         | 2/148 [00:00<00:07, 19.76it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1063.94it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step256 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:  26%|██▌       | 38/148 [00:00<00:00, 379.81it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1025.59it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step5000 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:15,  9.25it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1029.13it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step14000 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:15,  9.69it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1029.63it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step28000 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:  71%|███████   | 105/148 [00:00<00:00, 1049.77it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1194.97it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step51000 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:   1%|          | 1/148 [00:00<00:16,  9.18it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1008.98it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step86000 (377.2M)
+
+=== EleutherAI/pythia-160m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:  79%|███████▉  | 117/148 [00:00<00:00, 1169.42it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 1294.27it/s]
+  [cache] evicted EleutherAI/pythia-160m-seed2@step143000 (377.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/alignment_polypythia-160m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/isolation_polypythia-160m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/mechanistic_polypythia-160m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/mechanistic_layer_polypythia-160m-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds002236/behaviour_polypythia-160m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

@@ -1,0 +1,67 @@
+No files have been modified since last commit. Skipping to prevent empty commit.
+{
+  "dataset": "ds002236",
+  "families": 23,
+  "checkpoints": 253,
+  "alignment_rows": 1518,
+  "cells": 6,
+  "tasks": [
+    "Phon",
+    "Sem"
+  ],
+  "sessions": [
+    "ses-11",
+    "ses-11+",
+    "ses-9"
+  ],
+  "n_exceeding_null": 0,
+  "n_cells_tested": 84,
+  "best_frac_of_ceiling": 0.40369332900137944,
+  "best_rsa": 0.1031737012458801
+}
+staged 169 files -> /local/scratch/sas245/brainalign-evals/hf_package/ds002236
+pushed -> https://huggingface.co/datasets/BrainAlign/cdl-devai-results-ds002236
+{
+  "dataset": "ds002236",
+  "families": 27,
+  "checkpoints": 289,
+  "alignment_rows": 1734,
+  "cells": 6,
+  "tasks": [
+    "Phon",
+    "Sem"
+  ],
+  "sessions": [
+    "ses-11",
+    "ses-11+",
+    "ses-9"
+  ],
+  "n_exceeding_parc": 0,
+  "n_cells_tested": 108,
+  "best_frac_of_ceiling": 0.40369332900137944,
+  "best_rsa": 0.1031737012458801
+}
+staged 197 files -> /local/scratch/sas245/brainalign-evals/hf_package/ds002236
+pushed -> https://huggingface.co/datasets/BrainAlign/cdl-devai-results-ds002236
+{
+  "dataset": "ds002236",
+  "families": 29,
+  "checkpoints": 294,
+  "alignment_rows": 1764,
+  "cells": 6,
+  "tasks": [
+    "Phon",
+    "Sem"
+  ],
+  "sessions": [
+    "ses-11",
+    "ses-11+",
+    "ses-9"
+  ],
+  "n_exceeding_parc": 0,
+  "n_cells_tested": 120,
+  "best_frac_of_ceiling": 0.40369332900137944,
+  "best_rsa": 0.1031737012458801
+}
+staged 211 files -> /local/scratch/sas245/brainalign-evals/hf_package/ds002236
+pushed -> https://huggingface.co/datasets/BrainAlign/cdl-devai-results-ds002236

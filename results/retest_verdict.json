@@ -1,0 +1,94 @@
+{
+  "all_checkpoints": [
+    {
+      "contrast": "batch16 vs b_batch4",
+      "mean_j": 9.683659867516051e-07,
+      "mean_s_ff": 0.010195496145263844,
+      "mean_ratio": 0.00011653273535780049,
+      "max_ratio": 0.0002815104246772875,
+      "n_cells": 26,
+      "n_uninterpretable": 0,
+      "n_matched_only": 0
+    },
+    {
+      "contrast": "batch16 vs c_batch32",
+      "mean_j": 8.037528784017026e-07,
+      "mean_s_ff": 0.010195496145263844,
+      "mean_ratio": 9.638136625518377e-05,
+      "max_ratio": 0.0002654804052657471,
+      "n_cells": 26,
+      "n_uninterpretable": 0,
+      "n_matched_only": 0
+    },
+    {
+      "contrast": "batch16 vs d_gpu2",
+      "mean_j": 0.0,
+      "mean_s_ff": 0.010195496145263844,
+      "mean_ratio": 0.0,
+      "max_ratio": 0.0,
+      "n_cells": 26,
+      "n_uninterpretable": 0,
+      "n_matched_only": 0
+    },
+    {
+      "contrast": "batch16 vs main_sweep_gpu0",
+      "mean_j": 0.0,
+      "mean_s_ff": 0.010195496145263844,
+      "mean_ratio": 0.0,
+      "max_ratio": 0.0,
+      "n_cells": 26,
+      "n_uninterpretable": 0,
+      "n_matched_only": 0
+    },
+    {
+      "contrast": "fp32 vs bf16",
+      "mean_j": 0.0009478705156051368,
+      "mean_s_ff": 0.010195496145263844,
+      "mean_ratio": 0.09725168388952461,
+      "max_ratio": 0.20854378550143315,
+      "n_cells": 26,
+      "n_uninterpretable": 0,
+      "n_matched_only": 1
+    }
+  ],
+  "final_checkpoint": [
+    {
+      "contrast": "batch16 vs b_batch4",
+      "mean_ratio": 0.0006829225818618702,
+      "max_ratio": 0.002527728088724443,
+      "n_cells": 26,
+      "n_uninterpretable": 0
+    },
+    {
+      "contrast": "batch16 vs c_batch32",
+      "mean_ratio": 0.0004844609847608544,
+      "max_ratio": 0.001884467589142662,
+      "n_cells": 26,
+      "n_uninterpretable": 0
+    },
+    {
+      "contrast": "batch16 vs d_gpu2",
+      "mean_ratio": 0.0,
+      "max_ratio": 0.0,
+      "n_cells": 26,
+      "n_uninterpretable": 0
+    },
+    {
+      "contrast": "batch16 vs main_sweep_gpu0",
+      "mean_ratio": 0.0,
+      "max_ratio": 0.0,
+      "n_cells": 26,
+      "n_uninterpretable": 0
+    },
+    {
+      "contrast": "fp32 vs bf16",
+      "mean_ratio": 0.3155286867311841,
+      "max_ratio": 0.9536091187670145,
+      "n_cells": 26,
+      "n_uninterpretable": 6
+    }
+  ],
+  "worst_mean_ratio_final": 0.3155,
+  "verdict": "family rankings valid only within an arm matched on: fp32 vs bf16. No effect from: batch16 vs b_batch4, batch16 vs c_batch32, batch16 vs d_gpu2, batch16 vs main_sweep_gpu0",
+  "note": "the ratio grows monotonically with training step; the all-checkpoint average is diluted by untrained checkpoints where two precisions agree almost exactly"
+}

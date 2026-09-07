@@ -1,0 +1,2 @@
+family,model_ref,step,tokens,norm,gini,hoyer,per,condition_number,cka_to_prev
+pythia-6.9b-full,EleutherAI/pythia-6.9b@step0,0,0,70.65987201707472,0.18216266063369083,0.06070439207895734,0.2871653098720764,23.044911292129804,

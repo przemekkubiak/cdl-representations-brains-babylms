@@ -1,0 +1,67 @@
+No files have been modified since last commit. Skipping to prevent empty commit.
+{
+  "dataset": "ds006239",
+  "families": 27,
+  "checkpoints": 289,
+  "alignment_rows": 2312,
+  "cells": 8,
+  "tasks": [
+    "Orth",
+    "Phon",
+    "Sem",
+    "SemLocal"
+  ],
+  "sessions": [
+    "ses-11",
+    "ses-11+"
+  ],
+  "n_exceeding_null": 0,
+  "n_cells_tested": 144,
+  "best_frac_of_ceiling": 0.30524354947693083,
+  "best_rsa": 0.0703796349556932
+}
+staged 197 files -> /local/scratch/sas245/brainalign-evals/hf_package/ds006239
+pushed -> https://huggingface.co/datasets/BrainAlign/cdl-devai-results-ds006239
+Traceback (most recent call last):
+  File "/local/scratch/sas245/brainalign-evals/scripts/build_devai_package.py", line 551, in <module>
+    raise SystemExit(main())
+  File "/local/scratch/sas245/brainalign-evals/scripts/build_devai_package.py", line 525, in main
+    stats = build(a.dataset, out)
+  File "/local/scratch/sas245/brainalign-evals/scripts/build_devai_package.py", line 326, in build
+    d = pd.read_csv(f)
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1898, in _make_engine
+    return mapping[engine](f, **self.options)
+  File "/local/scratch/sas245/venvs/mergeability/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 93, in __init__
+    self._reader = parsers.TextReader(src, **kwds)
+  File "pandas/_libs/parsers.pyx", line 581, in pandas._libs.parsers.TextReader.__cinit__
+pandas.errors.EmptyDataError: No columns to parse from file
+No files have been modified since last commit. Skipping to prevent empty commit.
+{
+  "dataset": "ds006239",
+  "families": 29,
+  "checkpoints": 294,
+  "alignment_rows": 2352,
+  "cells": 8,
+  "tasks": [
+    "Orth",
+    "Phon",
+    "Sem",
+    "SemLocal"
+  ],
+  "sessions": [
+    "ses-11",
+    "ses-11+"
+  ],
+  "n_exceeding_parc": 0,
+  "n_cells_tested": 160,
+  "best_frac_of_ceiling": 0.30524354947693083,
+  "best_rsa": 0.0703796349556932
+}
+staged 211 files -> /local/scratch/sas245/brainalign-evals/hf_package/ds006239
+pushed -> https://huggingface.co/datasets/BrainAlign/cdl-devai-results-ds006239

@@ -1,0 +1,4 @@
+[roi 2026-09-05T13:58:53Z] >>> roi-phonology: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T16:54:47Z] <<< roi-phonology sweep rc=0
+[roi 2026-09-05T16:54:55Z]     packaged+pushed ds003604/roi-phonology rc=0
+[roi 2026-09-05T16:54:55Z] ROI SWEEPS COMPLETE rc=0

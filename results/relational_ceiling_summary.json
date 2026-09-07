@@ -1,0 +1,36 @@
+{
+  "n_cells": 26,
+  "median_ceiling_full": 0.7379,
+  "median_ceiling_relational": 0.8414,
+  "median_relational_frac_of_full": 1.0671,
+  "median_additive_var_share": 0.0033,
+  "median_amplitude_splithalf": 0.9371,
+  "median_amplitude_surface_r2": 0.022,
+  "n_cells_relational_ceiling_below_0p1": 0,
+  "by_dataset": {
+    "ds002236": {
+      "ceiling_full_splithalf": 0.4692,
+      "ceiling_relational_splithalf": 0.4662,
+      "relational_frac_of_full": 1.0078,
+      "additive_var_share": 0.0346,
+      "amplitude_splithalf_spearman": 0.4548,
+      "amplitude_surface_r2": 0.0007
+    },
+    "ds003604": {
+      "ceiling_full_splithalf": 0.8968,
+      "ceiling_relational_splithalf": 0.9839,
+      "relational_frac_of_full": 1.0892,
+      "additive_var_share": 0.0022,
+      "amplitude_splithalf_spearman": 0.9933,
+      "amplitude_surface_r2": 0.0356
+    },
+    "ds006239": {
+      "ceiling_full_splithalf": 0.6428,
+      "ceiling_relational_splithalf": 0.6976,
+      "relational_frac_of_full": 1.0818,
+      "additive_var_share": 0.0101,
+      "amplitude_splithalf_spearman": 0.4572,
+      "amplitude_surface_r2": 0.0278
+    }
+  }
+}

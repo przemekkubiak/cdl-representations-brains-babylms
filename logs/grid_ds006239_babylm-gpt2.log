@@ -1,0 +1,48 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> babylm-gpt2: 9 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-01 (step=598) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1245.12it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1242.25it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-02 (step=897) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1195.24it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1192.90it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-03 (step=1196) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1214.33it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1211.67it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-04 (step=1495) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1254.19it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1252.07it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-05 (step=1794) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1207.24it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1205.50it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-06 (step=2093) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1198.32it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1195.68it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-07 (step=2392) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1254.12it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1251.25it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-08 (step=2691) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1226.14it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1223.64it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+
+=== BrainAlign/gpt2-babylm-9@checkpoint-09 (step=2990) ===
+Loading weights:   0%|          | 0/149 [00:00<?, ?it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1231.40it/s]Loading weights: 100%|██████████| 149/149 [00:00<00:00, 1229.66it/s]
+  [cache] evicted BrainAlign/gpt2-babylm-9@checkpoint-0 (271.5M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/alignment_babylm-gpt2.csv  (72 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/isolation_babylm-gpt2.csv  (36 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_babylm-gpt2.csv  (9 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_layer_babylm-gpt2.csv  (108 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/behaviour_babylm-gpt2.csv  (36 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

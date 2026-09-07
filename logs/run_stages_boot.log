@@ -1,0 +1,14 @@
+[stages 2026-08-29T15:59:36Z] starting from stage 1
+[stages 2026-08-29T15:59:36Z] in-flight sweep finished; starting chained stages
+[stages 2026-08-29T15:59:36Z] >>> ladder: pythia-70m-full pythia-160m-full pythia-410m-full pythia-1b-full pythia-1.4b-full
+[stages 2026-08-29T16:54:57Z] <<< ladder rc=0 free=403GB
+[stages 2026-08-29T16:54:58Z] >>> parc: parc-pythia-seed0 parc-pythia-seed1 parc-pythia-seed2 parc-mamba-seed0 parc-mamba-seed1 parc-mamba-seed2 parc-rwkv-seed0 parc-rwkv-seed1 parc-rwkv-seed2
+[stages 2026-08-29T17:49:52Z] <<< parc rc=0 free=402GB
+[stages 2026-08-29T17:49:53Z] >>> polypythia: polypythia-70m-seed1 polypythia-70m-seed2 polypythia-70m-seed3 polypythia-160m-seed1 polypythia-160m-seed2 polypythia-160m-seed3 polypythia-410m-seed1 polypythia-410m-seed2 polypythia-410m-seed3
+[stages 2026-08-29T18:34:49Z] <<< polypythia rc=0 free=399GB
+[stages 2026-08-29T18:34:50Z] >>> babylm: babylm-gpt2-3 babylm-gpt2-5 babylm-gpt2-7 babylm-gpt2
+[stages 2026-08-29T18:48:32Z] <<< babylm rc=0 free=402GB
+[stages 2026-08-29T18:48:34Z] >>> ladder_top: pythia-2.8b-full pythia-6.9b-full
+[stages 2026-08-29T19:23:54Z] <<< ladder_top rc=0 free=402GB
+[stages 2026-08-29T19:23:55Z] >>> precision A/B: pythia-410m in bf16
+[stages 2026-08-29T19:30:03Z] ALL STAGES BEFORE 12B COMPLETE

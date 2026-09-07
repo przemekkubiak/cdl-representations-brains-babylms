@@ -1,0 +1,29 @@
+{
+  "roi-auditory": {
+    "n_cells": 12,
+    "mean_change": 0.0007,
+    "ci_lo": -0.00343,
+    "ci_hi": 0.00482,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-motor": {
+    "n_cells": 12,
+    "mean_change": -0.00101,
+    "ci_lo": -0.006,
+    "ci_hi": 0.00336,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}

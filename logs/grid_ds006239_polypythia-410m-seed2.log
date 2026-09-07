@@ -1,0 +1,56 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-410m-seed2: 11 checkpoints | tasks=['Orth', 'Phon', 'Sem', 'SemLocal'] | probe=176
+
+=== EleutherAI/pythia-410m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:01,  4.72it/s]Loading weights:  45%|████▌     | 132/292 [00:00<00:00, 524.30it/s]Loading weights:  71%|███████   | 208/292 [00:00<00:00, 581.01it/s]Loading weights:  99%|█████████▊| 288/292 [00:00<00:00, 649.56it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 548.73it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step0 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:55,  5.28it/s]Loading weights:  52%|█████▏    | 152/292 [00:00<00:00, 648.62it/s]Loading weights:  82%|████████▏ | 240/292 [00:00<00:00, 706.23it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 634.19it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step1 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:52,  5.59it/s]Loading weights:  50%|█████     | 146/292 [00:00<00:00, 639.88it/s]Loading weights:  79%|███████▉  | 230/292 [00:00<00:00, 686.10it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 629.30it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step4 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:47,  6.07it/s]Loading weights:  49%|████▉     | 144/292 [00:00<00:00, 650.72it/s]Loading weights:  77%|███████▋  | 225/292 [00:00<00:00, 704.92it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 632.57it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step16 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:41,  7.07it/s]Loading weights:  48%|████▊     | 140/292 [00:00<00:00, 695.27it/s]Loading weights:  76%|███████▌  | 221/292 [00:00<00:00, 700.32it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 637.62it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step256 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:29,  9.96it/s]Loading weights:  45%|████▌     | 132/292 [00:00<00:00, 759.04it/s]Loading weights:  78%|███████▊  | 228/292 [00:00<00:00, 811.61it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 790.23it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step5000 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:43,  6.66it/s]Loading weights:  46%|████▌     | 134/292 [00:00<00:00, 641.53it/s]Loading weights:  72%|███████▏  | 211/292 [00:00<00:00, 691.72it/s]Loading weights:  99%|█████████▊| 288/292 [00:00<00:00, 690.66it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 625.87it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step14000 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:  29%|██▉       | 84/292 [00:00<00:00, 789.74it/s]Loading weights:  58%|█████▊    | 168/292 [00:00<00:00, 801.97it/s]Loading weights:  91%|█████████ | 266/292 [00:00<00:00, 858.78it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 866.03it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step28000 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:23,  3.49it/s]Loading weights:  41%|████      | 120/292 [00:00<00:00, 394.73it/s]Loading weights:  65%|██████▍   | 189/292 [00:00<00:00, 431.57it/s]Loading weights:  85%|████████▌ | 249/292 [00:00<00:00, 450.84it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 406.20it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step51000 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<00:36,  7.93it/s]Loading weights:  45%|████▌     | 132/292 [00:00<00:00, 687.04it/s]Loading weights:  78%|███████▊  | 228/292 [00:00<00:00, 790.05it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 703.43it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step86000 (913.6M)
+
+=== EleutherAI/pythia-410m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights:   0%|          | 1/292 [00:00<01:06,  4.35it/s]Loading weights:  42%|████▏     | 122/292 [00:00<00:00, 461.25it/s]Loading weights:  66%|██████▌   | 192/292 [00:00<00:00, 500.45it/s]Loading weights:  88%|████████▊ | 256/292 [00:00<00:00, 517.65it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 464.96it/s]
+  [cache] evicted EleutherAI/pythia-410m-seed2@step143000 (913.6M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/alignment_polypythia-410m-seed2.csv  (88 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/isolation_polypythia-410m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_polypythia-410m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/mechanistic_layer_polypythia-410m-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds006239/behaviour_polypythia-410m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

@@ -1,0 +1,339 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5156.50it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4686.52it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3415.91it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3989.93it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4199.77it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4909.46it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5218.73it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 12929.88it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 6668.43it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4758.59it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4615.96it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/alignment_parc-mamba-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Phon'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3785.47it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3644.42it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3763.91it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 9003.69it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3001.53it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3409.43it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2989.09it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2758.10it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2999.87it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2851.35it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2986.55it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_parc-mamba-seed2.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Could not set the permissions on the file '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/3c6703f9d54a7c79352173472cedb20955b7b7053c590df957ca62ba67f0a64c.644f4bc5.incomplete'. Error: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/tmp_cb6628aa-e06f-4770-806f-cdae2b5ca75c'.
+Continuing without setting permissions.
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+  ! failed to load jmichaelov/parc-mamba-seed2@checkpoint-10: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/3c6703f9d54a7c79352173472cedb20955b7b7053c590df957ca62ba67f0a64c.644f4bc5.incomplete'
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4069.01it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5492.54it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4056.32it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5171.24it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3928.91it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5152.97it/s]
+Could not set the permissions on the file '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/241fcf20ccf52be9a507d3758a98807d0f516aaca265b287723c44ac741cb213.6880491f.incomplete'. Error: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/tmp_8a31e1a4-de95-4dd9-bfbb-d931dc8e8e36'.
+Continuing without setting permissions.
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+  ! failed to load jmichaelov/parc-mamba-seed2@checkpoint-640: [Errno 2] No such file or directory: '/local/scratch/sas245/brainalign-evals/pipeline/.cache/huggingface/models--jmichaelov--parc-mamba-seed2/blobs/241fcf20ccf52be9a507d3758a98807d0f516aaca265b287723c44ac741cb213.6880491f.incomplete'
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4078.16it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5237.96it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4231.90it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_parc-mamba-seed2.csv  (108 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_parc-mamba-seed2.csv  (36 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_parc-mamba-seed2.csv  (9 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (216 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_parc-mamba-seed2.csv  (36 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Sem'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4739.59it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5686.27it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4561.22it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4874.03it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3728.82it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3575.05it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4763.91it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4177.03it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4437.76it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5841.68it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5089.79it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_parc-mamba-seed2.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4368.73it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3840.09it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4454.86it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3557.22it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3565.71it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3954.90it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4310.84it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 5434.67it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2923.80it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 4365.36it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2816.87it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/alignment_parc-mamba-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] The fast path is not available because one of `(selective_state_update, selective_scan_fn, causal_conv1d_fn, causal_conv1d_update, mamba_inner_fn)` is None. Falling back to the sequential implementation of Mamba, as use_mambapy is set to False. To install follow https://github.com/state-spaces/mamba/#installation for mamba-ssm and install the kernels library using `pip install kernels` or https://github.com/Dao-AILab/causal-conv1d for causal-conv1d. For the mamba.py backend, follow https://github.com/alxndrTL/mamba.py.
+> parc-mamba-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-10 (step=10) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3304.49it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-20 (step=20) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3241.41it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-2 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-30 (step=30) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3582.88it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-50 (step=50) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2839.17it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-5 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-70 (step=70) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3020.37it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-7 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-100 (step=100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2865.79it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-300 (step=300) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2981.22it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-3 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-640 (step=640) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3754.04it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-6 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1100 (step=1100) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3696.30it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-1850 (step=1850) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 3613.12it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-1 (520.1M)
+
+=== jmichaelov/parc-mamba-seed2@checkpoint-4000 (step=4000) ===
+Loading weights:   0%|          | 0/242 [00:00<?, ?it/s]Loading weights: 100%|██████████| 242/242 [00:00<00:00, 2751.89it/s]
+  [cache] evicted jmichaelov/parc-mamba-seed2@checkpoint-4 (520.1M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_parc-mamba-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_parc-mamba-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_parc-mamba-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_parc-mamba-seed2.csv  (264 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_parc-mamba-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

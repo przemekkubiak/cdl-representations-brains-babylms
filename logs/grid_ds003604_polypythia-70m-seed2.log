@@ -1,0 +1,331 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 917.05it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1275.02it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1170.76it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1302.22it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1277.94it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1152.09it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1227.98it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1149.85it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1379.29it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1657.60it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 2145.73it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/alignment_polypythia-70m-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Phon'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 932.28it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 913.81it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1047.30it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:   1%|▏         | 1/76 [00:00<00:12,  5.98it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 328.08it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1076.66it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 999.83it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 903.95it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1032.31it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1078.74it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1156.71it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1085.50it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_polypythia-70m-seed2.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 937.94it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1105.49it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1444.04it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 886.99it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1177.46it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1067.68it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 947.82it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 909.00it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1178.45it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 948.58it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1015.58it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/alignment_polypythia-70m-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-phonology/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Sem'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 945.00it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 985.11it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 914.05it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1204.72it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1118.83it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1120.28it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1084.44it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1184.83it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 837.62it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 760.62it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 867.66it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_polypythia-70m-seed2.csv  (33 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1247.37it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 867.94it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1043.90it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1142.83it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1302.23it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1206.56it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1090.68it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1199.15it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1617.43it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 840.70it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1580.93it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/alignment_polypythia-70m-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-motor/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+> polypythia-70m-seed2: 11 checkpoints | tasks=['Gram', 'Phon', 'Plaus', 'Sem'] | probe=176
+
+=== EleutherAI/pythia-70m-seed2@step0 (step=0) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1156.44it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step0 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step1 (step=1) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1059.89it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step1 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step4 (step=4) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1023.98it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step4 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step16 (step=16) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1025.45it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step16 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step256 (step=256) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 793.93it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step256 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step5000 (step=5000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1107.26it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step5000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step14000 (step=14000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1052.92it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step14000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step28000 (step=28000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1232.97it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step28000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step51000 (step=51000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:   1%|▏         | 1/76 [00:00<00:07,  9.96it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 734.29it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step51000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step86000 (step=86000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1065.75it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step86000 (168.2M)
+
+=== EleutherAI/pythia-70m-seed2@step143000 (step=143000) ===
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 1083.88it/s]
+  [cache] evicted EleutherAI/pythia-70m-seed2@step143000 (168.2M)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/alignment_polypythia-70m-seed2.csv  (132 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/isolation_polypythia-70m-seed2.csv  (44 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_polypythia-70m-seed2.csv  (11 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/mechanistic_layer_polypythia-70m-seed2.csv  (66 rows)
+Saved /local/scratch/sas245/brainalign-evals/grid_roi-auditory/ds003604/behaviour_polypythia-70m-seed2.csv  (44 rows)
+  (no rows for ablation_alignment)
+  (no rows for ablation_behaviour)
+
+Done.

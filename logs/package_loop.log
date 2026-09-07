@@ -1,0 +1,11 @@
+[pkg 2026-08-29T18:42:05Z] families: ds006239=27 ds002236=23 (was -1/-1) -- rebuilding
+[pkg 2026-08-29T18:42:29Z]   ds006239 rc=0 -> 24 log lines
+[pkg 2026-08-29T18:42:49Z]   ds002236 rc=0 -> 23 log lines
+[pkg 2026-08-29T19:12:49Z] families: ds006239=29 ds002236=27 (was 27/23) -- rebuilding
+[pkg 2026-08-29T19:13:14Z]   ds006239 rc=1 -> 43 log lines
+[pkg 2026-08-29T19:13:38Z]   ds002236 rc=0 -> 45 log lines
+[pkg 2026-08-29T19:43:38Z] families: ds006239=29 ds002236=29 (was 29/27) -- rebuilding
+[pkg 2026-08-29T19:44:03Z]   ds006239 rc=0 -> 67 log lines
+[pkg 2026-08-29T19:44:29Z]   ds002236 rc=0 -> 67 log lines
+[pkg 2026-08-29T20:14:29Z] no new families (ds006239=29 ds002236=29), stage runner running=0
+[pkg 2026-08-29T20:14:29Z] stage runner gone and nothing new -- final push done, exiting

@@ -1,0 +1,168 @@
+[roi 2026-09-05T05:19:53Z] >>> roi-phonology: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T07:06:41Z] <<< roi-phonology sweep rc=0
+[roi 2026-09-05T07:07:24Z]     packaged+pushed ds003604/roi-phonology rc=0
+{
+  "roi-phonology": {
+    "n_cells": 3,
+    "mean_change": 0.00212,
+    "ci_lo": 0.00065,
+    "ci_hi": 0.00293,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking changes alignment but does not clear the untrained band"
+  }
+}
+[roi 2026-09-05T07:07:24Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-05T08:47:26Z] >>> roi-phonology: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T09:00:47Z] <<< roi-phonology sweep rc=0
+[roi 2026-09-05T09:00:53Z]     packaged+pushed ds003604/roi-phonology rc=0
+{
+  "roi-phonology": {
+    "n_cells": 3,
+    "mean_change": 0.00212,
+    "ci_lo": 0.00065,
+    "ci_hi": 0.00293,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking changes alignment but does not clear the untrained band"
+  }
+}
+[roi 2026-09-05T09:00:53Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-05T13:58:53Z] >>> roi-phonology: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T15:33:23Z] >>> roi-auditory: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T16:54:47Z] <<< roi-phonology sweep rc=0
+[roi 2026-09-05T16:54:55Z]     packaged+pushed ds003604/roi-phonology rc=0
+{
+  "roi-auditory": {
+    "n_cells": 3,
+    "mean_change": -0.00132,
+    "ci_lo": -0.0025,
+    "ci_hi": 0.00058,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}
+[roi 2026-09-05T16:54:55Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-05T17:33:50Z] <<< roi-auditory sweep rc=0
+[roi 2026-09-05T17:34:11Z]     packaged+pushed ds003604/roi-auditory rc=0
+{
+  "roi-auditory": {
+    "n_cells": 3,
+    "mean_change": 0.0003,
+    "ci_lo": -0.0009,
+    "ci_hi": 0.00121,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}
+[roi 2026-09-05T17:34:11Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-05T18:34:13Z] >>> roi-auditory: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T18:50:39Z] <<< roi-auditory sweep rc=0
+[roi 2026-09-05T18:50:44Z]     packaged+pushed ds003604/roi-auditory rc=0
+{
+  "roi-auditory": {
+    "n_cells": 3,
+    "mean_change": 0.0003,
+    "ci_lo": -0.0009,
+    "ci_hi": 0.00121,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}
+[roi 2026-09-05T18:50:44Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-05T21:44:59Z] >>> roi-motor: sweeping [ds003604] on GPU 1
+[roi 2026-09-05T22:59:41Z] <<< roi-motor sweep rc=0
+[roi 2026-09-05T22:59:50Z]     packaged+pushed ds003604/roi-motor rc=0
+{
+  "roi-auditory": {
+    "n_cells": 3,
+    "mean_change": 0.0003,
+    "ci_lo": -0.0009,
+    "ci_hi": 0.00121,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-motor": {
+    "n_cells": 12,
+    "mean_change": -0.00101,
+    "ci_lo": -0.006,
+    "ci_hi": 0.00336,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}
+[roi 2026-09-05T22:59:51Z] ROI SWEEPS COMPLETE rc=0
+[roi 2026-09-06T07:09:41Z] >>> roi-auditory: sweeping [ds003604] on GPU 1
+[roi 2026-09-06T08:50:16Z] <<< roi-auditory sweep rc=0
+[roi 2026-09-06T08:50:34Z]     packaged+pushed ds003604/roi-auditory rc=0
+{
+  "roi-auditory": {
+    "n_cells": 12,
+    "mean_change": 0.0007,
+    "ci_lo": -0.00343,
+    "ci_hi": 0.00482,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-motor": {
+    "n_cells": 12,
+    "mean_change": -0.00101,
+    "ci_lo": -0.006,
+    "ci_hi": 0.00336,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  },
+  "roi-phonology": {
+    "n_cells": 12,
+    "mean_change": -0.00196,
+    "ci_lo": -0.00695,
+    "ci_hi": 0.00211,
+    "cells_beating_untrained_2sd": 0,
+    "cells_below_2sd": 0,
+    "verdict": "masking is NEUTRAL: paired change CI contains zero"
+  }
+}
+[roi 2026-09-06T08:50:35Z] ROI SWEEPS COMPLETE rc=0

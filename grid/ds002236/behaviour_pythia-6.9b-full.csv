@@ -1,0 +1,5 @@
+family,model_ref,step,tokens,phenomenon,mp_accuracy
+pythia-6.9b-full,EleutherAI/pythia-6.9b@step0,0,0,Gram,0.6
+pythia-6.9b-full,EleutherAI/pythia-6.9b@step0,0,0,Phon,0.4166666666666667
+pythia-6.9b-full,EleutherAI/pythia-6.9b@step0,0,0,Plaus,0.55
+pythia-6.9b-full,EleutherAI/pythia-6.9b@step0,0,0,Sem,0.4166666666666667

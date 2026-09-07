@@ -1,0 +1,11 @@
+[retest 2026-08-29T19:55:15Z] start: family=pythia-410m-full
+[retest 2026-08-29T19:55:15Z] >>> arm=a_batch16 gpu=1 batch=16 
+[retest 2026-08-29T20:02:46Z] <<< arm=a_batch16 rc=0
+[retest 2026-08-29T20:02:46Z] >>> arm=b_batch4 gpu=1 batch=4 
+[retest 2026-08-29T20:11:29Z] <<< arm=b_batch4 rc=0
+[retest 2026-08-29T20:11:29Z] >>> arm=c_batch32 gpu=1 batch=32 
+[retest 2026-08-29T20:18:43Z] <<< arm=c_batch32 rc=0
+[retest 2026-08-29T20:18:43Z] >>> arm=d_gpu2 gpu=2 batch=16 
+[retest 2026-08-29T20:26:07Z] <<< arm=d_gpu2 rc=0
+[retest 2026-08-29T20:26:07Z] RETEST ARMS COMPLETE
+[retest 2026-08-29T20:26:07Z] RETEST DONE rc=0

@@ -98,3 +98,25 @@ temp/
 PRIVATE_NOTES.md
 *.private.md
 notes/private/
+
+# ---------------------------------------------------------------------------
+# From the brainalign-evals results checkout (branch neuro-results), merged in
+# 2026-09-07. Its own rules, kept as they were: the two trees were disjoint
+# apart from this file.
+# ---------------------------------------------------------------------------
+
+# The results checkout keeps the pipeline as a nested working copy; on this
+# branch the pipeline IS the root, so this only matters to that checkout.
+pipeline/
+
+# Caches and re-fetchable inputs
+hf_home/
+hf_cache/
+*.pyc
+
+# Built packages: regenerable by scripts/build_devai_package.py, and already
+# published to BrainAlign/cdl-devai-results-ds002236 and -ds006239 on the Hub.
+hf_package/
+
+# Model weights / large binaries should never land here
+*.safetensors
