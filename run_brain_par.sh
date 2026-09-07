@@ -35,6 +35,18 @@ export HOME=/local/scratch/sas245
 export HF_HOME="$HOME/hf_cache"
 export HF_DATASETS_CACHE="$HOME/hf_datasets_cache"
 export TOKENIZERS_PARALLELISM=false
+
+# REQUIRED for the same reason. run_new_datasets.sh commits and pushes at the end
+# of every (dataset, ROI) stage. Without GIT_SSH_COMMAND, ssh has no key here and
+# falls through to asking the terminal -- and a background process reading its
+# tty is SIGTTIN-stopped by the kernel. Measured 2026-09-07: all three wave
+# drivers sat in state T on `git push -q origin main` for up to 90 minutes,
+# GPUs idle, tmux sessions alive, the supervisor's revive() satisfied that
+# everything was running, and nothing in any log saying so. BatchMode makes the
+# same failure a fast non-zero exit instead of a silent freeze; the push is
+# already best-effort, so a failed one just retries next cycle.
+export GIT_SSH_COMMAND="ssh -i /local/scratch/sas245/sshkeys/id_ed25519 -o UserKnownHostsFile=/local/scratch/sas245/.ssh/known_hosts -o IdentitiesOnly=yes -o BatchMode=yes"
+export GIT_TERMINAL_PROMPT=0
 DS="${1:?usage: run_brain_par.sh <dataset> <gpu>}"
 GPU="${2:?usage: run_brain_par.sh <dataset> <gpu>}"
 WAVES="${WAVES:-6 12 25 50 89}"
