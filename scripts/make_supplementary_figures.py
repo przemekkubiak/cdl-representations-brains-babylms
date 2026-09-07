@@ -42,6 +42,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
 import figlib as F                                      # noqa: E402
+from viz.brainplot import plot_roi_row, roi_mask_img     # noqa: E402
 from viz.plot_style import (                            # noqa: E402
     DIVERGING_CMAP, PALETTE_ACL, SEQUENTIAL_CMAP,
     add_panel_label, apply_acl_style, compact_legend, fig_double,
@@ -228,35 +229,13 @@ def fig_s2() -> None:
 # S3 -- the anatomical ROI masks
 # ───────────────────────────────────────────────────────────────────────────
 
-def _roi_mask_img(roi_set: str):
-    """Binary MNI-space mask for a named ROI set, from the AAL SPM12 atlas.
-
-    This renders the mask DEFINITION (src/preprocessing/roi_atlas.py) in
-    template space. It is deliberately not a map of measured per-voxel effects:
-    fmri_preprocessing.py stores each stimulus pattern as a flat masked vector
-    without the mask affine, so per-voxel maps cannot be reconstructed after
-    the fact (see scripts/plot_activation_by_age_domain.py). What is honest to
-    draw is where we looked, coloured by what we found there.
-    """
-    import nibabel as nib
-    from nilearn import datasets, image
-    from preprocessing.roi_atlas import ROI_SETS
-
-    atlas = datasets.fetch_atlas_aal(
-        version="SPM12", data_dir=str(REPO.parent / "nilearn_data"))
-    img = nib.load(atlas.maps)
-    data = np.asarray(img.dataobj)
-    wanted = [lab for lab in atlas.labels
-              if any(s in lab for s in ROI_SETS[roi_set])]
-    codes = [int(atlas.indices[list(atlas.labels).index(lab)]) for lab in wanted]
-    mask = np.isin(data, codes).astype(np.int16)
-    return image.new_img_like(img, mask), wanted, int(mask.sum())
-
-
 def fig_s3() -> None:
-    """Where the ROI analyses actually looked, and what was found there."""
-    from nilearn import plotting
+    """Where the ROI analyses actually looked, and what was found there.
 
+    The brain rendering lives in src/viz/brainplot.py; that module's docstring
+    explains why these are mask definitions tinted by a measured scalar rather
+    than per-voxel effect maps.
+    """
     align = {m: F.load_package_alignment(p)
              for m, p in F.MASK_PACKAGES.items()}
     align = {m: d[d.task.isin(F.DOMAIN_ORDER)] for m, d in align.items()}
@@ -287,21 +266,10 @@ def fig_s3() -> None:
     fig = plt.figure(figsize=(6.9, 3.3))
     gs = fig.add_gridspec(2, 3, height_ratios=[0.62, 1.0])
 
-    voxels = {}
-    for j, roi in enumerate(rois):
-        img, labels, nvox = _roi_mask_img(roi)
-        voxels[roi] = nvox
-        ax = fig.add_subplot(gs[0, j])
-        disp = plotting.plot_glass_brain(
-            None, axes=ax, display_mode="lzr", plot_abs=False,
-            annotate=False)
-        # Solid fill, no alpha: nilearn's alpha kwarg has moved between
-        # versions and a half-transparent mask reads as a weaker effect.
-        disp.add_contours(img, levels=[0.5], colors=[F.MASK_COLORS[roi]],
-                          filled=True)
-        ax.set_title(f"{roi}  ({nvox:,} voxels)", fontsize=7, pad=2)
-        if j == 0:
-            add_panel_label(ax, "A", dy=0.02)
+    brain_axes = [fig.add_subplot(gs[0, j]) for j in range(len(rois))]
+    plot_roi_row(rois, F.MASK_COLORS, fig=fig, axes=brain_axes)
+    voxels = {roi: roi_mask_img(roi)[2] for roi in rois}
+    add_panel_label(brain_axes[0], "A", dy=0.02)
 
     # (B) mean alignment under each mask, whole-brain included as reference.
     ax = fig.add_subplot(gs[1, 0])

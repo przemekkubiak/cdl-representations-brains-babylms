@@ -1,0 +1,5 @@
+Domain,Occupied bins,CI $>0$,CI $<0$,CI $\ni 0$,First bin,Last bin,Table 2 (submitted),Agrees
+Sem,15,5,3,7,+0.0018,-0.0049,7/3/5,no
+Phon,15,6,5,4,-0.0063,+0.0079,0/4/11,no
+Gram,15,14,0,1,+0.0169,+0.0115,15/0/0,no
+Plaus,15,4,9,2,+0.0152,-0.0076,4/9/2,yes

@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lllllllll}
+\toprule
+Domain & Occupied bins & CI $>0$ & CI $<0$ & CI $\ni 0$ & First bin & Last bin & Table 2 (submitted) & Agrees \\
+\midrule
+Sem & 15 & 5 & 3 & 7 & +0.0018 & -0.0049 & 7/3/5 & no \\
+Phon & 15 & 6 & 5 & 4 & -0.0063 & +0.0079 & 0/4/11 & no \\
+Gram & 15 & 14 & 0 & 1 & +0.0169 & +0.0115 & 15/0/0 & no \\
+Plaus & 15 & 4 & 9 & 2 & +0.0152 & -0.0076 & 4/9/2 & yes \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\begin{minipage}{\linewidth}\footnotesize Bins are the 16 log-spaced cumulative-token bins of the main text; 15 are occupied. Plausibility reproduces exactly and grammar to within one bin, but phonology does not: the submitted row reports no bin with a positive zero-excluding interval, and this recomputation finds several. No subset of the three datasets reproduces the submitted row.\end{minipage}
+\caption{Token-binned brain--model alignment by linguistic domain, recomputed from \texttt{results/alignment\_rows.csv} with the checkpoint as the unit of the confidence interval. The last two columns compare against Table~2 as submitted.}
+\label{tab:t1}
+\end{table}

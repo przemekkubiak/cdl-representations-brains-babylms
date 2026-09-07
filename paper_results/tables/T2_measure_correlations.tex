@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llllll}
+\toprule
+Pair & Stat & Sem & Phon & Gram & Plaus \\
+\midrule
+Sparsity vs.\ accuracy & $\rho$ & +0.473 & -0.027 & +0.373 & \textbf{+0.690} \\
+ & $p$ & 8.0e-18 & 0.640 & 3.8e-11 & 6.5e-43 \\
+Sparsity vs.\ alignment & $\rho$ & -0.216 & +0.101 & -0.146 & -0.441 \\
+ & $p$ & 1.9e-04 & 0.084 & 0.012 & 2.2e-15 \\
+Selectivity vs.\ accuracy & $\rho$ & -0.090 & +0.140 & -0.211 & +0.045 \\
+ & $p$ & 0.125 & 0.016 & 2.7e-04 & 0.447 \\
+Selectivity vs.\ alignment & $\rho$ & +0.215 & +0.155 & -0.080 & +0.030 \\
+ & $p$ & 2.1e-04 & 0.008 & 0.173 & 0.608 \\
+Accuracy vs.\ alignment & $\rho$ & -0.057 & -0.005 & +0.212 & \textbf{-0.639} \\
+ & $p$ & 0.333 & 0.937 & 2.6e-04 & 4.3e-35 \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\begin{minipage}{\linewidth}\footnotesize Checkpoints within a family form a training trajectory rather than independent draws, so these are descriptive. Plausibility accuracy against plausibility alignment is the only entry of any magnitude, and it reproduces the submitted $\rho = -0.641$.\end{minipage}
+\caption{Spearman correlations between checkpoint-level measures, by domain, recomputed from \texttt{hf\_package/ds003604}. Bold exceeds $|\rho| = 0.5$.}
+\label{tab:t2}
+\end{table}
