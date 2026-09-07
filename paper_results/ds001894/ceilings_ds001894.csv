@@ -3,3 +3,11 @@ Phon,ses-11+,data/processed/fmri_wrn/ds001894/Phon/session_rdm_ses-11+.npz,True,
 Phon,ses-11,data/processed/fmri_wrn/ds001894/Phon/session_rdm_ses-11.npz,True,96,5,0.33554957607251623,0.5745960530832595,0.019257988088185574,5.0
 Phon,ses-7,data/processed/fmri_wrn/ds001894/Phon/session_rdm_ses-7.npz,True,96,1,,,,
 Phon,ses-9,data/processed/fmri_wrn/ds001894/Phon/session_rdm_ses-9.npz,True,96,3,0.18397059284201345,0.5897400715738574,0.016040448658234882,3.0
+Orth,ses-11+,data/processed/fmri_wrn/ds001894/roi-phonology/Orth/session_rdm_ses-11+.npz,True,96,4,0.1742624769225749,0.5457342923093875,0.019915371260648275,4.0
+Orth,ses-11,data/processed/fmri_wrn/ds001894/roi-phonology/Orth/session_rdm_ses-11.npz,True,96,5,0.21368609959371118,0.5240498443952196,0.00863954809326559,5.0
+Orth,ses-7,data/processed/fmri_wrn/ds001894/roi-phonology/Orth/session_rdm_ses-7.npz,True,96,1,,,,
+Orth,ses-9,data/processed/fmri_wrn/ds001894/roi-phonology/Orth/session_rdm_ses-9.npz,True,96,3,0.16507553885613072,0.607179038133363,0.016126684714859608,3.0
+Phon,ses-11+,data/processed/fmri_wrn/ds001894/roi-phonology/Phon/session_rdm_ses-11+.npz,True,96,4,0.1742624769225749,0.5457342923093875,0.019915371260648275,4.0
+Phon,ses-11,data/processed/fmri_wrn/ds001894/roi-phonology/Phon/session_rdm_ses-11.npz,True,96,5,0.21368609959371118,0.5240498443952196,0.00863954809326559,5.0
+Phon,ses-7,data/processed/fmri_wrn/ds001894/roi-phonology/Phon/session_rdm_ses-7.npz,True,96,1,,,,
+Phon,ses-9,data/processed/fmri_wrn/ds001894/roi-phonology/Phon/session_rdm_ses-9.npz,True,96,3,0.16507553885613072,0.607179038133363,0.016126684714859608,3.0
