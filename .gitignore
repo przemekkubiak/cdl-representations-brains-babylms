@@ -126,3 +126,11 @@ hf_package/
 # runs from -- so a tracked symlink here makes every checkout of this branch
 # refuse to touch it. Ignored instead.
 venv
+
+# Exception: the supplementary figure set is a paper artefact, not a scratch
+# output, so it is versioned. The parent directories have to be un-ignored
+# first -- git cannot re-include a file whose parent directory is excluded,
+# and the "figures/" rule above matches paper_results/figures/.
+!paper_results/figures/
+!paper_results/figures/supplementary/
+!paper_results/figures/supplementary/**

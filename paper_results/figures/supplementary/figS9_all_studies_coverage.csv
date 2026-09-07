@@ -1,0 +1,9 @@
+run,dataset,Sem,Phon,Gram,Plaus,Orth,SemLocal
+"29-family grid (main results: Figures 1-2, S1-S8)",ds001894,0.0,0.0,0.0,0.0,0.0,0.0
+"29-family grid (main results: Figures 1-2, S1-S8)",ds002236,882.0,882.0,0.0,0.0,0.0,0.0
+"29-family grid (main results: Figures 1-2, S1-S8)",ds003604,882.0,882.0,882.0,882.0,0.0,0.0
+"29-family grid (main results: Figures 1-2, S1-S8)",ds006239,588.0,588.0,0.0,0.0,588.0,588.0
+15-family devai grid (the only run covering ds001894),ds001894,0.0,400.0,0.0,0.0,0.0,0.0
+15-family devai grid (the only run covering ds001894),ds002236,300.0,300.0,0.0,0.0,0.0,0.0
+15-family devai grid (the only run covering ds001894),ds003604,0.0,0.0,0.0,0.0,0.0,0.0
+15-family devai grid (the only run covering ds001894),ds006239,200.0,200.0,0.0,0.0,200.0,200.0
