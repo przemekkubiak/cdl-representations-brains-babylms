@@ -15,7 +15,7 @@
   "best_z": 1.961345174847301,
   "best_cell": "Sem/ses-11+",
   "best_frac_of_ceiling": 0.11482362009507456,
-  "lm_best_rsa_for_comparison": null,
+  "lm_best_rsa_for_comparison": 0.0599242193158628,
   "n_permutations": 5000,
   "verdict": "no recoverable stimulus signal"
 }
