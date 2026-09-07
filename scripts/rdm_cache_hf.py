@@ -70,11 +70,36 @@ def variant_name(within_run_normalized: bool) -> str:
     return VARIANT_WRN if within_run_normalized else VARIANT_RAW
 
 
+# COHORT (added 2026-09-07) namespaces by subject-cohort size for the third
+# instance of exactly the same hazard. run_brain_par.sh climbs a cohort ladder
+# (MAX_SUBJECTS = 6, 12, 25, 50, 89) and a session RDM is an AVERAGE OVER
+# SUBJECTS, so the N=6 and N=25 versions of one (dataset, variant, roi, task,
+# session) are different data -- but they had the same cache path, so the wave-6
+# entry would be served straight into a wave-25 pull and the run would publish
+# six subjects' RDM under a 25-subject label, cache HIT and all. Only BOUNDED
+# cohorts get a segment: the full cohort keeps the unscoped path, which is what
+# every entry in the repo today is (checked 2026-09-07: ds003604 whole-brain +
+# three ROI levels, ds002236 and ds006239 whole-brain -- no capped run has ever
+# reached the Hub), so nothing already cached is orphaned by this.
+def cohort_segment(cohort: int | str | None) -> str | None:
+    """"cohort-<N>" for a capped cohort; None for the full one (0/None/"")."""
+    try:
+        n = int(cohort)
+    except (TypeError, ValueError):
+        return None
+    return f"cohort-{n}" if n > 0 else None
+
+
 def remote_path(task: str, session: str, dataset: str = "ds003604",
-                variant: str = VARIANT_RAW, roi_subdir: str | None = None) -> str:
+                variant: str = VARIANT_RAW, roi_subdir: str | None = None,
+                cohort: int | str | None = None) -> str:
+    parts = [dataset, variant]
     if roi_subdir:
-        return f"{dataset}/{variant}/{roi_subdir}/{task}/session_rdm_{session}.npz"
-    return f"{dataset}/{variant}/{task}/session_rdm_{session}.npz"
+        parts.append(roi_subdir)
+    seg = cohort_segment(cohort)
+    if seg:
+        parts.append(seg)
+    return "/".join(parts + [task, f"session_rdm_{session}.npz"])
 
 
 def legacy_remote_path(task: str, session: str) -> str:
@@ -111,12 +136,18 @@ def cmd_pull(a) -> int:
     dataset = getattr(a, "dataset", None) or "ds003604"
     roi_subdir = getattr(a, "roi_subdir", None) or None
 
-    candidates = [remote_path(a.task, a.session, dataset, variant, roi_subdir)]
+    cohort = getattr(a, "cohort", None)
+
+    candidates = [remote_path(a.task, a.session, dataset, variant, roi_subdir, cohort)]
     # Only the raw ds003604 variant has a legacy flat equivalent; never serve a
     # legacy (uncorrected) file into a request for the corrected variant, AND
     # never into an ROI-restricted request -- the legacy path predates ROI
     # masking entirely and is definitionally whole-brain.
-    if dataset == "ds003604" and variant == VARIANT_RAW and not roi_subdir:
+    # A capped-cohort request never falls back to the unscoped path: that path
+    # holds the FULL cohort, and serving it here would silently answer "give me
+    # the 12-subject RDM" with the 322-subject one.
+    if (dataset == "ds003604" and variant == VARIANT_RAW and not roi_subdir
+            and not cohort_segment(cohort)):
         candidates.append(legacy_remote_path(a.task, a.session))
 
     got = None
@@ -153,7 +184,8 @@ def cmd_push(a) -> int:
     dataset = getattr(a, "dataset", None) or "ds003604"
     variant = variant_name(rdm_is_normalized(src))     # read off the file, not the CLI
     roi_subdir = getattr(a, "roi_subdir", None) or None
-    rp = remote_path(a.task, a.session, dataset, variant, roi_subdir)
+    rp = remote_path(a.task, a.session, dataset, variant, roi_subdir,
+                     getattr(a, "cohort", None))
     try:
         api.create_repo(REPO, repo_type="dataset", exist_ok=True)
         api.upload_file(path_or_fileobj=str(src), path_in_repo=rp,
@@ -208,6 +240,15 @@ def cmd_sync(a) -> int:
     if roi_subdir:
         print(f"[rdm-cache] syncing ROI-restricted RDMs under roi_subdir={roi_subdir!r}")
 
+    # The cohort comes from the marker run_new_datasets.sh writes beside the
+    # RDMs, for the same reason roi_subdir comes from the path: one source of
+    # truth for "which cohort is this", not a CLI flag that can disagree with
+    # the files.
+    marker = root / ".cohort"
+    cohort = marker.read_text().strip() if marker.exists() else None
+    if cohort_segment(cohort):
+        print(f"[rdm-cache] syncing cohort-capped RDMs under {cohort_segment(cohort)}")
+
     try:
         api.create_repo(REPO, repo_type="dataset", exist_ok=True)
         remote = set(api.list_repo_files(REPO, repo_type="dataset"))
@@ -220,7 +261,7 @@ def cmd_sync(a) -> int:
         task = f.parent.name
         session = f.name.replace("session_rdm_", "").replace(".npz", "")
         variant = variant_name(rdm_is_normalized(f))
-        rp = remote_path(task, session, a.dataset, variant, roi_subdir)
+        rp = remote_path(task, session, a.dataset, variant, roi_subdir, cohort)
         if rp in remote:
             print(f"[rdm-cache] have  {rp}")
             skipped += 1
@@ -250,6 +291,12 @@ def main() -> int:
         s.add_argument("--variant", default=None,
                        choices=[VARIANT_RAW, VARIANT_WRN],
                        help="pull only: which variant to fetch (push reads it off the file)")
+        s.add_argument("--cohort", default=None,
+                       help="MAX_SUBJECTS the RDM was built with (0/omitted = the full "
+                            "cohort). A capped cohort is cached under its own "
+                            "'cohort-<N>' segment and NEVER falls back to the unscoped "
+                            "(full-cohort) entry -- a session RDM is an average over "
+                            "subjects, so the two are different data.")
         s.add_argument("--roi-subdir", default=None,
                        help="e.g. 'roi-phonology' -- prepare_brain_rdms.sh's own ROI_SUBDIR value, "
                             "passed through as-is (not re-derived from ROI_SET here). Omit for "

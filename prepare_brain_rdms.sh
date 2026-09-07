@@ -135,6 +135,15 @@ RESOLVE
   # (true today for ds002236 and ds003604) would silently pull that
   # whole-brain RDM and mislabel it as ROI-restricted.
   ROI_CACHE_ARGS=(); [ -n "$ROI_SUBDIR" ] && ROI_CACHE_ARGS=(--roi-subdir "${ROI_SUBDIR%/}")
+  # ... and by COHORT, for the third instance of the same hazard: a session RDM
+  # is an average over subjects, so the MAX_SUBJECTS=6 and MAX_SUBJECTS=25
+  # versions of one cell are different data that shared a cache path. Without
+  # this, every wave above the first pulled the first wave's RDMs and published
+  # them under its own larger-N label. Only a capped cohort gets a segment --
+  # MAX_SUBJECTS=0 (the full cohort) keeps the unscoped path every cached entry
+  # already uses.
+  COHORT_CACHE_ARGS=(); [ "${MAX_SUBJECTS:-0}" -gt 0 ] \
+    && COHORT_CACHE_ARGS=(--cohort "$MAX_SUBJECTS")
   # Cross-sectional datasets (everything except ds003604) need patterns
   # relabeled by real per-subject age-group bin before an RDM is built --
   # see scripts/regroup_patterns_by_age.py and configs/age_groups.yaml for
@@ -244,7 +253,7 @@ RESOLVE
       [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
       if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
            pull --task "$T" --session "$S" --dir "$OUT" \
-           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" "${COHORT_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
         if ls "$OUT"/session_rdm_${S}.npz >/dev/null 2>&1; then
           log "$T/$S: pulled from Hub cache -- preprocessing skipped"; continue
         fi
@@ -370,7 +379,7 @@ RESOLVE
       # be filed under the wrong variant.
       [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
           push --task "$T" --session "$S" --dir "$OUT" \
-          --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
+          --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" "${COHORT_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
       log "$T/$S: done, $(free_gb)GB free"
     else
       log "$T/$S: NO session RDM produced -- keeping patterns for diagnosis"
@@ -404,7 +413,7 @@ RESOLVE
       [ "$WITHIN_RUN_NORM" = "1" ] && CACHE_VARIANT=within-run-normalised
       if [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
            pull --task "$T" --session "$AS" --dir "$OUT" \
-           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
+           --dataset "$DATASET" --variant "$CACHE_VARIANT" "${ROI_CACHE_ARGS[@]}" "${COHORT_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"; then
         if ls "$OUT"/session_rdm_${AS}.npz >/dev/null 2>&1; then
           log "$T/$AS: pulled from Hub cache -- skipping"; continue
         fi
@@ -431,7 +440,7 @@ RESOLVE
             || log "$T/$AS: brain localization failed (non-fatal, continuing)"
         [ "${RDM_CACHE:-1}" = "1" ] && "$PY" "$ROOT/scripts/rdm_cache_hf.py" \
             push --task "$T" --session "$AS" --dir "$OUT" \
-            --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
+            --dataset "$DATASET" "${ROI_CACHE_ARGS[@]}" "${COHORT_CACHE_ARGS[@]}" 2>&1 | sed "s/^/  /"
         log "$T/$AS: done, $(free_gb)GB free"
       else
         log "$T/$AS: NO session RDM produced -- keeping patterns for diagnosis"

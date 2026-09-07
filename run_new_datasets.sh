@@ -217,9 +217,57 @@ for DS in $DATASETS; do
   fi
 
   # ---- 1. brain prep -------------------------------------------------------
-  if [ "$(find "$RDM_ROOT" -name 'session_rdm_*.npz' 2>/dev/null | wc -l)" -gt 0 ]; then
-    log "$DS ($ROI_LABEL): session RDMs already present -- skipping brain prep"
+  # The skip is COHORT-AWARE. It used to be "any session RDM here means done",
+  # which silently made run_brain_par.sh's wave ladder (N=6 -> 12 -> 25 -> 50
+  # -> 89) a no-op: wave 6 built the RDMs, and every later wave found them,
+  # skipped prep, re-ran the identical grid, and published N=6 numbers under a
+  # larger-N label. Measured 2026-09-07, with ds002236/ses-11 sitting at ONE
+  # subject and a meaningless noise ceiling.
+  # $RDM_ROOT/.cohort records the MAX_SUBJECTS the RDMs in it were built with
+  # (0 = the full cohort). Prep is skipped only when that cohort already covers
+  # what is being asked for; a larger request moves the smaller cohort aside
+  # (kept, not deleted -- it is hours of CPU and it is what was published) and
+  # rebuilds, because prepare_brain_rdms.sh skips per session on "RDM already
+  # present" and would otherwise leave the old cohort in place.
+  # An UNMARKED root is treated as full: every root that exists predates this
+  # marker, and seeding them wrong in the other direction would shrink a
+  # full-cohort dataset down to the wave size.
+  COHORT_REQ="${MAX_SUBJECTS:-0}"
+  COHORT_FILE="$RDM_ROOT/.cohort"
+  COHORT_HAVE=""
+  [ -f "$COHORT_FILE" ] && COHORT_HAVE="$(tr -dc '0-9' < "$COHORT_FILE")"
+  # -maxdepth 2 scopes this to "$RDM_ROOT/<task>/session_rdm_*.npz", the layout
+  # every RDM uses. A plain recursive find counts the ROI levels NESTED inside a
+  # whole-brain root (data/processed/fmri_wrn/ds002236/roi-phonology/...), so a
+  # whole-brain root with no RDMs of its own looked populated as soon as any ROI
+  # level had been built.
+  HAVE_RDMS=$(find "$RDM_ROOT" -maxdepth 2 -name 'session_rdm_*.npz' 2>/dev/null | wc -l)
+  COHORT_COVERS=0
+  if [ "$HAVE_RDMS" -gt 0 ]; then
+    if [ -z "$COHORT_HAVE" ] || [ "$COHORT_HAVE" = "0" ]; then
+      COHORT_COVERS=1                                   # unmarked or full
+    elif [ "$COHORT_REQ" != "0" ] && [ "$COHORT_HAVE" -ge "$COHORT_REQ" ]; then
+      COHORT_COVERS=1
+    fi
+  fi
+  if [ "$HAVE_RDMS" -gt 0 ] && [ "$COHORT_COVERS" = "1" ]; then
+    log "$DS ($ROI_LABEL): session RDMs already present at cohort ${COHORT_HAVE:-unmarked} (want ${COHORT_REQ:-0}) -- skipping brain prep"
   else
+    if [ "$HAVE_RDMS" -gt 0 ]; then
+      ARCHIVE="${RDM_ROOT}.cohort-${COHORT_HAVE:-unknown}"
+      log "$DS ($ROI_LABEL): cohort ${COHORT_HAVE} < requested ${COHORT_REQ} -- moving $HAVE_RDMS RDM(s) to $ARCHIVE and rebuilding"
+      # Move the RDM FILES, not the root. The ROI levels live inside the
+      # whole-brain root (.../ds002236/roi-phonology), so `mv "$RDM_ROOT"`
+      # would carry every ROI level's RDMs off with the whole-brain ones and
+      # leave three other levels looking unbuilt.
+      rm -rf "$ARCHIVE"; mkdir -p "$ARCHIVE"
+      find "$RDM_ROOT" -maxdepth 2 -name 'session_rdm_*.npz' 2>/dev/null |
+        while read -r f; do
+          t="$(basename "$(dirname "$f")")"
+          mkdir -p "$ARCHIVE/$t" && mv "$f" "$ARCHIVE/$t/"
+        done
+      [ -f "$COHORT_FILE" ] && mv "$COHORT_FILE" "$ARCHIVE/.cohort"
+    fi
     log "$DS ($ROI_LABEL): brain prep (streamed; floor ${DISK_FLOOR_GB}GB, $(free_gb)GB free)"
     ledger_set "$LKEY" stage1 running
     # RDM_CACHE=1: push each session RDM to the Hub as it is built, and pull
@@ -245,6 +293,10 @@ for DS in $DATASETS; do
     ledger_set "$LKEY" stage1 "$([ "$N" -gt 0 ] && echo ok || echo failed)"
     ledger_set "$LKEY" n_rdms "$N"
     [ "$N" -eq 0 ] && { log "$DS ($ROI_LABEL): no RDMs -- SKIPPING the rest of this dataset"; continue; }
+    # Record the cohort these RDMs were built with, so the next wave can tell
+    # whether it has to rebuild. Written only after a prep that produced files.
+    echo "$COHORT_REQ" > "$COHORT_FILE"
+    ledger_set "$LKEY" cohort "$COHORT_REQ"
   fi
 
   # ---- 1b. stimulus texts --------------------------------------------------
