@@ -1,6 +1,6 @@
 dataset,variant,cells,status,masks_ok,masks_failed,suspect_wholebrain,median_roi_voxels
 ds001894,within-run-normalised,0,not run,,,,
-ds001894,roi-phonology,0,EMPTY DIR (no results),,,,
+ds001894,roi-phonology,0,not run,,,,
 ds001894,roi-auditory,0,not run,,,,
 ds001894,roi-motor,0,not run,,,,
 ds001894,roi-language,0,not run,,,,
