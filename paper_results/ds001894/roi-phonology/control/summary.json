@@ -1,0 +1,19 @@
+{
+  "n_tests": 32,
+  "n_stimulus_tests_corrected": 32,
+  "n_significant_holm": 0,
+  "controls_tested": [
+    "condition",
+    "text_edit_distance",
+    "visual_luminance",
+    "visual_pixels"
+  ],
+  "best_control": "text_edit_distance",
+  "best_rsa": 0.01960732419159607,
+  "best_z": 1.3634220522530605,
+  "best_cell": "Orth/ses-7",
+  "best_frac_of_ceiling": NaN,
+  "lm_best_rsa_for_comparison": null,
+  "n_permutations": 5000,
+  "verdict": "no recoverable stimulus signal"
+}

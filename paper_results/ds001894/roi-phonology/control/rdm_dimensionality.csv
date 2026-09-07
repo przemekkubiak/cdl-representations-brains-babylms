@@ -1,0 +1,9 @@
+task,session,n_stim,group_rdm_effective_rank,subject_rdm_rank_median,subject_rdm_rank_min,subject_rdm_rank_max,ceiling
+Orth,ses-11,96,64,51,44,54,0.2136862869244167
+Orth,ses-11+,96,61,49,40,55,0.1742622826215844
+Orth,ses-7,96,51,51,51,51,
+Orth,ses-9,96,60,49,44,55,0.165075425290524
+Phon,ses-11,96,64,51,44,54,0.2136862869244167
+Phon,ses-11+,96,61,49,40,55,0.1742622826215844
+Phon,ses-7,96,51,51,51,51,
+Phon,ses-9,96,60,49,44,55,0.165075425290524
