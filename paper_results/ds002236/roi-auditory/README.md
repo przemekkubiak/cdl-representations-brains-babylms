@@ -60,31 +60,35 @@ rather than language) and an inter-subject noise ceiling.
 | Sem    | ses-11    |       72 |      nan        |      nan        |         nan |
 | Sem    | ses-9     |       72 |      nan        |      nan        |         nan |
 
-Model grid: **11 families**, 356 alignment rows across 2 cells.
+Model grid: **15 families**, 1284 alignment rows across 6 cells.
 
 | | |
 |---|---|
 | mean noise ceiling | 0.242 |
 | best alignment anywhere | 0.0700 |
-| as a fraction of ceiling | nan% |
-| families equivalent to zero (TOST ±0.05) | 0/11 |
-| Pythia scale trend | ρ = +0.295, p = 0.41 |
+| as a fraction of ceiling | 27.0% |
+| families equivalent to zero (TOST ±0.05) | 13/15 |
+| Pythia scale trend | ρ = +0.287, p = 0.20 |
 
 ### Per family
 
 | family                |   n_checkpoints |   rsa_mean |   rsa_sd |   rsa_abs_max |   frac_of_ceiling_abs_max |   p_equivalence_tost |
 |:----------------------|----------------:|-----------:|---------:|--------------:|--------------------------:|---------------------:|
-| babylm-gpt2-7         |               9 |     0.0317 |   0.0077 |        0.048  |                       nan |                  nan |
-| babylm-gpt2-3         |               9 |     0.0313 |   0.0058 |        0.0462 |                       nan |                  nan |
-| babylm-gpt2-5         |               9 |     0.0301 |   0.0097 |        0.049  |                       nan |                  nan |
-| babylm-gpt2           |               9 |     0.025  |   0.004  |        0.0354 |                       nan |                  nan |
-| pythia-1b-full        |              21 |     0.0201 |   0.0078 |        0.0489 |                       nan |                  nan |
-| pythia-1.4b-full      |              21 |     0.0177 |   0.0101 |        0.07   |                       nan |                  nan |
-| pythia-160m-full      |              21 |     0.0158 |   0.0007 |        0.0395 |                       nan |                  nan |
-| pythia-410m-full      |              21 |     0.0154 |   0.0041 |        0.0479 |                       nan |                  nan |
-| beetle-humanscale-eng |              18 |     0.0123 |   0.003  |        0.0486 |                       nan |                  nan |
-| pythia-70m-full       |              21 |     0.0115 |   0.0011 |        0.0446 |                       nan |                  nan |
-| beetle-fineweb3-eng   |              19 |     0.0035 |   0.0142 |        0.0399 |                       nan |                  nan |
+| pythia-1b-full        |              21 |     0.0201 |   0.0078 |        0.0489 |                  nan      |             nan      |
+| pythia-1.4b-full      |              21 |     0.0177 |   0.0101 |        0.07   |                  nan      |             nan      |
+| babylm-gpt2-3         |               9 |     0.0147 |   0.0215 |        0.0462 |                    0.17   |               0.0051 |
+| babylm-gpt2-7         |               9 |     0.0143 |   0.022  |        0.048  |                    0.1607 |               0.0053 |
+| babylm-gpt2-5         |               9 |     0.0134 |   0.0221 |        0.049  |                    0.1578 |               0.0049 |
+| pythia-410m-full      |               1 |     0.0134 |   0.0218 |        0.0398 |                    0.0998 |               0.0046 |
+| babylm-gpt2           |               9 |     0.0113 |   0.0209 |        0.041  |                    0.1679 |               0.0031 |
+| pico-decoder-medium   |              21 |     0.0104 |   0.019  |        0.066  |                    0.2703 |               0.0019 |
+| beetle-humanscale-eng |              18 |     0.0091 |   0.01   |        0.0486 |                    0.2005 |               0.0001 |
+| pico-decoder-large    |              21 |     0.0087 |   0.0199 |        0.0634 |                    0.2599 |               0.0019 |
+| pythia-160m-full      |              21 |     0.0073 |   0.0108 |        0.0592 |                    0.2427 |               0.0001 |
+| pico-decoder-small    |              21 |     0.0069 |   0.019  |        0.0573 |                    0.2243 |               0.0013 |
+| pythia-70m-full       |              21 |     0.0068 |   0.0128 |        0.0446 |                    0.1798 |               0.0002 |
+| beetle-fineweb3-eng   |              19 |     0.0029 |   0.0069 |        0.0399 |                    0.1152 |               0      |
+| pico-decoder-tiny     |              21 |     0.0016 |   0.0162 |        0.0581 |                    0.2383 |               0.0004 |
 
 ## Dataset-specific notes
 
@@ -92,15 +96,15 @@ The accession is not stated in the data article; it was resolved to ds002236 by 
 
 ## Files
 
-| path | what |
-|---|---|
-| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling |
-| `alignment_by_family.csv` | per family, with equivalence tests |
-| `alignment_by_cell.csv` | per task × session |
-| `ceilings_*.csv` | noise ceiling per cell |
-| `control/` | the positive control and RDM dimensionality — the gate |
-| `scale_ladder.csv` | the Pythia 70M→1.4B scale test |
-| `fig_*.pdf`, `fig_*.png` | figures |
+| path | what | present here |
+|---|---|---|
+| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling | ✓ |
+| `alignment_by_family.csv` | per family, with equivalence tests | ✓ |
+| `alignment_by_cell.csv` | per task × session | ✓ |
+| `ceilings_ds002236.csv` | noise ceiling per cell | ✓ |
+| `control/` | the positive control and RDM dimensionality — the gate | ✓ |
+| `scale_ladder.csv` | the Pythia 70M→1.4B scale test | ✓ |
+| `fig_*.pdf, fig_*.png` | figures | ✓ |
 
 ## Method
 
