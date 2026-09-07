@@ -1,0 +1,21 @@
+{
+  "n_tests": 30,
+  "n_stimulus_tests_corrected": 30,
+  "n_significant_holm": 0,
+  "controls_tested": [
+    "acoustic_envelope",
+    "acoustic_spectrum",
+    "condition",
+    "text_edit_distance",
+    "word_association",
+    "word_frequency"
+  ],
+  "best_control": "condition",
+  "best_rsa": 0.029796516260988278,
+  "best_z": 1.4651067080153684,
+  "best_cell": "Sem/ses-11+",
+  "best_frac_of_ceiling": 0.12426607138679707,
+  "lm_best_rsa_for_comparison": null,
+  "n_permutations": 5000,
+  "verdict": "no recoverable stimulus signal"
+}
