@@ -107,6 +107,16 @@ def build_readme(ds: str, results: Path, gate: str, roi_label: str = "whole-brai
     control = read_json(results / "control" / "summary.json")
     dims = read_json(results / "control" / "dimensionality_summary.json")
     fam_path = results / "alignment_by_family.csv"
+    # Whether the LM grid produced anything at all. Distinct from the gate:
+    # a dataset can gate-fail and still have alignment numbers (published for
+    # completeness, per the fail branch below), or gate-pass and have none if
+    # the grid itself never ran (crashed, wrong env, killed early) -- caught
+    # 2026-08-30 when a local run's every checkpoint load failed for
+    # environment reasons and this function still said "the alignment numbers
+    # below" and listed alignment_by_*.csv/figures in Files with nothing
+    # there to back either claim, once for a whole-brain run and again for an
+    # ROI one before this check existed.
+    grid_ran = bool(summary) and summary.get("n_rows", 0)
     fam = pd.read_csv(fam_path) if fam_path.exists() else pd.DataFrame()
 
     L: list[str] = []
@@ -153,12 +163,19 @@ def build_readme(ds: str, results: Path, gate: str, roi_label: str = "whole-brai
         A("correction — not the acoustic model of the audio the children actually")
         A("heard, not the study's own experimental contrast.")
         A("")
-        A("**The alignment numbers below are therefore uninterpretable as")
-        A("evidence about language models.** They measure a representational")
-        A("geometry that does not demonstrably encode the stimuli. They are")
-        A("published for completeness and for whoever fixes the estimator, not as")
-        A("a result. Do not cite them as evidence that models fail to align with")
-        A("the developing brain.")
+        if grid_ran:
+            A("**The alignment numbers below are therefore uninterpretable as")
+            A("evidence about language models.** They measure a representational")
+            A("geometry that does not demonstrably encode the stimuli. They are")
+            A("published for completeness and for whoever fixes the estimator, not as")
+            A("a result. Do not cite them as evidence that models fail to align with")
+            A("the developing brain.")
+        else:
+            A("**No alignment numbers exist in this results directory** -- the")
+            A("language-model grid produced zero rows for this run (see this run's")
+            A("own logs for why: a real crash, an environment problem, or simply")
+            A("never having been run). That is independent of the gate result")
+            A("above, which is real either way.")
         if dims:
             A("")
             A("Measured cause, from `control/`:")
@@ -252,15 +269,26 @@ def build_readme(ds: str, results: Path, gate: str, roi_label: str = "whole-brai
 
     A("## Files")
     A("")
-    A("| path | what |")
-    A("|---|---|")
-    A("| `alignment_by_checkpoint.csv` | every model × checkpoint × cell, with ceiling |")
-    A("| `alignment_by_family.csv` | per family, with equivalence tests |")
-    A("| `alignment_by_cell.csv` | per task × session |")
-    A("| `ceilings_*.csv` | noise ceiling per cell |")
-    A("| `control/` | the positive control and RDM dimensionality — the gate |")
-    A("| `scale_ladder.csv` | the Pythia 70M→1.4B scale test |")
-    A("| `fig_*.pdf`, `fig_*.png` | figures |")
+    if not grid_ran:
+        A("**No alignment or figure files exist in this results directory** --")
+        A("the table below is what a completed run produces; this run's own")
+        A("logs say why these are absent.")
+        A("")
+    A("| path | what | present here |")
+    A("|---|---|---|")
+    _files = [
+        ("alignment_by_checkpoint.csv", "every model × checkpoint × cell, with ceiling"),
+        ("alignment_by_family.csv", "per family, with equivalence tests"),
+        ("alignment_by_cell.csv", "per task × session"),
+        (f"ceilings_{ds}.csv", "noise ceiling per cell"),
+        ("control/", "the positive control and RDM dimensionality — the gate"),
+        ("scale_ladder.csv", "the Pythia 70M→1.4B scale test"),
+        ("fig_*.pdf, fig_*.png", "figures"),
+    ]
+    for fname, what in _files:
+        glob_name = fname.split(",")[0].split()[0]
+        present = "✓" if list(results.glob(glob_name)) or (results / glob_name).exists() else "—"
+        A(f"| `{fname}` | {what} | {present} |")
     A("")
     A("## Method")
     A("")

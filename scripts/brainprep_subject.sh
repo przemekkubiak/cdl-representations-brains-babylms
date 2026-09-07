@@ -4,6 +4,21 @@
 # per-subject unit is what bounds peak disk: raw BOLD for a subject exists only
 # between its download and its preprocessing, so the dataset never lands whole.
 set -uo pipefail
+
+# mapfile below needs bash >=4; macOS ships 3.2, and prepare_brain_rdms.sh
+# invokes this script as `bash brainprep_subject.sh ...` (via xargs -P),
+# which never consults this file's own #!/bin/bash shebang. Re-exec with
+# Homebrew's bash rather than failing per-subject with "mapfile: command
+# not found" cascading into "REAL_TASKS: unbound variable" -- caught
+# 2026-08-30 one level below prepare_brain_rdms.sh's own copy of this guard.
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  if [ -x /opt/homebrew/bin/bash ]; then
+    exec /opt/homebrew/bin/bash "$0" "$@"
+  fi
+  echo "brainprep_subject.sh needs bash >=4 (mapfile) -- this is $BASH_VERSION." >&2
+  exit 1
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 SUB="$1"; T="$2"
 DATA_DIR="${DATA_DIR:-data/brain/ds003604}"
@@ -11,7 +26,9 @@ OUT="${OUT:-data/processed/fmri/ds003604/$T}"
 FLOOR="${DISK_FLOOR_GB:-350}"
 PYBIN="$ROOT/venv/bin/python"
 
-free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+# See prepare_brain_rdms.sh's copy of this function -- GNU-only df flags
+# silently returned "" on macOS, disabling every disk-floor check downstream.
+free_gb() { df -Pk / | awk 'NR==2 {print int($4/1024/1024)}'; }
 
 # $T is a PHENOMENON key (Sem/Phon/Orth/SemLocal), which is what
 # batch_preprocessing.py wants -- it resolves it through the registry itself

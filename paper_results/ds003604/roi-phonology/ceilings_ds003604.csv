@@ -1,0 +1,13 @@
+task,session,file,within_run_normalized,n_stim,n_subjects_rdm,ceiling_lower,ceiling_upper,ceiling_lower_sem,ceiling_n
+Gram,ses-5,data/processed/fmri_wrn/ds003604/roi-phonology/Gram/session_rdm_ses-5.npz,True,60,3,0.6449861877826638,0.8086840637868571,0.0609246903520254,3.0
+Gram,ses-7,data/processed/fmri_wrn/ds003604/roi-phonology/Gram/session_rdm_ses-7.npz,True,60,2,,,,
+Gram,ses-9,data/processed/fmri_wrn/ds003604/roi-phonology/Gram/session_rdm_ses-9.npz,True,60,3,0.810485408303713,0.9117153626792946,0.018007404159277315,3.0
+Phon,ses-5,data/processed/fmri_wrn/ds003604/roi-phonology/Phon/session_rdm_ses-5.npz,True,72,3,0.724946485475511,0.8610417286004409,0.04865597454623581,3.0
+Phon,ses-7,data/processed/fmri_wrn/ds003604/roi-phonology/Phon/session_rdm_ses-7.npz,True,72,3,0.8460160083146459,0.9118938927019536,0.06702431394156999,3.0
+Phon,ses-9,data/processed/fmri_wrn/ds003604/roi-phonology/Phon/session_rdm_ses-9.npz,True,72,3,0.727361653866265,0.8704599020252246,0.04461210507116482,3.0
+Plaus,ses-5,data/processed/fmri_wrn/ds003604/roi-phonology/Plaus/session_rdm_ses-5.npz,True,60,3,0.753901592211352,0.8697669782950901,0.03773810920797132,3.0
+Plaus,ses-7,data/processed/fmri_wrn/ds003604/roi-phonology/Plaus/session_rdm_ses-7.npz,True,60,4,0.7511977439522328,0.8510140576432607,0.022387744450534538,4.0
+Plaus,ses-9,data/processed/fmri_wrn/ds003604/roi-phonology/Plaus/session_rdm_ses-9.npz,True,60,4,0.8601155502561522,0.914215238508369,0.026798793023003427,4.0
+Sem,ses-5,data/processed/fmri_wrn/ds003604/roi-phonology/Sem/session_rdm_ses-5.npz,True,72,3,0.7763458796751123,0.8971543561332872,0.012202483367730223,3.0
+Sem,ses-7,data/processed/fmri_wrn/ds003604/roi-phonology/Sem/session_rdm_ses-7.npz,True,72,4,0.829124914730184,0.8938885054914242,0.046145217063987935,4.0
+Sem,ses-9,data/processed/fmri_wrn/ds003604/roi-phonology/Sem/session_rdm_ses-9.npz,True,72,3,0.7882265304624617,0.9016043273981295,0.0017664967827866135,3.0

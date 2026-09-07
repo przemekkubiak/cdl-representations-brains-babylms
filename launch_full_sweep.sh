@@ -45,7 +45,10 @@ NGPU=${#GPU_ARR[@]}
 
 mkdir -p logs
 log() { echo "[sweep $(date -u +%FT%TZ)] $*" | tee -a logs/sweep.log; }
-free_gb() { df -BG --output=avail / | tail -1 | tr -dc '0-9'; }
+# -BG --output=avail is GNU-only; BSD/macOS df returns "" for it, which
+# silently disables every disk-floor check that reads this (see
+# prepare_brain_rdms.sh's copy of this fix, 2026-08-30).
+free_gb() { df -Pk / | awk 'NR==2 {print int($4/1024/1024)}'; }
 
 ledger_set() {  # ledger_set <stage> <key> <value>
   "$PY" - "$LEDGER" "$1" "$2" "$3" <<'PYEOF'

@@ -1,4 +1,4 @@
-# Brain–language-model alignment: ds003604 (whole-brain)
+# Brain–language-model alignment: ds003604 (roi-phonology)
 
 The flagship dataset of this project — auditory sentence/word-pair listening in children aged 5, 7 and 9, four phenomena (semantic, phonological, grammatical, plausibility).
 
@@ -6,6 +6,7 @@ The flagship dataset of this project — auditory sentence/word-pair listening i
 - Data: https://openneuro.org/datasets/ds003604
 - Generated: 2026-08-30
 - Pipeline: https://github.com/suchirsalhan/cdl-representations-brains-babylms
+- Masking: **roi-phonology** -- see DATASETS.md section 10 for the three-level standard (phonology/language/all) this is part of, and how it differs from the whole-brain reference.
 
 ## Read this first: does the measurement work?
 
@@ -30,8 +31,8 @@ above, which is real either way.
 Measured cause, from `control/`:
 
 - RDM effective rank: **5** of 66 stimuli
-- voxels per pattern: 188,036
-- leading component vs the pattern's global signal: |ρ| = 0.79
+- voxels per pattern: 8,909
+- leading component vs the pattern's global signal: |ρ| = 0.92
 
 This reproduces what was found on ds003604: the per-stimulus GLM
 betas are near-degenerate, so the RDM cannot express stimulus-level
@@ -47,18 +48,18 @@ rather than language) and an inter-subject noise ceiling.
 
 | task   | session   |   n_stim |   ceiling_lower |   ceiling_upper |   ceiling_n |
 |:-------|:----------|---------:|----------------:|----------------:|------------:|
-| Gram   | ses-5     |       60 |        0.618815 |        0.794905 |           3 |
+| Gram   | ses-5     |       60 |        0.644986 |        0.808684 |           3 |
 | Gram   | ses-7     |       60 |      nan        |      nan        |         nan |
-| Gram   | ses-9     |       60 |        0.829904 |        0.91325  |           3 |
-| Phon   | ses-5     |       72 |        0.749221 |        0.861677 |           3 |
-| Phon   | ses-7     |       72 |        0.892745 |        0.935251 |           3 |
-| Phon   | ses-9     |       72 |        0.773901 |        0.890869 |           3 |
-| Plaus  | ses-5     |       60 |        0.738963 |        0.862723 |           3 |
-| Plaus  | ses-7     |       60 |        0.823496 |        0.890821 |           4 |
-| Plaus  | ses-9     |       60 |        0.829081 |        0.897825 |           4 |
-| Sem    | ses-5     |       72 |        0.839831 |        0.917688 |           3 |
-| Sem    | ses-7     |       72 |        0.934354 |        0.957514 |           4 |
-| Sem    | ses-9     |       72 |        0.825657 |        0.914217 |           3 |
+| Gram   | ses-9     |       60 |        0.810485 |        0.911715 |           3 |
+| Phon   | ses-5     |       72 |        0.724946 |        0.861042 |           3 |
+| Phon   | ses-7     |       72 |        0.846016 |        0.911894 |           3 |
+| Phon   | ses-9     |       72 |        0.727362 |        0.87046  |           3 |
+| Plaus  | ses-5     |       60 |        0.753902 |        0.869767 |           3 |
+| Plaus  | ses-7     |       60 |        0.751198 |        0.851014 |           4 |
+| Plaus  | ses-9     |       60 |        0.860116 |        0.914215 |           4 |
+| Sem    | ses-5     |       72 |        0.776346 |        0.897154 |           3 |
+| Sem    | ses-7     |       72 |        0.829125 |        0.893889 |           4 |
+| Sem    | ses-9     |       72 |        0.788227 |        0.901604 |           3 |
 
 ## Dataset-specific notes
 
